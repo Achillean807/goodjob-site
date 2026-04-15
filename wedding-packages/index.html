@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>婚禮場景佈置｜送客背景・舞台走道套組 | 村花弄囍</title>
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="apple-touch-icon" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Noto+Serif+TC:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet">
+<!-- AEO Crawler Tracking by Washinmura -->
+<link rel="aeo-profile" href="https://aeo.washinmura.jp/ai/goodjob.weddingwishlove.com/">
+<meta name="aeo-verified" content="washinmura-aeo-goodjob.weddingwishlove.com">
+<script src="https://aeo.washinmura.jp/widget/crawler-track.js" data-site="goodjob.weddingwishlove.com"></script>
+<style>
+:root {
+  --cream: #FAF6F1;
+  --warm-white: #FFFCF7;
+  --champagne: #E8D5B7;
+  --gold: #C4A265;
+  --gold-dark: #9B7D4A;
+  --terracotta: #B8755C;
+  --blush: #E8C4B8;
+  --charcoal: #2C2420;
+  --brown: #5C4A3A;
+  --brown-light: #8B7355;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'Noto Serif TC', serif;
+  background: var(--cream);
+  color: var(--charcoal);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════════
+   HERO — Split Screen
+═══════════════════════════════════════ */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 85vh;
+  min-height: 550px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+
+.hero-half {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  text-decoration: none;
+}
+
+.hero-half img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 8s ease-out;
+}
+
+.hero-half:hover img { transform: scale(1.04); }
+
+.hero-half .overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(44,36,32,0.08) 0%, rgba(44,36,32,0.55) 100%);
+  transition: background 0.5s ease;
+}
+
+.hero-half:hover .overlay {
+  background: linear-gradient(180deg, rgba(44,36,32,0.02) 0%, rgba(44,36,32,0.4) 100%);
+}
+
+.hero-label {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 2.5rem;
+  z-index: 2;
+  text-align: center;
+  animation: fadeUp 1s ease-out 0.3s both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-label .tier {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  margin-bottom: 0.5rem;
+}
+
+.hero-label h2 {
+  font-size: clamp(1.3rem, 2.5vw, 2rem);
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.3rem;
+}
+
+.hero-label .original-price {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(0.85rem, 1.6vw, 1.15rem);
+  font-weight: 400;
+  color: rgba(255,255,255,0.6);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  margin-bottom: 0.15rem;
+}
+
+.hero-label .price {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  font-weight: 700;
+  color: #fff;
+}
+
+.hero-divider {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 1px; height: 100%;
+  background: rgba(255,255,255,0.2);
+  z-index: 5;
+}
+
+.hero-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+  animation: fadeCenter 1.2s ease-out 0.5s both;
+}
+
+@keyframes fadeCenter {
+  from { opacity: 0; transform: translate(-50%, -40%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.hero-logo {
+  width: 120px;
+  height: auto;
+  filter: drop-shadow(0 2px 12px rgba(0,0,0,0.3));
+}
+
+/* ═══════════════════════════════════════
+   COMPARISON CARDS
+═══════════════════════════════════════ */
+.comparison {
+  padding: 5rem 5vw;
+  background: var(--warm-white);
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.section-header .eng {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+
+.section-header h2 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 500;
+  letter-spacing: 0.15em;
+}
+
+.section-header .line {
+  width: 40px; height: 1px;
+  background: var(--gold);
+  margin: 1.5rem auto 0;
+}
+
+.section-header .logo-inline {
+  width: 80px;
+  margin: 0 auto 1.2rem;
+  display: block;
+  opacity: 0.7;
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.pkg-card {
+  background: var(--cream);
+  padding: 3rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.pkg-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(44,36,32,0.08);
+}
+
+.pkg-card.recommended::before {
+  content: 'BEST VALUE';
+  position: absolute;
+  top: 1.5rem; right: -2.5rem;
+  background: var(--terracotta);
+  color: #fff;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  padding: 0.4rem 3rem;
+  transform: rotate(45deg);
+}
+
+.pkg-tier {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+}
+
+.pkg-name { font-size: 1.6rem; font-weight: 600; letter-spacing: 0.1em; margin-bottom: 0.6rem; }
+
+.pkg-original { font-size: 0.85rem; color: var(--brown-light); font-weight: 300; }
+.pkg-original .strike { text-decoration: line-through; text-decoration-color: var(--terracotta); }
+
+.pkg-price-row { display: flex; align-items: baseline; gap: 0.3rem; margin: 1rem 0 2rem; }
+.pkg-currency { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--terracotta); }
+.pkg-amount { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 700; color: var(--terracotta); line-height: 1; }
+
+.pkg-items { list-style: none; border-top: 1px solid var(--champagne); padding-top: 1.5rem; }
+.pkg-items li { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.88rem; color: var(--brown); line-height: 1.8; letter-spacing: 0.05em; font-weight: 300; }
+.pkg-items li + li { margin-top: 0.4rem; }
+.pkg-items .check { color: var(--gold); font-size: 0.8rem; flex-shrink: 0; margin-top: 0.35rem; }
+.pkg-items .cross { color: #ccc; font-size: 0.8rem; flex-shrink: 0; margin-top: 0.35rem; }
+.pkg-items .na { color: #bbb; text-decoration: line-through; text-decoration-color: #ddd; }
+.pkg-items .hint { font-size: 0.75rem; color: var(--brown-light); margin-left: 0.2rem; }
+
+.pkg-btn {
+  display: block; text-align: center; margin-top: 2rem;
+  padding: 0.9rem 2rem; text-decoration: none;
+  font-size: 0.8rem; letter-spacing: 0.25em;
+  font-family: 'Noto Serif TC', serif; transition: all 0.4s ease;
+}
+
+.pkg-card:not(.recommended) .pkg-btn { background: transparent; color: var(--charcoal); border: 1px solid var(--charcoal); }
+.pkg-card:not(.recommended) .pkg-btn:hover { background: var(--charcoal); color: var(--champagne); }
+.pkg-card.recommended .pkg-btn { background: var(--charcoal); color: var(--champagne); border: 1px solid var(--charcoal); }
+.pkg-card.recommended .pkg-btn:hover { background: var(--gold-dark); border-color: var(--gold-dark); color: #fff; }
+
+/* ═══════════════════════════════════════
+   DYNAMIC 2-COL ITEM GRID (v1 style)
+═══════════════════════════════════════ */
+.detail-section {
+  padding: 5rem 5vw;
+}
+
+.detail-section.on-cream { background: var(--cream); }
+.detail-section.on-white { background: var(--warm-white); }
+
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.item-card {
+  position: relative;
+  background: var(--warm-white);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.detail-section.on-white .item-card { background: var(--cream); }
+
+.item-card.visible { opacity: 1; transform: translateY(0); }
+
+/* Featured = full width */
+.item-card.featured {
+  grid-column: 1 / -1;
+}
+
+/* ALL cards: side-by-side photo + text */
+.item-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 380px;
+}
+
+.item-card.featured .item-inner {
+  min-height: 450px;
+}
+
+.item-card:not(.featured) .item-inner {
+  grid-template-columns: 3fr 2fr;
+  min-height: 320px;
+}
+
+/* Even cards flip direction → photos meet in center when side-by-side */
+.item-card:nth-child(even) .item-inner {
+  direction: rtl;
+}
+
+.item-card:nth-child(even) .item-inner > * {
+  direction: ltr;
+}
+
+.item-img-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.item-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.item-card:hover .item-img,
+.item-card:hover .carousel-slide.active { transform: scale(1.05); }
+
+.item-num {
+  position: absolute;
+  top: 1.2rem; left: 1.2rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.7rem; font-style: italic;
+  color: rgba(255,255,255,0.85);
+  background: rgba(44,36,32,0.4);
+  backdrop-filter: blur(8px);
+  padding: 0.25rem 0.7rem;
+  letter-spacing: 0.15em;
+}
+
+.item-card:nth-child(even) .item-num {
+  left: auto; right: 1.2rem;
+}
+
+.item-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2.5rem;
+  position: relative;
+}
+
+.item-body::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 0;
+  transform: translateY(-50%);
+  width: 3px; height: 40px;
+  background: var(--gold);
+}
+
+.item-card:nth-child(even) .item-body::before {
+  left: auto; right: 0;
+}
+
+.item-eng {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.7rem;
+  font-weight: 500;
+}
+
+.item-title {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 600;
+  color: var(--charcoal);
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.08em;
+}
+
+.item-desc {
+  font-size: 0.85rem;
+  color: var(--brown-light);
+  line-height: 1.8;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+}
+
+.item-price-tag {
+  display: inline-block;
+  margin-top: 1rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.8rem;
+  color: var(--terracotta);
+  border-bottom: 1px solid var(--blush);
+  padding-bottom: 0.2rem;
+  letter-spacing: 0.1em;
+}
+
+/* Extra items row */
+.extras-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 2rem auto 0;
+}
+
+.extra-card {
+  background: var(--warm-white);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.detail-section.on-white .extra-card { background: var(--cream); }
+
+.extra-card.visible { opacity: 1; transform: translateY(0); }
+
+.extra-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 30px; height: 2px;
+  background: var(--gold);
+  transition: width 0.4s ease;
+}
+
+.extra-card:hover::after { width: 60px; }
+
+.extra-title { font-size: 0.95rem; font-weight: 500; color: var(--charcoal); letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+.extra-desc { font-size: 0.78rem; color: var(--brown-light); font-weight: 300; }
+
+/* ═══════════════════════════════════════
+   SERVICE + CTA + FOOTER
+═══════════════════════════════════════ */
+.service-bar {
+  padding: 3.5rem 5vw;
+  background: var(--charcoal);
+  text-align: center;
+}
+
+.service-bar .eng {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+
+.service-bar p {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.8);
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  line-height: 1.8;
+}
+
+.service-bar .sub { font-size: 0.8rem; opacity: 0.5; }
+
+.cta {
+  padding: 5rem 5vw;
+  background: var(--warm-white);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta::before, .cta::after {
+  content: '';
+  position: absolute;
+  width: 180px; height: 180px;
+  border: 1px solid var(--champagne);
+  border-radius: 50%;
+  opacity: 0.25;
+}
+
+.cta::before { top: -50px; left: -50px; }
+.cta::after { bottom: -50px; right: -50px; }
+
+.cta .eng {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+
+.cta h2 {
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1rem 3rem;
+  background: #06C755;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  font-family: 'Noto Serif TC', serif;
+  transition: all 0.4s ease;
+  position: relative;
+  z-index: 1;
+  border-radius: 4px;
+}
+
+.cta-btn:hover {
+  background: #05a848;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(6,199,85,0.3);
+}
+
+.cta-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: #fff;
+}
+
+.disclaimer {
+  padding: 2rem 5vw;
+  background: var(--cream);
+  text-align: center;
+  border-top: 1px solid rgba(196,162,101,0.2);
+}
+
+.disclaimer p {
+  font-size: 0.72rem;
+  color: var(--terracotta);
+  letter-spacing: 0.08em;
+  line-height: 1.8;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.footer {
+  padding: 3rem 5vw;
+  background: var(--charcoal);
+  text-align: center;
+}
+
+.footer-logo {
+  width: 70px;
+  margin: 0 auto 1rem;
+  display: block;
+  filter: brightness(0) invert(1);
+  opacity: 0.6;
+}
+
+.footer-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.3em;
+  color: var(--champagne);
+  opacity: 0.5;
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    height: auto; min-height: auto;
+  }
+
+  .hero-half { height: 45vh; min-height: 280px; }
+
+  .hero-divider {
+    top: auto; bottom: 50%;
+    left: 0; width: 100%; height: 1px;
+    transform: none;
+  }
+
+  .hero-center {
+    top: auto; bottom: 50%;
+    transform: translate(-50%, 50%);
+  }
+
+  .hero-logo { width: 48px; }
+
+  @keyframes fadeCenter {
+    from { opacity: 0; transform: translate(-50%, 60%); }
+    to { opacity: 1; transform: translate(-50%, 50%); }
+  }
+
+  .comparison-grid { grid-template-columns: 1fr; gap: 2rem; }
+
+  .items-grid { grid-template-columns: 1fr; }
+
+  .item-inner,
+  .item-card.featured .item-inner,
+  .item-card:not(.featured) .item-inner {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .item-card:nth-child(even) .item-inner { direction: ltr; }
+  .item-card:nth-child(even) .item-num { left: 1.2rem; right: auto; }
+  .item-card:nth-child(even) .item-body::before { left: 0; right: auto; }
+
+  .item-img-wrap { height: 260px; }
+  .item-img-wrap.portrait { height: 420px; }
+
+  .item-body { padding: 2rem; }
+}
+
+@media (max-width: 600px) {
+  .hero-label { padding: 1.5rem; }
+  .pkg-card { padding: 2rem 1.5rem; }
+  .item-body { padding: 1.5rem; }
+  .item-card:not(.featured) .item-img-wrap,
+  .item-img-wrap { height: 220px; }
+  .item-img-wrap.portrait { height: 360px; }
+}
+
+/* Lightbox */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20,16,14,0.92);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  cursor: zoom-out;
+  backdrop-filter: blur(6px);
+}
+
+.lightbox-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.lightbox-overlay img {
+  max-width: 90vw;
+  max-height: 88vh;
+  object-fit: contain;
+  border-radius: 2px;
+  box-shadow: 0 8px 60px rgba(0,0,0,0.5);
+  transform: scale(0.92);
+  transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+
+.lightbox-overlay.active img {
+  transform: scale(1);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+  font-size: 2rem;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  transition: color 0.3s;
+  line-height: 1;
+}
+
+.lightbox-close:hover {
+  color: #fff;
+}
+
+.item-img-wrap {
+  cursor: zoom-in;
+}
+
+/* ═══════════════════════════════════════
+   CAROUSEL
+═══════════════════════════════════════ */
+.carousel-track {
+  position: absolute;
+  inset: 0;
+}
+.carousel-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.carousel-slide.active { opacity: 1; }
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(44,36,32,0.45);
+  color: #fff;
+  border: none;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 4;
+  font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.3s, opacity 0.3s;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+}
+.item-img-wrap:hover .carousel-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+.carousel-btn:hover { background: rgba(44,36,32,0.8); }
+.carousel-prev { left: 0.7rem; }
+.carousel-next { right: 0.7rem; }
+
+.carousel-dots {
+  position: absolute;
+  bottom: 0.65rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 4;
+}
+.dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+  border: none;
+  padding: 0;
+  display: block;
+}
+.dot.active {
+  background: #fff;
+  transform: scale(1.3);
+}
+
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .item-card, .extra-card { opacity: 1 !important; transform: none !important; }
+  .lightbox-overlay { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-half" onclick="document.getElementById('classic').scrollIntoView({behavior:'smooth'})">
+    <img src="images/classic/DSC05940-已增強-雜訊減少.jpg" alt="經典版" loading="eager">
+    <div class="overlay"></div>
+    <div class="hero-label">
+      <span class="tier">Classic Package</span>
+      <h2>經典版</h2>
+      <span class="original-price">NT$ 64,100</span>
+      <span class="price">NT$ 50,000</span>
+    </div>
+  </div>
+  <div class="hero-divider"></div>
+  <div class="hero-half" onclick="document.getElementById('deluxe').scrollIntoView({behavior:'smooth'})">
+    <img src="images/deluxe/焦糖紗.jpg" alt="豪華版" loading="eager">
+    <div class="overlay"></div>
+    <div class="hero-label">
+      <span class="tier">Deluxe Package</span>
+      <h2>豪華版</h2>
+      <span class="original-price">NT$ 98,600</span>
+      <span class="price">NT$ 68,000</span>
+    </div>
+  </div>
+  <div class="hero-center">
+    <img src="images/logo-white.png" alt="村花弄囍" class="hero-logo">
+  </div>
+</section>
+
+<!-- ═══ COMPARISON ═══ -->
+<section class="comparison">
+  <div class="section-header">
+    <div class="eng">Choose Your Package</div>
+    <h2>婚禮場景佈置｜送客背景・舞台走道套組</h2>
+    <div class="line"></div>
+  </div>
+
+  <div class="comparison-grid">
+    <div class="pkg-card">
+      <div class="pkg-tier">Classic Package</div>
+      <div class="pkg-name">經典版</div>
+      <div class="pkg-original">原價 <span class="strike">NT$ 64,100</span></div>
+      <div class="pkg-price-row">
+        <span class="pkg-currency">NT$</span>
+        <span class="pkg-amount">50,000</span>
+      </div>
+      <ul class="pkg-items">
+        <li><span class="check">&#10003;</span> 拍照區花柱多層次方案 <span class="hint">$25,800內任選</span></li>
+        <li><span class="check">&#10003;</span> 拍照區新人名字LOGO一式</li>
+        <li><span class="check">&#10003;</span> 舞台花柱 <span class="hint">$18,800內任選</span></li>
+        <li><span class="cross">&#10007;</span> <span class="na">走道地貼 20M</span></li>
+        <li><span class="check">&#10003;</span> 仿真走道花 4對8球</li>
+        <li><span class="cross">&#10007;</span> <span class="na">客製迎賓鏡含裝飾仿真花</span></li>
+        <li><span class="check">&#10003;</span> 收禮桌佈置（兩張長桌）</li>
+        <li><span class="check">&#10003;</span> 相簿桌佈置（一張圓桌）</li>
+      </ul>
+      <span class="pkg-btn" onclick="document.getElementById('classic').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">查看經典版實景</span>
+    </div>
+
+    <div class="pkg-card recommended">
+      <div class="pkg-tier">Deluxe Package</div>
+      <div class="pkg-name">豪華版</div>
+      <div class="pkg-original">原價 <span class="strike">NT$ 98,600</span></div>
+      <div class="pkg-price-row">
+        <span class="pkg-currency">NT$</span>
+        <span class="pkg-amount">68,000</span>
+      </div>
+      <ul class="pkg-items">
+        <li><span class="check">&#10003;</span> 拍照區花柱多層次方案 <span class="hint">$27,800內任選</span></li>
+        <li><span class="check">&#10003;</span> 拍照區新人名字LOGO一式</li>
+        <li><span class="check">&#10003;</span> 舞台花柱 <span class="hint">$24,800內任選</span></li>
+        <li><span class="check">&#10003;</span> 走道地貼 20M長度</li>
+        <li><span class="check">&#10003;</span> 仿真走道花 4對8球</li>
+        <li><span class="check">&#10003;</span> 客製迎賓鏡含裝飾仿真花</li>
+        <li><span class="check">&#10003;</span> 收禮桌佈置（兩張長桌）</li>
+        <li><span class="check">&#10003;</span> 相簿桌佈置（一張圓桌）</li>
+      </ul>
+      <span class="pkg-btn" onclick="document.getElementById('deluxe').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">查看豪華版實景</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CLASSIC — DYNAMIC GRID
+═══════════════════════════════════════════ -->
+<section class="detail-section on-cream" id="classic">
+  <div class="section-header">
+    <div class="eng">Classic Package &mdash; NT$ 50,000</div>
+    <h2>經典版 套組內容</h2>
+    <div class="line"></div>
+  </div>
+
+  <div class="items-grid">
+
+    <!-- C-01 拍照區 (featured, full width) -->
+    <div class="item-card featured">
+      <div class="item-inner">
+        <div class="item-img-wrap">
+          <div class="carousel-track">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%8B%8D%E7%85%A7%E5%8D%80/0DSC05072%20-%20.jpg" alt="拍照區花柱多層次方案" class="item-img carousel-slide active" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%8B%8D%E7%85%A7%E5%8D%80/DSC05376-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="拍照區花柱多層次方案" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%8B%8D%E7%85%A7%E5%8D%80/DSC05733-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="拍照區花柱多層次方案" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%8B%8D%E7%85%A7%E5%8D%80/DSC05882-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="拍照區花柱多層次方案" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%8B%8D%E7%85%A7%E5%8D%80/DSC05939-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="拍照區花柱多層次方案" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%8B%8D%E7%85%A7%E5%8D%80/DSC07340-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="拍照區花柱多層次方案" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%8B%8D%E7%85%A7%E5%8D%80/%E8%97%8D%E7%99%BD%E7%A9%BA%E4%B8%AD%E8%B1%AA%E8%8F%AF_%E6%B7%A1%E6%B0%B4%E5%98%89%E5%BB%AC%20(2).jpg" alt="拍照區花柱多層次方案" class="item-img carousel-slide" loading="lazy">
+          </div>
+          <button class="carousel-btn carousel-prev" aria-label="上一張">&#10094;</button>
+          <button class="carousel-btn carousel-next" aria-label="下一張">&#10095;</button>
+          <div class="carousel-dots">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <span class="item-num">01</span>
+        </div>
+        <div class="item-body">
+          <div class="item-eng">Photo Backdrop</div>
+          <h3 class="item-title">拍照區<br>花柱多層次方案</h3>
+          <p class="item-desc">浪漫花藝搭配多層次仿真花材，營造夢幻層次感。可依新人風格自由選配色系與造型。含新人名字 LOGO 客製化設計一式。</p>
+          <span class="item-price-tag">$25,800 內方案任選一式</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- C-02 舞台花柱 (featured) -->
+    <div class="item-card featured">
+      <div class="item-inner">
+        <div class="item-img-wrap">
+          <div class="carousel-track">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E8%88%9E%E5%8F%B0%E8%8A%B1%E6%9F%B1/230923_%E7%9A%87%E5%AE%B6%E8%AD%89%E5%A9%9A.jpg" alt="舞台花柱" class="item-img carousel-slide active" loading="lazy" style="object-position:center 30%;">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E8%88%9E%E5%8F%B0%E8%8A%B1%E6%9F%B1/DSC00566-%E7%84%A1LOGO.jpg" alt="舞台花柱" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E8%88%9E%E5%8F%B0%E8%8A%B1%E6%9F%B1/IMG_20240907_165641.jpg" alt="舞台花柱" class="item-img carousel-slide" loading="lazy">
+          </div>
+          <button class="carousel-btn carousel-prev" aria-label="上一張">&#10094;</button>
+          <button class="carousel-btn carousel-next" aria-label="下一張">&#10095;</button>
+          <div class="carousel-dots">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <span class="item-num">02</span>
+        </div>
+        <div class="item-body">
+          <div class="item-eng">Stage Pillars</div>
+          <h3 class="item-title">舞台花柱</h3>
+          <p class="item-desc">精緻仿真花大器花柱，為主舞台增添華麗的視覺焦點。</p>
+          <span class="item-price-tag">$18,800 內方案任選一式</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- C-03 走道花 (featured) -->
+    <div class="item-card featured">
+      <div class="item-inner">
+        <div class="item-img-wrap">
+          <div class="carousel-track">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E4%BB%BF%E7%9C%9F%E8%B5%B0%E9%81%93%E8%8A%B1/%E7%A7%8B%E8%89%B2%E7%B3%BB%20(2).jpg" alt="仿真走道花" class="item-img carousel-slide active" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E4%BB%BF%E7%9C%9F%E8%B5%B0%E9%81%93%E8%8A%B1/%E7%B2%89%E8%89%B2%E7%B3%BB%20(3).jpg" alt="仿真走道花" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E4%BB%BF%E7%9C%9F%E8%B5%B0%E9%81%93%E8%8A%B1/%E7%B2%89%E8%89%B2%E7%B3%BB%20(4).jpg" alt="仿真走道花" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E4%BB%BF%E7%9C%9F%E8%B5%B0%E9%81%93%E8%8A%B1/%E7%BF%A1%E9%BA%97%E8%A9%A9%20(1).jpg" alt="仿真走道花" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E4%BB%BF%E7%9C%9F%E8%B5%B0%E9%81%93%E8%8A%B1/%E8%97%8D%E8%89%B2%E7%B3%BB%20(2).jpg" alt="仿真走道花" class="item-img carousel-slide" loading="lazy">
+          </div>
+          <button class="carousel-btn carousel-prev" aria-label="上一張">&#10094;</button>
+          <button class="carousel-btn carousel-next" aria-label="下一張">&#10095;</button>
+          <div class="carousel-dots">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <span class="item-num">03</span>
+        </div>
+        <div class="item-body">
+          <div class="item-eng">Aisle Flowers</div>
+          <h3 class="item-title">仿真走道花</h3>
+          <p class="item-desc">4 對 8 球仿真花，點綴走道兩側，打造優雅的進場動線。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- C-04 收禮桌 (half) -->
+    <div class="item-card">
+      <div class="item-inner">
+        <div class="item-img-wrap">
+          <div class="carousel-track">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%94%B6%E7%A6%AE%E6%A1%8C%E4%BD%88%E7%BD%AE/2251025_%E6%A0%BC%E8%90%8A%E5%A4%A9%E6%BC%BE_%E6%8E%A5.jpg" alt="收禮桌佈置" class="item-img carousel-slide active" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%94%B6%E7%A6%AE%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC00628-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="收禮桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%94%B6%E7%A6%AE%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC00725-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="收禮桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%94%B6%E7%A6%AE%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC00768-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="收禮桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%94%B6%E7%A6%AE%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC07236-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="收禮桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%94%B6%E7%A6%AE%E6%A1%8C%E4%BD%88%E7%BD%AE/%E6%8E%A5%E5%BE%85%E6%A1%8C.jpg" alt="收禮桌佈置" class="item-img carousel-slide" loading="lazy">
+          </div>
+          <button class="carousel-btn carousel-prev" aria-label="上一張">&#10094;</button>
+          <button class="carousel-btn carousel-next" aria-label="下一張">&#10095;</button>
+          <div class="carousel-dots">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <span class="item-num">04</span>
+        </div>
+        <div class="item-body">
+          <div class="item-eng">Gift Reception Table</div>
+          <h3 class="item-title">收禮桌佈置</h3>
+          <p class="item-desc">兩張長桌完整佈置，韓式仿真花藝與指示牌搭配，讓賓客從入場的一刻就留下深刻印象。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- C-05 相簿桌 (half, single) -->
+    <div class="item-card">
+      <div class="item-inner">
+        <div class="item-img-wrap">
+          <div class="carousel-track">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E7%9B%B8%E7%B0%BF%E6%A1%8C%E4%BD%88%E7%BD%AE/251025_%E6%A0%BC%E8%90%8A%E5%A4%A9%E6%BC%BE_%E7%9B%B84.jpg" alt="相簿桌佈置" class="item-img carousel-slide active" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E7%9B%B8%E7%B0%BF%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC00642-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="相簿桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E7%9B%B8%E7%B0%BF%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC00755-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="相簿桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E7%9B%B8%E7%B0%BF%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC00790-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="相簿桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E7%9B%B8%E7%B0%BF%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC07253-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="相簿桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E7%B6%93%E5%85%B8%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E7%9B%B8%E7%B0%BF%E6%A1%8C%E4%BD%88%E7%BD%AE/%E7%9B%B8%E6%9C%AC%E6%A1%8C.jpg" alt="相簿桌佈置" class="item-img carousel-slide" loading="lazy">
+          </div>
+          <button class="carousel-btn carousel-prev" aria-label="上一張">&#10094;</button>
+          <button class="carousel-btn carousel-next" aria-label="下一張">&#10095;</button>
+          <div class="carousel-dots">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <span class="item-num">05</span>
+        </div>
+        <div class="item-body">
+          <div class="item-eng">Album Display Table</div>
+          <h3 class="item-title">相簿桌佈置</h3>
+          <p class="item-desc">一張圓桌精緻佈置，展示新人婚紗相簿，花藝師手作浪漫韓系仿真花藝，增添溫馨氛圍。</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     DELUXE — DYNAMIC GRID
+═══════════════════════════════════════════ -->
+<section class="detail-section on-white" id="deluxe">
+  <div class="section-header">
+    <div class="eng">Deluxe Package &mdash; NT$ 68,000</div>
+    <h2>豪華版 套組內容</h2>
+    <div class="line"></div>
+  </div>
+
+  <div class="items-grid">
+
+    <!-- D-01 拍照區 (featured) -->
+    <div class="item-card featured">
+      <div class="item-inner">
+        <div class="item-img-wrap">
+          <div class="carousel-track">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%8B%8D%E7%85%A7%E5%8D%80/471721147_2148013345593322_5341670306081921510_n.jpg" alt="拍照區花柱多層次方案" class="item-img carousel-slide active" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%8B%8D%E7%85%A7%E5%8D%80/8db15157-48ff-4e00-ab98-e64591dfbcd3.jpg" alt="拍照區花柱多層次方案" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%8B%8D%E7%85%A7%E5%8D%80/DSC04475-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="拍照區花柱多層次方案" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%8B%8D%E7%85%A7%E5%8D%80/DSC05217-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="拍照區花柱多層次方案" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%8B%8D%E7%85%A7%E5%8D%80/DSC05550-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="拍照區花柱多層次方案" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%8B%8D%E7%85%A7%E5%8D%80/%E7%84%A6%E7%B3%96%E7%B4%97.jpg" alt="拍照區花柱多層次方案" class="item-img carousel-slide" loading="lazy">
+          </div>
+          <button class="carousel-btn carousel-prev" aria-label="上一張">&#10094;</button>
+          <button class="carousel-btn carousel-next" aria-label="下一張">&#10095;</button>
+          <div class="carousel-dots">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <span class="item-num">01</span>
+        </div>
+        <div class="item-body">
+          <div class="item-eng">Photo Backdrop</div>
+          <h3 class="item-title">拍照區<br>花柱多層次方案</h3>
+          <p class="item-desc">浪漫花藝搭配多層次仿真花材，營造夢幻層次感。可依新人風格自由選配色系與造型。含新人名字 LOGO 客製化設計一式。</p>
+          <span class="item-price-tag">$27,800 內方案任選一式</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- D-02 舞台花柱 (featured) -->
+    <div class="item-card featured">
+      <div class="item-inner">
+        <div class="item-img-wrap">
+          <div class="carousel-track">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E8%88%9E%E5%8F%B0%E8%8A%B1%E6%9F%B1/240907_%E7%99%BD%E7%B6%A0%E7%A9%BA%E4%B8%AD%2B%E5%B7%A8%E5%A4%A7%E8%8A%B1%20(2).jpg" alt="舞台花柱" class="item-img carousel-slide active" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E8%88%9E%E5%8F%B0%E8%8A%B1%E6%9F%B1/DSC00612-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="舞台花柱" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E8%88%9E%E5%8F%B0%E8%8A%B1%E6%9F%B1/DSC00782-%E7%84%A1LOGO.jpg" alt="舞台花柱" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E8%88%9E%E5%8F%B0%E8%8A%B1%E6%9F%B1/DSC01094-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="舞台花柱" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E8%88%9E%E5%8F%B0%E8%8A%B1%E6%9F%B1/Gemini_Generated_Image_a4souba4souba4so.png" alt="舞台花柱" class="item-img carousel-slide" loading="lazy">
+          </div>
+          <button class="carousel-btn carousel-prev" aria-label="上一張">&#10094;</button>
+          <button class="carousel-btn carousel-next" aria-label="下一張">&#10095;</button>
+          <div class="carousel-dots">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <span class="item-num">02</span>
+        </div>
+        <div class="item-body">
+          <div class="item-eng">Stage Pillars</div>
+          <h3 class="item-title">舞台花柱</h3>
+          <p class="item-desc">精緻仿真花大器花柱，為主舞台增添華麗的視覺焦點。</p>
+          <span class="item-price-tag">$24,800 內方案任選一式</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- D-03 走道 (featured) -->
+    <div class="item-card featured">
+      <div class="item-inner">
+        <div class="item-img-wrap">
+          <div class="carousel-track">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E4%BB%BF%E7%9C%9F%E8%B5%B0%E9%81%93%E8%8A%B1/%E7%A7%8B%E8%89%B2%E7%B3%BB%20(2).jpg" alt="走道地貼與仿真走道花" class="item-img carousel-slide active" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E4%BB%BF%E7%9C%9F%E8%B5%B0%E9%81%93%E8%8A%B1/%E7%B2%89%E8%89%B2%E7%B3%BB%20(3).jpg" alt="走道地貼與仿真走道花" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E4%BB%BF%E7%9C%9F%E8%B5%B0%E9%81%93%E8%8A%B1/%E7%B2%89%E8%89%B2%E7%B3%BB%20(4).jpg" alt="走道地貼與仿真走道花" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E4%BB%BF%E7%9C%9F%E8%B5%B0%E9%81%93%E8%8A%B1/%E7%BF%A1%E9%BA%97%E8%A9%A9%20(1).jpg" alt="走道地貼與仿真走道花" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E4%BB%BF%E7%9C%9F%E8%B5%B0%E9%81%93%E8%8A%B1/%E8%97%8D%E8%89%B2%E7%B3%BB%20(2).jpg" alt="走道地貼與仿真走道花" class="item-img carousel-slide" loading="lazy">
+          </div>
+          <button class="carousel-btn carousel-prev" aria-label="上一張">&#10094;</button>
+          <button class="carousel-btn carousel-next" aria-label="下一張">&#10095;</button>
+          <div class="carousel-dots">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <span class="item-num">03</span>
+        </div>
+        <div class="item-body">
+          <div class="item-eng">Aisle Decoration</div>
+          <h3 class="item-title">走道地貼 &amp; 仿真走道花</h3>
+          <p class="item-desc">20M 走道地貼鋪設，搭配 4 對 8 球仿真走道花，打造優雅大器的進場動線。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- D-04 迎賓鏡 (featured) -->
+    <div class="item-card featured">
+      <div class="item-inner">
+        <div class="item-img-wrap">
+          <div class="carousel-track">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E5%AE%A2%E8%A3%BD%E8%BF%8E%E8%B3%93%E9%8F%A1/DSC05010.jpg" alt="客製迎賓鏡" class="item-img carousel-slide active" loading="lazy" style="object-position:center 25%; object-fit:contain; background:var(--cream);">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E5%AE%A2%E8%A3%BD%E8%BF%8E%E8%B3%93%E9%8F%A1/DSC05018.jpg" alt="客製迎賓鏡" class="item-img carousel-slide" loading="lazy" style="object-position:center 25%; object-fit:contain; background:var(--cream);">
+          </div>
+          <button class="carousel-btn carousel-prev" aria-label="上一張">&#10094;</button>
+          <button class="carousel-btn carousel-next" aria-label="下一張">&#10095;</button>
+          <div class="carousel-dots">
+            <span class="dot active"></span><span class="dot"></span>
+          </div>
+          <span class="item-num">04</span>
+        </div>
+        <div class="item-body">
+          <div class="item-eng">Welcome Mirror</div>
+          <h3 class="item-title">客製迎賓鏡<br>含裝飾仿真花</h3>
+          <p class="item-desc">客製化新人名字與婚禮主題，搭配精緻仿真花裝飾，成為賓客的第一道美好迎接。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- D-05 收禮桌 (half) -->
+    <div class="item-card">
+      <div class="item-inner">
+        <div class="item-img-wrap">
+          <div class="carousel-track">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%94%B6%E7%A6%AE%E6%A1%8C%E4%BD%88%E7%BD%AE/2251025_%E6%A0%BC%E8%90%8A%E5%A4%A9%E6%BC%BE_%E6%8E%A5.jpg" alt="收禮桌佈置" class="item-img carousel-slide active" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%94%B6%E7%A6%AE%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC00628-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="收禮桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%94%B6%E7%A6%AE%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC00725-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="收禮桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%94%B6%E7%A6%AE%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC00768-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="收禮桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%94%B6%E7%A6%AE%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC07236-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="收禮桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E6%94%B6%E7%A6%AE%E6%A1%8C%E4%BD%88%E7%BD%AE/%E6%8E%A5%E5%BE%85%E6%A1%8C.jpg" alt="收禮桌佈置" class="item-img carousel-slide" loading="lazy">
+          </div>
+          <button class="carousel-btn carousel-prev" aria-label="上一張">&#10094;</button>
+          <button class="carousel-btn carousel-next" aria-label="下一張">&#10095;</button>
+          <div class="carousel-dots">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <span class="item-num">05</span>
+        </div>
+        <div class="item-body">
+          <div class="item-eng">Gift Reception Table</div>
+          <h3 class="item-title">收禮桌佈置</h3>
+          <p class="item-desc">兩張長桌完整佈置，韓式仿真花藝與指示牌搭配，讓賓客從入場的一刻就留下深刻印象。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- D-06 相簿桌 (half) -->
+    <div class="item-card">
+      <div class="item-inner">
+        <div class="item-img-wrap">
+          <div class="carousel-track">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E7%9B%B8%E7%B0%BF%E6%A1%8C%E4%BD%88%E7%BD%AE/251025_%E6%A0%BC%E8%90%8A%E5%A4%A9%E6%BC%BE_%E7%9B%B84.jpg" alt="相簿桌佈置" class="item-img carousel-slide active" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E7%9B%B8%E7%B0%BF%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC00642-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="相簿桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E7%9B%B8%E7%B0%BF%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC00755-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="相簿桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E7%9B%B8%E7%B0%BF%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC00790-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="相簿桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E7%9B%B8%E7%B0%BF%E6%A1%8C%E4%BD%88%E7%BD%AE/DSC07253-%E5%B7%B2%E5%A2%9E%E5%BC%B7-%E9%9B%9C%E8%A8%8A%E6%B8%9B%E5%B0%91.jpg" alt="相簿桌佈置" class="item-img carousel-slide" loading="lazy">
+            <img src="images/carousel/%E8%B1%AA%E8%8F%AF%E7%89%88%20%E5%A5%97%E7%B5%84%E5%85%A7%E5%AE%B9/%E7%9B%B8%E7%B0%BF%E6%A1%8C%E4%BD%88%E7%BD%AE/%E7%9B%B8%E6%9C%AC%E6%A1%8C.jpg" alt="相簿桌佈置" class="item-img carousel-slide" loading="lazy">
+          </div>
+          <button class="carousel-btn carousel-prev" aria-label="上一張">&#10094;</button>
+          <button class="carousel-btn carousel-next" aria-label="下一張">&#10095;</button>
+          <div class="carousel-dots">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </div>
+          <span class="item-num">06</span>
+        </div>
+        <div class="item-body">
+          <div class="item-eng">Album Display Table</div>
+          <h3 class="item-title">相簿桌佈置</h3>
+          <p class="item-desc">一張圓桌精緻佈置，展示新人婚紗相簿，花藝師手作浪漫韓系仿真花藝，增添溫馨氛圍。</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ SERVICE ═══ -->
+<section class="service-bar">
+  <div class="eng">Included In Both Packages</div>
+  <p>
+    專人專車佈置 &amp; 撤場服務<br>
+    <span class="sub">（外縣市酌收車馬費）</span>
+  </p>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta">
+  <div class="eng">Book Your Dream Wedding</div>
+  <h2>讓我們為你打造<br>最美的婚禮場景</h2>
+  <a href="https://lin.ee/OG1T3R5" class="cta-btn" target="_blank" rel="noopener" style="margin-bottom: 2.5rem;">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+    LINE 諮詢預約
+  </a>
+  <div style="margin-top: 1rem;">
+    <img src="images/1774609062333.png" alt="村花弄囍" style="width: clamp(140px, 25vw, 240px); height: auto; opacity: 0.8;">
+  </div>
+</section>
+
+<!-- ═══ FOOTER BAR ═══ -->
+<footer class="disclaimer" style="background: var(--charcoal); border-top: none; padding: 1.5rem 5vw;">
+  <p style="color: rgba(255,255,255,0.4);">※套餐內容不得與其他優惠併用，已下訂新人恕不回溯，村花弄囍保留套餐內容最終解釋權※</p>
+</footer>
+
+<!-- Lightbox -->
+<div class="lightbox-overlay" id="lightbox">
+  <span class="lightbox-close">&times;</span>
+  <img src="" alt="">
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // ── Scroll fade-in ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.item-card, .extra-card').forEach((el, i) => {
+    el.style.transitionDelay = `${(i % 3) * 0.1}s`;
+    observer.observe(el);
+  });
+
+  // ── Carousel ──
+  document.querySelectorAll('.item-img-wrap').forEach(wrap => {
+    const slides = Array.from(wrap.querySelectorAll('.carousel-slide'));
+    const dots   = Array.from(wrap.querySelectorAll('.dot'));
+    if (slides.length <= 1) return;
+
+    let current = 0;
+    let autoTimer = null;
+
+    function goTo(idx) {
+      slides[current].classList.remove('active');
+      if (dots[current]) dots[current].classList.remove('active');
+      current = (idx + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      if (dots[current]) dots[current].classList.add('active');
+    }
+
+    function startAuto() { autoTimer = setInterval(() => goTo(current + 1), 6500); }
+    function stopAuto()  { clearInterval(autoTimer); }
+
+    const btnPrev = wrap.querySelector('.carousel-prev');
+    const btnNext = wrap.querySelector('.carousel-next');
+    if (btnPrev) btnPrev.addEventListener('click', e => { e.stopPropagation(); stopAuto(); goTo(current - 1); startAuto(); });
+    if (btnNext) btnNext.addEventListener('click', e => { e.stopPropagation(); stopAuto(); goTo(current + 1); startAuto(); });
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', e => { e.stopPropagation(); stopAuto(); goTo(i); startAuto(); });
+    });
+
+    // Touch swipe
+    let touchX = 0;
+    wrap.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+    wrap.addEventListener('touchend', e => {
+      const diff = touchX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) { stopAuto(); goTo(current + (diff > 0 ? 1 : -1)); startAuto(); }
+    });
+
+    startAuto();
+  });
+
+  // ── Lightbox ──
+  const lb    = document.getElementById('lightbox');
+  const lbImg = lb.querySelector('img');
+
+  document.querySelectorAll('.item-img-wrap').forEach(wrap => {
+    wrap.addEventListener('click', () => {
+      const img = wrap.querySelector('.carousel-slide.active') || wrap.querySelector('.item-img');
+      if (img) {
+        lbImg.src = img.src;
+        lbImg.alt = img.alt;
+        lb.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+  });
+
+  function closeLightbox() {
+    lb.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  lb.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://goodjob.weddingwishlove.com/sitemap.xml
+LLMs-Txt: https://goodjob.weddingwishlove.com/llms.txt

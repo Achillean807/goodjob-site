@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>分類帽｜入席預言查詢系統</title>
+    <meta name="description" content="讓賓客用魔法分類帽的方式，查詢自己的座位。互動體驗取代傳統座位表，適用婚宴、派對與各式活動現場。" />
+    <link rel="icon" href="../assets/images/murayama-favicon.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,400;1,700&family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <!-- AEO Crawler Tracking by Washinmura -->
+    <link rel="aeo-profile" href="https://aeo.washinmura.jp/ai/goodjob.weddingwishlove.com/">
+    <meta name="aeo-verified" content="washinmura-aeo-goodjob.weddingwishlove.com">
+    <script src="https://aeo.washinmura.jp/widget/crawler-track.js" data-site="goodjob.weddingwishlove.com"></script>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #141414;
+        --bg-card: #1a1a1a;
+        --bg-surface: #222222;
+        --text: #ffffff;
+        --muted: rgba(255,255,255,0.65);
+        --line: rgba(196,164,74,0.15);
+        --accent: #c4a44a;
+        --accent-light: #f0d68a;
+        --accent-glow: rgba(196,164,74,0.2);
+        --danger: #c0392b;
+        --wrap: min(1140px, calc(100vw - 40px));
+      }
+
+      *, *::before, *::after { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0; background: var(--bg); color: var(--text);
+        font-family: 'Noto Sans TC', system-ui, sans-serif;
+        line-height: 1.8; font-size: 15px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a { color: inherit; text-decoration: none; }
+      img { display: block; max-width: 100%; }
+      .wrap { width: var(--wrap); margin: 0 auto; }
+
+      /* ── Typography ── */
+      .display { font-family: 'Playfair Display', 'Noto Serif TC', serif; }
+      .serif { font-family: 'Noto Serif TC', serif; }
+
+      /* ── Gold Divider ── */
+      .gold-rule {
+        border: none; height: 1px; margin: 0;
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      }
+
+      /* ── Scroll Animations ── */
+      .reveal {
+        opacity: 0; transform: translateY(32px);
+        transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+      }
+      .reveal.visible { opacity: 1; transform: none; }
+
+      /* ── Topbar ── */
+      .topbar {
+        position: fixed; inset: 0 0 auto; z-index: 40;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.34));
+        backdrop-filter: blur(12px);
+      }
+      .topbar-inner {
+        min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      }
+      .topbar .wrap {
+        width: min(1760px, calc(100vw - 28px));
+        margin: 0 auto;
+      }
+      .brand { display: inline-flex; align-items: center; }
+      .brand-logo { height: 46px; width: auto; }
+      .brand-text { display: flex; flex-direction: column; gap: 1px; margin-left: 10px; }
+      .brand-name { font-size: 15px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.2; }
+      .brand-tagline { font-size: 11px; color: var(--muted); letter-spacing: 0.02em; line-height: 1.2; }
+      .nav { display: inline-flex; align-items: center; gap: 26px; margin-right: auto; margin-left: 20px; }
+      .nav a,
+      .tool-button {
+        font-size: 0.95rem; font-weight: 600; color: rgba(255,255,255,0.92);
+      }
+      .nav a { opacity: 0.9; transition: opacity 0.3s; }
+      .nav a:hover { opacity: 1; }
+      .topbar-tools { display: flex; align-items: center; gap: 16px; }
+      .tool-button {
+        border: 0; background: transparent; cursor: pointer; text-decoration: none;
+        white-space: nowrap;
+      }
+      .tool-button.is-active { color: #fff; }
+      .btn-line-sm {
+        min-height: 40px; padding: 0 18px; border-radius: 999px;
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        font-size: 0.84rem; font-weight: 700; letter-spacing: 0.02em;
+        background: #06c755; color: #fff; transition: background 0.2s, transform 0.15s;
+      }
+      .btn-line-sm:hover { background: #05b34a; transform: scale(1.03); }
+      .btn-line-sm svg { width: 18px; height: 18px; fill: currentColor; }
+
+      /* ── Hero ── */
+      .hero {
+        position: relative; min-height: 100vh; display: flex; align-items: center;
+        overflow: hidden;
+        background:
+          radial-gradient(ellipse 80% 60% at 65% 40%, rgba(20,20,20,0.9), transparent),
+          radial-gradient(ellipse 50% 50% at 20% 80%, rgba(30,30,30,0.4), transparent),
+          var(--bg);
+      }
+      .hero::before {
+        content: ''; position: absolute; inset: 0; opacity: 0.06;
+        background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L20 40M0 20L40 20' stroke='%23c4a44a' stroke-width='0.5'/%3E%3C/svg%3E");
+      }
+      /* Floating stars */
+      .hero-stars { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+      .star {
+        position: absolute; width: 2px; height: 2px; border-radius: 50%;
+        background: var(--accent-light);
+        animation: twinkle 4s ease-in-out infinite;
+      }
+      @keyframes twinkle {
+        0%, 100% { opacity: 0.1; transform: scale(1); }
+        50% { opacity: 0.9; transform: scale(1.8); }
+      }
+
+      .hero-layout {
+        position: relative; z-index: 2;
+        display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+        padding: 120px 0 80px;
+      }
+      .hero-copy {}
+      .hero-eyebrow {
+        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+        color: var(--accent); margin-bottom: 20px;
+        display: flex; align-items: center; gap: 12px;
+      }
+      .hero-eyebrow::before {
+        content: ''; width: 32px; height: 1px; background: var(--accent);
+      }
+      .hero h1 {
+        font-family: 'Playfair Display', 'Noto Serif TC', serif;
+        font-size: clamp(2.6rem, 4.5vw, 3.8rem); font-weight: 800;
+        line-height: 1.2; margin: 0 0 20px;
+        background: linear-gradient(160deg, var(--text) 30%, var(--accent-light) 60%, var(--accent));
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      }
+      .hero-desc {
+        font-size: 1.05rem; color: var(--muted); max-width: 480px; margin-bottom: 36px;
+      }
+      .hero-actions { display: flex; gap: 14px; }
+
+      .btn-primary {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 14px 32px; border-radius: 6px; font-weight: 700; font-size: 0.92rem;
+        background: var(--accent); color: var(--bg); border: none; cursor: pointer;
+        transition: all 0.3s; letter-spacing: 0.03em;
+      }
+      .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); box-shadow: 0 12px 32px var(--accent-glow); }
+      .btn-ghost {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 14px 32px; border-radius: 6px; font-weight: 600; font-size: 0.92rem;
+        background: transparent; color: var(--text); border: 1px solid var(--line);
+        cursor: pointer; transition: all 0.3s;
+      }
+      .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+      .pricing-cta {
+        margin-top: 22px;
+        text-align: center;
+      }
+      .fab-line {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        background: #06c755;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 16px 32px rgba(6, 199, 85, 0.35);
+        z-index: 45;
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+      .fab-line:hover {
+        background: #05b34a;
+        transform: translateY(-2px) scale(1.04);
+      }
+      .fab-line svg {
+        width: 28px;
+        height: 28px;
+        fill: #fff;
+      }
+
+      /* Hero phone mockup */
+      .hero-visual { display: flex; justify-content: center; }
+      .phone-frame {
+        width: 280px; border-radius: 36px; overflow: hidden;
+        border: 3px solid rgba(255,255,255,0.1);
+        box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+        position: relative;
+        background: #000;
+      }
+      .phone-frame::before {
+        content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+        width: 80px; height: 24px; border-radius: 16px; background: #000; z-index: 2;
+        border: 1px solid rgba(255,255,255,0.08);
+      }
+      .phone-frame img { width: 100%; display: block; }
+
+      /* ── Section commons ── */
+      section { padding: 100px 0; }
+      .section-eyebrow {
+        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+        color: var(--accent); margin-bottom: 14px;
+      }
+      .section-title {
+        font-family: 'Noto Serif TC', serif;
+        font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 900;
+        line-height: 1.35; margin: 0 0 16px;
+      }
+      .section-desc {
+        font-size: 1rem; color: var(--muted); max-width: 580px; margin-bottom: 56px;
+      }
+
+      /* ── Compare ── */
+      .compare { background: var(--bg-card); }
+      .compare-grid {
+        display: grid; grid-template-columns: 1fr 56px 1fr; gap: 24px; align-items: center;
+      }
+      .compare-card {
+        border-radius: 12px; overflow: hidden; border: 1px solid var(--line);
+        background: var(--bg); transition: transform 0.4s;
+      }
+      .compare-card:hover { transform: scale(1.02); }
+      .compare-card img { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
+      .compare-label {
+        padding: 16px 20px; display: flex; align-items: flex-start; gap: 10px;
+        font-size: 0.9rem; font-weight: 700;
+      }
+      .compare-label small { font-weight: 400; font-size: 0.8rem; color: var(--muted); display: block; margin-top: 3px; }
+      .label-bad { border-top: 2px solid var(--danger); color: #e57373; }
+      .label-good { border-top: 2px solid var(--accent); color: var(--accent); }
+      .compare-vs {
+        width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+        background: var(--bg-surface); border: 1px solid var(--line);
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Playfair Display', serif; font-weight: 800; font-size: 0.9rem; font-style: italic;
+        color: var(--accent);
+      }
+
+      /* ── Flow (Timeline) ── */
+      .flow { background: var(--bg); }
+      .timeline {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+        position: relative;
+      }
+      .timeline::before {
+        content: ''; position: absolute; top: 36px; left: 16.66%; right: 16.66%;
+        height: 1px; background: linear-gradient(90deg, transparent, var(--accent), var(--accent), transparent);
+      }
+      .tl-step { text-align: center; position: relative; padding: 0 20px; }
+      .tl-dot {
+        width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 24px;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Playfair Display', serif; font-weight: 800; font-size: 1.6rem;
+        color: var(--accent);
+        background: var(--bg); border: 2px solid var(--accent);
+        box-shadow: 0 0 24px var(--accent-glow);
+        position: relative; z-index: 2;
+      }
+      .tl-step h3 {
+        font-family: 'Noto Serif TC', serif;
+        font-size: 1.1rem; font-weight: 700; margin: 0 0 8px;
+      }
+      .tl-step p { font-size: 0.88rem; color: var(--muted); margin: 0; }
+      .tl-thumb {
+        width: 120px; margin: 20px auto 0; border-radius: 8px; overflow: hidden;
+        border: 1px solid var(--line);
+      }
+
+      /* ── Features ── */
+      .features { background: var(--bg-card); }
+      .feat-grid {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+      }
+      .feat-item {
+        padding: 32px 24px; border-radius: 12px;
+        background: var(--bg); border: 1px solid var(--line);
+        transition: border-color 0.4s, transform 0.4s;
+      }
+      .feat-item:hover { border-color: var(--accent); transform: translateY(-4px); }
+      .feat-icon {
+        width: 46px; height: 46px; margin-bottom: 18px;
+        display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 12px; color: var(--accent);
+        background: rgba(196,164,74,0.08);
+        border: 1px solid rgba(196,164,74,0.18);
+      }
+      .feat-icon svg {
+        width: 22px; height: 22px;
+        stroke: currentColor; fill: none; stroke-width: 1.8;
+        stroke-linecap: round; stroke-linejoin: round;
+      }
+      .feat-item h3 {
+        font-family: 'Noto Serif TC', serif;
+        font-size: 1rem; font-weight: 700; margin: 0 0 8px;
+      }
+      .feat-item p { font-size: 0.85rem; color: var(--muted); margin: 0; }
+
+      /* ── Demo Phones ── */
+      .demo { background: var(--bg); text-align: center; }
+      .phones-showcase {
+        display: flex; justify-content: center; align-items: flex-end; gap: 28px;
+        margin-top: 56px; perspective: 800px;
+      }
+      .phone-demo {
+        width: 220px; border-radius: 28px; overflow: hidden;
+        border: 2px solid rgba(255,255,255,0.08);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        transition: transform 0.5s; position: relative;
+        background: #000;
+      }
+      .phone-demo::before {
+        content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+        width: 60px; height: 18px; border-radius: 12px; background: #000; z-index: 2;
+        border: 1px solid rgba(255,255,255,0.06);
+      }
+      .phone-demo:nth-child(1) { transform: rotate(-4deg) translateY(20px); }
+      .phone-demo:nth-child(2) { transform: scale(1.08); z-index: 2; }
+      .phone-demo:nth-child(3) { transform: rotate(4deg) translateY(20px); }
+      .phone-demo:hover { transform: scale(1.05) rotate(0deg) translateY(-8px); z-index: 3; }
+      .phone-demo img { width: 100%; }
+      .phone-caption {
+        margin-top: 20px; font-size: 0.82rem; font-weight: 600; color: var(--muted);
+        text-align: center;
+      }
+      .phones-labels {
+        display: flex; justify-content: center; gap: 28px; margin-top: 32px;
+      }
+      .phones-labels span {
+        width: 220px; text-align: center; font-size: 0.82rem; color: var(--muted); font-weight: 600;
+      }
+
+      /* ── Seating Chart ── */
+      .seating { background: var(--bg-card); }
+      .seating-stack {
+        display: grid; gap: 28px;
+        max-width: 940px; margin: 0 auto;
+      }
+      .seating-pair {
+        display: grid; grid-template-columns: 260px 1fr; gap: 32px; align-items: end;
+      }
+      .seating-pair-label {
+        grid-column: 1 / -1;
+        text-align: left; font-size: 0.78rem; font-weight: 700;
+        letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
+      }
+      .seating-before {
+        border-radius: 10px; overflow: hidden; border: 1px solid var(--line);
+        background: var(--bg); opacity: 0.7; transition: opacity 0.3s;
+      }
+      .seating-before:hover { opacity: 1; }
+      .seating-before img { width: 100%; }
+      .seating-before-tag {
+        padding: 10px 14px; font-size: 0.78rem; font-weight: 600;
+        color: #e57373; border-top: 2px solid var(--danger); background: rgba(220,38,38,0.08);
+      }
+      .seating-before-tag small { font-weight: 400; color: var(--muted); display: block; margin-top: 2px; font-size: 0.72rem; }
+      .seating-after {
+        border-radius: 12px; overflow: hidden;
+        border: 1px solid var(--accent);
+        box-shadow: 0 0 40px var(--accent-glow);
+      }
+      .seating-after img { width: 100%; }
+      .seating-after-tag {
+        padding: 16px 20px; background: var(--bg);
+        font-size: 0.9rem; font-weight: 600; color: var(--accent);
+        border-top: 1px solid var(--line);
+      }
+      .seating-after-tag small { font-weight: 400; color: var(--muted); display: block; margin-top: 3px; font-size: 0.82rem; }
+      @media (max-width: 768px) {
+        .seating-stack { max-width: 400px; }
+        .seating-pair { grid-template-columns: 1fr; }
+        .seating-before { max-width: 200px; margin: 0 auto; }
+        .seating-pair-label { text-align: center; }
+      }
+
+      /* ── Pricing ── */
+      .pricing { background: var(--bg); }
+      .price-grid {
+        display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+        max-width: 780px; margin: 0 auto;
+      }
+      .price-card {
+        background: var(--bg-card); border: 1px solid var(--line); border-radius: 12px;
+        padding: 40px 28px; text-align: center; transition: all 0.4s; position: relative;
+      }
+      .price-card.featured {
+        border-color: var(--accent);
+        background: linear-gradient(165deg, var(--bg-card), rgba(196,164,74,0.06));
+      }
+      .price-card.featured::before {
+        content: '推薦'; position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+        background: var(--accent); color: var(--bg); font-size: 0.7rem; font-weight: 700;
+        padding: 3px 14px; border-radius: 20px; letter-spacing: 0.1em;
+      }
+      .price-card h3 { font-family: 'Noto Serif TC', serif; font-size: 1.15rem; margin: 0 0 6px; }
+      .price-card .price {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.4rem; font-weight: 800; color: var(--accent); margin: 20px 0;
+      }
+      .price-card .price small {
+        font-size: 0.95rem; font-weight: 600; color: var(--muted);
+        font-family: 'Noto Sans TC', system-ui, sans-serif;
+      }
+      .price-card ul { list-style: none; padding: 0; margin: 28px 0; text-align: left; }
+      .price-card li {
+        padding: 9px 0; font-size: 0.88rem; color: var(--muted);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        display: flex; align-items: center; gap: 10px;
+      }
+      .price-card li::before { content: '✦'; color: var(--accent); font-size: 0.6rem; }
+      .pricing-note {
+        max-width: 780px; margin: 18px auto 0;
+        font-size: 0.82rem; line-height: 1.7; color: var(--muted); text-align: center;
+      }
+
+      /* ── FAQ ── */
+      .faq { background: var(--bg-card); }
+      .faq-list { max-width: 680px; margin: 0 auto; }
+      .faq-item { border-bottom: 1px solid var(--line); padding: 20px 0; }
+      .faq-q {
+        font-family: 'Noto Serif TC', serif;
+        font-weight: 700; font-size: 1rem; cursor: pointer;
+        display: flex; justify-content: space-between; align-items: center; gap: 16px;
+      }
+      .faq-q::after {
+        content: '+'; font-family: 'Playfair Display', serif;
+        font-size: 1.6rem; color: var(--accent); transition: transform 0.3s;
+        flex-shrink: 0;
+      }
+      .faq-item.open .faq-q::after { transform: rotate(45deg); }
+      .faq-a {
+        max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s;
+        font-size: 0.9rem; color: var(--muted);
+      }
+      .faq-item.open .faq-a { max-height: 200px; padding-top: 14px; }
+
+      /* ── CTA ── */
+      .cta-final {
+        padding: 120px 0; text-align: center; position: relative; overflow: hidden;
+        background:
+          radial-gradient(ellipse 70% 60% at 50% 50%, rgba(196,164,74,0.05), transparent),
+          var(--bg);
+      }
+      .cta-final h2 {
+        font-family: 'Playfair Display', 'Noto Serif TC', serif;
+        font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 800; font-style: italic;
+        margin: 0 0 16px;
+        background: linear-gradient(135deg, var(--text), var(--accent-light));
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      }
+      .cta-final p { color: var(--muted); margin-bottom: 36px; font-size: 1.05rem; }
+
+      /* ── Footer ── */
+      footer {
+        padding: 36px 0; text-align: center; font-size: 0.78rem;
+        color: var(--muted); border-top: 1px solid var(--line); background: var(--bg);
+      }
+      footer a { color: var(--accent); }
+
+      /* ── Responsive ── */
+      @media (max-width: 900px) {
+        .hero-layout { grid-template-columns: 1fr; text-align: center; }
+        .hero-desc { margin-left: auto; margin-right: auto; }
+        .hero-actions { justify-content: center; }
+        .hero-visual { margin-top: 40px; }
+        .phone-frame { width: 220px; }
+      }
+      @media (max-width: 768px) {
+        .topbar .wrap { width: min(100vw - 16px, 1760px); }
+        .timeline { grid-template-columns: 1fr; gap: 40px; }
+        .timeline::before { display: none; }
+        .feat-grid { grid-template-columns: 1fr; }
+        .compare-grid { grid-template-columns: 1fr; }
+        .compare-vs { margin: -12px auto; }
+        .phones-showcase { flex-direction: column; align-items: center; }
+        .phone-demo, .phone-demo:nth-child(1), .phone-demo:nth-child(2), .phone-demo:nth-child(3) {
+          transform: none; width: 240px;
+        }
+        .phones-labels { flex-direction: column; align-items: center; }
+        .price-grid { grid-template-columns: 1fr; max-width: 380px; }
+        .nav { display: none; }
+        .brand-tagline { display: none; }
+        .topbar-tools { gap: 10px; }
+        .tool-button { font-size: 0.84rem; }
+        .fab-line {
+          right: 14px;
+          bottom: 14px;
+          width: 54px;
+          height: 54px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="wrap topbar-inner">
+        <a class="brand" href="../index.html" aria-label="村山良作首頁">
+          <img class="brand-logo" src="../assets/murayama-logo-white.png" alt="村山良作" />
+          <div class="brand-text">
+            <span class="brand-name">村山良作</span>
+            <span class="brand-tagline">品牌活動・主題場景・展場空間</span>
+          </div>
+        </a>
+        <nav class="nav">
+          <a href="../index.html">首頁</a>
+          <a href="../index.html#works">精選作品</a>
+          <a href="../index.html#business">商業活動</a>
+          <a href="../index.html#party">春酒尾牙</a>
+          <a href="../index.html#civil">戶政改造</a>
+        </nav>
+        <div class="topbar-tools">
+          <a class="tool-button is-active" href="./" aria-label="分類帽">分類帽</a>
+          <a class="tool-button" href="../teabar.html" aria-label="囍茶方案">囍茶方案</a>
+          <a class="tool-button" href="../workflow.html" aria-label="合作流程">合作流程</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-stars" aria-hidden="true">
+        <div class="star" style="left:8%;top:15%;animation-delay:0s"></div>
+        <div class="star" style="left:22%;top:28%;animation-delay:1.5s"></div>
+        <div class="star" style="left:45%;top:12%;animation-delay:0.8s"></div>
+        <div class="star" style="left:68%;top:22%;animation-delay:2.2s"></div>
+        <div class="star" style="left:85%;top:35%;animation-delay:0.4s"></div>
+        <div class="star" style="left:33%;top:65%;animation-delay:3s"></div>
+        <div class="star" style="left:75%;top:70%;animation-delay:1.8s"></div>
+        <div class="star" style="left:12%;top:80%;animation-delay:2.8s"></div>
+        <div class="star" style="left:55%;top:85%;animation-delay:0.6s"></div>
+        <div class="star" style="left:90%;top:60%;animation-delay:1.2s"></div>
+      </div>
+
+      <div class="wrap hero-layout">
+        <div class="hero-copy">
+          <p class="hero-eyebrow">入席預言查詢系統</p>
+          <h1>分類帽</h1>
+          <p class="hero-desc">
+            賓客掃碼、選名字、被分類帽「分院」——30 秒後知道自己坐哪。<br>
+            取代紙本座位表，創造活動入場的第一個驚喜時刻。
+          </p>
+          <div class="hero-actions">
+            <a class="btn-primary" href="https://g-skyview.weddingwishlove.com/" target="_blank" rel="noopener">體驗 Demo</a>
+            <a class="btn-ghost" href="#pricing">了解方案</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="phone-frame">
+            <img src="./images/sort-hat-step1.jpg" alt="Sort-Hat 首頁畫面" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="gold-rule" />
+
+    <!-- Before vs After -->
+    <section class="compare" id="compare">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="section-eyebrow">Before &amp; After</p>
+          <h2 class="section-title">你的活動入場，還在用紙本座位表？</h2>
+          <p class="section-desc">一張 A4、一位招待、兩百位賓客——結果就是入口塞車十五分鐘。</p>
+        </div>
+        <div class="compare-grid reveal">
+          <div class="compare-card">
+            <img src="./images/pain-point-crowded-reception.png" alt="傳統活動入場：工作人員被賓客圍住" />
+            <div class="compare-label label-bad">
+              <span>❌ 傳統座位表<small>招待手忙腳亂、賓客排隊等候、走道擁擠</small></span>
+            </div>
+          </div>
+          <div class="compare-vs"><em>vs</em></div>
+          <div class="compare-card">
+            <img src="./images/compare-sort-hat-seatmap.png?v=20260401b" alt="分類帽座位查詢與座位圖整合示意" />
+            <div class="compare-label label-good">
+              <span>✦ 分類帽<small>賓客自助查詢、互動體驗、IG 自主分享</small></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="gold-rule" />
+
+    <!-- 體驗流程（時間軸） -->
+    <section class="flow" id="flow">
+      <div class="wrap">
+        <div style="text-align:center;" class="reveal">
+          <p class="section-eyebrow">How It Works</p>
+          <h2 class="section-title">三步完成，賓客全程驚喜</h2>
+          <p class="section-desc" style="margin-left:auto;margin-right:auto;">
+            賓客掃描 QR Code 進入系統，從選擇名字到看見座位，整段體驗只需 30 秒——卻能留下整晚話題。
+          </p>
+        </div>
+        <div class="timeline reveal">
+          <div class="tl-step">
+            <div class="tl-dot">1</div>
+            <h3>選擇名字</h3>
+            <p>霍格華茲風格介面，賓客從名單選取自己的姓名，搭配魔法音效。</p>
+            <div class="tl-thumb"><img src="./images/sort-hat-step1.jpg" alt="步驟一：選擇名字" /></div>
+          </div>
+          <div class="tl-step">
+            <div class="tl-dot">2</div>
+            <h3>分類帽思考中</h3>
+            <p>煙霧動畫搭配隨機占卜語錄，營造懸念與期待感。</p>
+            <div class="tl-thumb"><img src="./images/sort-hat-step2.jpg" alt="步驟二：思考中" /></div>
+          </div>
+          <div class="tl-step">
+            <div class="tl-dot">3</div>
+            <h3>揭曉座位</h3>
+            <p>出現自己的桌號座位，還有你專屬給賓客的留言。可直接分享到 IG 限動。</p>
+            <div class="tl-thumb"><img src="./images/sort-hat-step3.jpg" alt="步驟三：揭曉座位" /></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="gold-rule" />
+
+    <!-- 功能特色 -->
+    <section class="features" id="features">
+      <div class="wrap">
+        <div style="text-align:center;" class="reveal">
+          <p class="section-eyebrow">Features</p>
+          <h2 class="section-title">為婚宴與活動場景打造的完整系統</h2>
+          <p class="section-desc" style="margin-left:auto;margin-right:auto;">
+            不只是「查座位」——是一套從後台管理到現場互動、從準備期到活動當天的完整解決方案。
+          </p>
+        </div>
+        <div class="feat-grid reveal">
+          <div class="feat-item">
+            <div class="feat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 20 14 10" />
+                <path d="M13 6 15 4" />
+                <path d="M16 9 18 7" />
+                <path d="M15 11 17 13" />
+                <path d="M5 19 3 21" />
+              </svg>
+            </div>
+            <h3>活動主題沉浸感</h3>
+            <p>魔法學院風格、主題音樂、煙霧動畫，將「查座位」變成一段沉浸式體驗。</p>
+          </div>
+          <div class="feat-item">
+            <div class="feat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="4" y="5" width="16" height="14" rx="2" />
+                <path d="M8 9h8" />
+                <path d="M8 13h5" />
+                <path d="M16 12v4" />
+                <path d="M14 14h4" />
+              </svg>
+            </div>
+            <h3>後台資料編輯簡單</h3>
+            <p>賓客名單與座位資料好調整、好更新，修改後即可快速同步，不需要任何技術背景。</p>
+          </div>
+          <div class="feat-item">
+            <div class="feat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="7" y="3" width="10" height="18" rx="2" />
+                <path d="M11 8h-1" />
+                <path d="M13 6l4-3" />
+                <path d="M17 3h-3" />
+                <path d="M17 3v3" />
+              </svg>
+            </div>
+            <h3>IG 限動分享功能</h3>
+            <p>結果頁內建「分享到 Instagram Story」按鈕，賓客自發性為現場創造社群曝光。</p>
+          </div>
+          <div class="feat-item">
+            <div class="feat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M5 7.5a4.5 4.5 0 0 1 8.2-2.6" />
+                <path d="M19 15.5a4.5 4.5 0 0 1-8.2 2.6" />
+                <path d="M8 9.5c0 2 1.8 3.2 4 4.5s4 2.5 4 4.5" />
+                <path d="M8 15h.01" />
+                <path d="M16 9h.01" />
+              </svg>
+            </div>
+            <h3>專屬貼心話設定</h3>
+            <p>可為每一位賓客安排貼心話，或是只有你們知道的小秘密，讓每個人都收到更專屬的驚喜。</p>
+          </div>
+          <div class="feat-item">
+            <div class="feat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M15 5v10.5" />
+                <path d="M15 5 20 6.5v9" />
+                <circle cx="10" cy="17" r="2.5" />
+                <circle cx="20" cy="15.5" r="2.5" />
+                <path d="M15 8.5 20 10" />
+              </svg>
+            </div>
+            <h3>跨平台音效支援</h3>
+            <p>iOS、Android 與桌面瀏覽器皆可播放背景音效，體驗更完整。</p>
+          </div>
+          <div class="feat-item">
+            <div class="feat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 11V8.5a4 4 0 1 1 8 0V11" />
+                <rect x="6" y="11" width="12" height="9" rx="2" />
+                <path d="M12 14.5v2" />
+              </svg>
+            </div>
+            <h3>專屬活動子網域</h3>
+            <p>每場活動都有自己的專屬網址，分享更方便，也讓整體體驗看起來更完整、更有儀式感。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="gold-rule" />
+
+    <!-- 畫面展示（手機 Mockup） -->
+    <section class="demo" id="demo">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="section-eyebrow">Live Preview</p>
+          <h2 class="section-title">實際畫面長這樣</h2>
+          <p class="section-desc" style="margin-left:auto;margin-right:auto;">在手機上操作，就像打開一款精緻的魔法遊戲。</p>
+        </div>
+        <div class="phones-showcase reveal">
+          <div class="phone-demo">
+            <img src="./images/sort-hat-step1.jpg" alt="首頁 — 選擇名字" />
+          </div>
+          <div class="phone-demo">
+            <img src="./images/sort-hat-step2.jpg" alt="思考中 — 煙霧動畫" />
+          </div>
+          <div class="phone-demo">
+            <img src="./images/sort-hat-step3.jpg" alt="結果頁 — 座位揭曉" />
+          </div>
+        </div>
+        <div class="phones-labels reveal">
+          <span>選擇名字</span>
+          <span>分類帽思考中</span>
+          <span>揭曉座位</span>
+        </div>
+        <p style="margin-top:40px;" class="reveal">
+          <a class="btn-primary" href="https://g-skyview.weddingwishlove.com/" target="_blank" rel="noopener">親自體驗 Demo →</a>
+        </p>
+      </div>
+    </section>
+
+    <hr class="gold-rule" />
+
+    <!-- 座位圖設計 -->
+    <section class="seating" id="seating-design">
+      <div class="wrap" style="text-align:center;">
+        <div class="reveal">
+          <p class="section-eyebrow">Seating Chart Design</p>
+          <h2 class="section-title">不只數位互動，還有實體大圖</h2>
+          <p class="section-desc" style="margin-left:auto;margin-right:auto;">
+            座位圖可依主題重新設計，搭配風格一致的大圖看板輸出，讓現場佈置與數位體驗一氣呵成。
+          </p>
+        </div>
+        <div class="seating-stack reveal">
+          <div class="seating-pair">
+            <div class="seating-pair-label">A 組範例</div>
+            <div class="seating-before">
+              <img src="./images/seating-chart-before.jpg" alt="A 組原始座位圖：陽春平面圖" />
+              <div class="seating-before-tag">
+                ❌ A 組原始座位圖
+                <small>制式表格、沒有設計感、跟活動主題不搭</small>
+              </div>
+            </div>
+            <div class="seating-after">
+              <img src="./images/seating-chart-design-sample.png" alt="客製化活動座位圖設計範例 A" />
+              <div class="seating-after-tag">
+                ✦ 客製主題座位圖 A
+                <small>根據活動風格重新設計，含 QR Code 導向分類帽系統，大圖輸出一份</small>
+              </div>
+            </div>
+          </div>
+          <div class="seating-pair">
+            <div class="seating-pair-label">B 組範例</div>
+            <div class="seating-before">
+              <img src="./images/seating-chart-before-2.jpg" alt="B 組原始座位圖：通訊軟體提供的桌次資訊" />
+              <div class="seating-before-tag">
+                ❌ B 組原始座位圖
+                <small>資訊分散在對話截圖裡，現場查看不直觀</small>
+              </div>
+            </div>
+            <div class="seating-after">
+              <img src="./images/seating-chart-design-sample-2.jpg" alt="客製化活動座位圖設計範例 B" />
+              <div class="seating-after-tag">
+                ✦ 客製主題座位圖 B
+                <small>可依場地動線與主題視覺調整桌次配置，讓紙本與互動查詢一起成立</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="gold-rule" />
+
+    <!-- 方案 -->
+    <section class="pricing" id="pricing">
+      <div class="wrap">
+        <div style="text-align:center;" class="reveal">
+          <p class="section-eyebrow">Pricing</p>
+          <h2 class="section-title">依合作方式，分成兩種價格</h2>
+          <p class="section-desc" style="margin-left:auto;margin-right:auto;">如果只需要分類帽可單購；若已搭配同場場佈服務，則可直接用加購價升級。</p>
+        </div>
+        <div class="price-grid reveal">
+          <div class="price-card">
+            <h3>單購方案</h3>
+            <div class="price">NT$6,800 <small>/ 場</small></div>
+            <ul>
+              <li>活動座位表主題設計</li>
+              <li>分類帽系統設定與上架</li>
+              <li>座位表大圖輸出 1 張</li>
+              <li>交件前最終名單校對 1 次</li>
+              <li>活動前完成測試，可直接現場使用</li>
+            </ul>
+          </div>
+          <div class="price-card featured">
+            <h3>場佈加購價</h3>
+            <div class="price">NT$5,800 <small>/ 場</small></div>
+            <ul>
+              <li>內容與單購方案相同</li>
+              <li>搭配同場活動場佈可享加購優惠</li>
+              <li>限同步下訂同場場佈服務</li>
+            </ul>
+          </div>
+        </div>
+        <p class="pricing-cta reveal">
+          <a class="btn-primary" href="https://lin.ee/OG1T3R5" target="_blank" rel="noopener">LINE 詢問</a>
+        </p>
+        <p class="pricing-note reveal">以上價格不含到場支援、額外輸出、二次以上改稿與急件處理；若名單複雜或需追加設計項目，將另行報價。場佈加購價僅適用於同步下訂同場場佈服務的客戶。</p>
+      </div>
+    </section>
+
+    <hr class="gold-rule" />
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+      <div class="wrap">
+        <div style="text-align:center;" class="reveal">
+          <p class="section-eyebrow">FAQ</p>
+          <h2 class="section-title">常見問題</h2>
+        </div>
+        <div class="faq-list reveal">
+          <div class="faq-item">
+            <div class="faq-q">賓客需要下載 App 嗎？</div>
+            <div class="faq-a">不需要。分類帽是網頁應用，掃描 QR Code 就能直接在手機瀏覽器中使用，iPhone 和 Android 都支援。</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">我要怎麼管理賓客名單？</div>
+            <div class="faq-a">透過 Google 試算表管理。你只需要在試算表中填入賓客姓名、桌號、座位，系統會即時同步。完全不需要技術背景。</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">可以改成其他主題嗎？</div>
+            <div class="faq-a">完整方案支援客製化主題。可以將學院名稱替換為你想要的分組名（例如：新郎隊 / 新娘隊、星座分組等），搭配專屬視覺設計。</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">活動當天如果網路不穩怎麼辦？</div>
+            <div class="faq-a">我們會附贈一張座位圖大圖輸出，賓客也可以使用傳統方式詢問總召自己的桌次。</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">活動結束後資料會怎樣？</div>
+            <div class="faq-a">每場活動使用獨立系統，活動結束後即下線。你的賓客資料不會與任何人共用，也不會被保留。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-final" id="contact">
+      <div class="wrap reveal">
+        <h2>讓你的活動座位表，<br>也成為一場體驗</h2>
+        <p>透過 LINE 聯繫我們，告訴我們你的活動日期、預計人數與主題方向，我們會在營業時間內盡快回復。</p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <a class="btn-primary" href="https://goodjob.weddingwishlove.com/" target="_blank" rel="noopener">前往村山良作官網</a>
+          <a class="btn-ghost" href="https://g-skyview.weddingwishlove.com/" target="_blank" rel="noopener">體驗 Demo</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="wrap">
+        <p>分類帽｜入席預言查詢系統｜<a href="https://goodjob.weddingwishlove.com/">村山良作</a> 出品</p>
+        <p style="margin-top:6px;">品牌活動・主題場景・展場空間——<a href="../">村山良作</a></p>
+      </div>
+    </footer>
+
+    <a class="fab-line" href="https://lin.ee/OG1T3R5" target="_blank" rel="noopener" aria-label="LINE 聯絡我們">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+    </a>
+
+    <script>
+      // FAQ toggle
+      document.querySelectorAll('.faq-q').forEach(q => {
+        q.addEventListener('click', () => q.parentElement.classList.toggle('open'));
+      });
+
+      // Scroll reveal
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+      }, { threshold: 0.15 });
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+  </body>
+</html>
