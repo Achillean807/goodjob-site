@@ -63,6 +63,14 @@ function hasPermission(permission) {
   return !!(currentAccount && currentAccount.permissions && currentAccount.permissions.indexOf(permission) !== -1);
 }
 
+function thumbUrl(src) {
+  if (!src) return src;
+  var lower = src.toLowerCase();
+  if (lower.indexOf('-thumb.webp') !== -1) return src;
+  if (lower.slice(-5) !== '.webp') return src;
+  return src.slice(0, -5) + '-thumb.webp';
+}
+
 function requirePermission(permission, message) {
   if (hasPermission(permission)) {
     return true;
@@ -347,7 +355,7 @@ function renderList() {
     rows.push(
       '<tr' + (canWrite ? ' draggable="true"' : '') + ' data-id="' + esc(item.id) + '">' +
         '<td>' + (canWrite ? '<span class="drag-handle">⋮⋮</span>' : '') + '</td>' +
-        '<td><img class="thumb" src="' + esc(heroSrc) + '" alt="" onerror="this.style.display=\'none\'"></td>' +
+        '<td><img class="thumb" src="' + esc(thumbUrl(heroSrc)) + '" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'' + esc(heroSrc) + '\'"></td>' +
         '<td><strong>' + esc(item.title) + '</strong></td>' +
         '<td><span class="badge ' + categoryClass + '">' + esc(categoryLabel) + '</span></td>' +
         '<td>' + featured + '</td>' +
@@ -628,10 +636,11 @@ function renderHeroPreview(src) {
   var img = document.getElementById('hero-preview');
 
   if (src) {
-    img.src = src;
+    img.src = thumbUrl(src);
     wrap.style.display = '';
     placeholder.style.display = 'none';
   } else {
+    img.removeAttribute('src');
     wrap.style.display = 'none';
     placeholder.style.display = '';
   }
@@ -700,7 +709,7 @@ function renderGallery() {
     var isHero = src === heroVal;
     parts.push(
       '<div class="gallery-item' + (isHero ? ' is-hero' : '') + '" data-index="' + i + '" data-src="' + esc(src) + '" onclick="openLightbox(' + i + ')">' +
-        '<img src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' +
+        '<img src="' + esc(thumbUrl(src)) + '" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'' + esc(src) + '\'">' +
         '<span class="gallery-badge"' + (isHero ? '' : ' style="display:none"') + '>★ 封面</span>' +
         '<span class="gallery-order">' + (i + 1) + '</span>' +
         (canWrite ? '<button class="gallery-remove" onclick="removeGalleryImage(' + i + ',event)">&times;</button>' : '') +

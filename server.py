@@ -64,6 +64,9 @@ R2_REMOTE = os.environ.get("GOODJOB_R2_REMOTE", "r2:goodjob-images")
 CDN_DOMAIN = os.environ.get("GOODJOB_CDN_DOMAIN", "https://goodjob-img.weddingwishlove.com")
 RCLONE_BIN = os.environ.get("GOODJOB_RCLONE_BIN", "rclone")
 WEBP_QUALITY = int(os.environ.get("GOODJOB_WEBP_QUALITY", "90"))
+# Thumbnail config — small preview variant for admin gallery / table.
+THUMB_WIDTH = int(os.environ.get("GOODJOB_THUMB_WIDTH", "400"))
+THUMB_QUALITY = int(os.environ.get("GOODJOB_THUMB_QUALITY", "75"))
 
 
 # ---------------------------------------------------------------------------
@@ -538,6 +541,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 continue
             safe_name = re.sub(r"[^\w.\-]", "_", filename)
             img_data = part["data"]
+            thumb_data = None
 
             # Convert to WebP when Pillow is available (quality matches migration).
             # Keep original bytes if conversion fails (e.g. unsupported format).
@@ -549,6 +553,15 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                     img.save(buf, format="WEBP", quality=WEBP_QUALITY, method=6)
                     img_data = buf.getvalue()
                     safe_name = os.path.splitext(safe_name)[0] + ".webp"
+                    # Generate small thumbnail for admin gallery preview.
+                    try:
+                        thumb_img = img.copy()
+                        thumb_img.thumbnail((THUMB_WIDTH, THUMB_WIDTH * 10), _PILImage.LANCZOS)
+                        thumb_buf = io.BytesIO()
+                        thumb_img.save(thumb_buf, format="WEBP", quality=THUMB_QUALITY, method=6)
+                        thumb_data = thumb_buf.getvalue()
+                    except Exception as e:
+                        sys.stderr.write(f"[upload] thumb generation failed for {filename}: {e}\n")
                 except Exception as e:
                     sys.stderr.write(f"[upload] WebP conversion failed for {filename}: {e}\n")
 
@@ -560,6 +573,11 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 failed.append(filename)
                 continue
             saved_paths.append(cdn_url)
+
+            # Upload thumbnail alongside (best-effort; skip log on failure).
+            if thumb_data and target_name.lower().endswith(".webp"):
+                thumb_key = f"works/{article_id}/{target_name[:-5]}-thumb.webp"
+                _upload_to_r2(thumb_data, thumb_key)
 
         if failed and not saved_paths:
             self._send_error_json(500, f"All uploads failed: {failed}")
