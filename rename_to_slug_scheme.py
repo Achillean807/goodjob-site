@@ -109,8 +109,16 @@ def main():
         hero_url = article.get("heroImage")
         url_map = {}  # old_url -> new_url, for heroImage post-fix
 
+        # Two-phase rename to avoid chain-overwrite (where renaming A→B
+        # clobbers B before B gets renamed to C). Phase 1: move each source
+        # to a unique `.rename-tmp-{uuid}.webp` staging key. Phase 2: move
+        # each staging key to its final `{slug}-{N}.webp` target.
         seq = 0
+        staged = []  # list of (url, staging_key, final_key, final_fname, thumb_staging, thumb_final)
         new_images = []
+
+        import uuid as _uuid
+
         for url in images:
             key = url_to_r2_key(url)
             if not key:
@@ -150,13 +158,29 @@ def main():
                 print(f"[catchup] {slug}: {fname} -> {new_fname}")
                 continue
 
-            if not r2_moveto(key, new_key):
+            staging_key = f"works/{slug}/.rename-tmp-{_uuid.uuid4().hex}.webp"
+            thumb_staging = staging_key[:-5] + "-thumb.webp" if thumb_old else None
+
+            # Phase 1: move src → staging (protects against B→B' chain)
+            if not r2_moveto(key, staging_key):
                 new_images.append(url)
                 total_failed += 1
                 continue
-
             if thumb_old and r2_exists(thumb_old):
-                r2_moveto(thumb_old, thumb_new)
+                r2_moveto(thumb_old, thumb_staging)
+
+            staged.append((url, staging_key, new_key, new_fname, thumb_staging, thumb_new, fname))
+
+        # Phase 2: move staging → final names. Now every source is safely
+        # out of the final name space so no overwrite can happen.
+        for url, staging_key, new_key, new_fname, thumb_staging, thumb_new, fname in staged:
+            if not r2_moveto(staging_key, new_key):
+                # leave staging file in place for manual recovery; skip mapping
+                total_failed += 1
+                new_images.append(url)
+                continue
+            if thumb_staging and r2_exists(thumb_staging):
+                r2_moveto(thumb_staging, thumb_new)
 
             new_url = r2_url(new_key)
             new_images.append(new_url)

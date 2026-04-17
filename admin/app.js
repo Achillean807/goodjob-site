@@ -669,12 +669,12 @@ function onHeroFileChange(event) {
       return;
     }
 
-    var heroPath = paths[0].charAt(0) === '/' ? paths[0] : '/' + paths[0];
+    var heroPath = paths[0];
     document.getElementById('f-hero').value = heroPath;
     renderHeroPreview(heroPath);
 
     for (var i = 0; i < paths.length; i++) {
-      var fullPath = paths[i].charAt(0) === '/' ? paths[i] : '/' + paths[i];
+      var fullPath = paths[i];
       if (editImages.indexOf(fullPath) === -1) {
         editImages.unshift(fullPath);
       }
@@ -909,7 +909,7 @@ function onGalleryFilesChange(event) {
 
   uploadFiles(articleId, files, function(paths) {
     for (var i = 0; i < paths.length; i++) {
-      var fullPath = paths[i].charAt(0) === '/' ? paths[i] : '/' + paths[i];
+      var fullPath = paths[i];
       if (editImages.indexOf(fullPath) === -1) {
         editImages.push(fullPath);
       }
