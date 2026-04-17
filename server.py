@@ -17,6 +17,7 @@ import hashlib
 import json
 import os
 import re
+import secrets
 import subprocess
 import sys
 import tempfile
@@ -43,7 +44,19 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 ARTICLES_PATH = os.path.join(DATA_DIR, "articles.json")
 CONFIG_PATH = os.path.join(DATA_DIR, "config.json")
+ACCOUNTS_PATH = os.path.join(DATA_DIR, "accounts.json")
 IMAGES_DIR = os.path.join(BASE_DIR, "assets", "images")
+
+VALID_ROLES = {"admin", "editor", "viewer", "custom"}
+VALID_PERMISSIONS = {
+    "articles.read",
+    "articles.write",
+    "articles.delete",
+    "uploads.write",
+    "accounts.manage",
+}
+ACCOUNT_PUBLIC_FIELDS = ("username", "name", "role", "enabled", "permissions",
+                         "createdAt", "updatedAt")
 
 # R2 / CDN config — admin uploads go directly to R2 object storage.
 # Override via env vars for dev / alternative deployments.
@@ -147,6 +160,51 @@ def _save_articles(articles):
     """Persist the articles list to disk atomically."""
     os.makedirs(DATA_DIR, exist_ok=True)
     _write_json_atomic(ARTICLES_PATH, {"articles": articles})
+
+
+def _load_accounts():
+    """Return the accounts list from accounts.json, or [] if missing."""
+    data = _read_json(ACCOUNTS_PATH)
+    if isinstance(data, dict) and isinstance(data.get("accounts"), list):
+        return data["accounts"]
+    return []
+
+
+def _save_accounts(accounts):
+    """Persist the accounts list to disk atomically."""
+    os.makedirs(DATA_DIR, exist_ok=True)
+    _write_json_atomic(ACCOUNTS_PATH, {"accounts": accounts})
+
+
+def _hash_password(salt, password):
+    return hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
+
+
+def _generate_salt():
+    return secrets.token_hex(16)
+
+
+def _public_account(account):
+    """Return account dict with sensitive fields stripped."""
+    return {k: account.get(k) for k in ACCOUNT_PUBLIC_FIELDS if k in account}
+
+
+def _find_account(accounts, username):
+    for a in accounts:
+        if a.get("username") == username:
+            return a
+    return None
+
+
+def _count_active_admins(accounts, exclude_username=None):
+    """Count enabled accounts with accounts.manage permission."""
+    count = 0
+    for a in accounts:
+        if exclude_username and a.get("username") == exclude_username:
+            continue
+        if a.get("enabled") and "accounts.manage" in (a.get("permissions") or []):
+            count += 1
+    return count
 
 
 def _json_bytes(obj, status_hint=200):
@@ -254,14 +312,12 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
 
     def _check_auth(self):
         """
-        Validate HTTP Basic Auth against data/config.json.
-        Returns True if authenticated, False otherwise (and sends 401).
-        """
-        cfg = _load_config()
-        expected_user = cfg.get("adminUser", "")
-        expected_hash = cfg.get("adminPasswordHash", "")
-        salt = cfg.get("adminSalt", "")
+        Validate HTTP Basic Auth against data/accounts.json (preferred) or
+        data/config.json (legacy single-user fallback).
 
+        On success, stores the matched account dict on `self._auth_account`
+        and returns True. On failure, sends 401 and returns False.
+        """
         auth_header = self.headers.get("Authorization", "")
         if not auth_header.startswith("Basic "):
             self._send_401()
@@ -274,11 +330,43 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self._send_401()
             return False
 
-        computed = hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
-        if user != expected_user or computed != expected_hash:
+        accounts = _load_accounts()
+        if accounts:
+            account = _find_account(accounts, user)
+            if (account
+                    and account.get("enabled")
+                    and _hash_password(account.get("salt", ""), password)
+                        == account.get("passwordHash", "")):
+                self._auth_account = account
+                return True
             self._send_401()
             return False
-        return True
+
+        # Legacy fallback: single-user config.json
+        cfg = _load_config()
+        expected_user = cfg.get("adminUser", "")
+        expected_hash = cfg.get("adminPasswordHash", "")
+        salt = cfg.get("adminSalt", "")
+        if (user == expected_user and expected_hash
+                and _hash_password(salt, password) == expected_hash):
+            self._auth_account = {
+                "username": expected_user,
+                "name": expected_user,
+                "role": "admin",
+                "enabled": True,
+                "permissions": sorted(VALID_PERMISSIONS),
+            }
+            return True
+        self._send_401()
+        return False
+
+    def _require_permission(self, permission):
+        """Check the authenticated account has *permission*; send 403 if not."""
+        account = getattr(self, "_auth_account", None)
+        if account and permission in (account.get("permissions") or []):
+            return True
+        self._send_error_json(403, "Forbidden: missing permission " + permission)
+        return False
 
     def _send_401(self):
         body = _json_bytes({"error": "Unauthorized"})
@@ -340,6 +428,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         """POST /api/articles — create a new article (auth required)."""
         if not self._check_auth():
             return
+        if not self._require_permission("articles.write"):
+            return
         data = self._read_json_body()
         if not data or not isinstance(data, dict):
             self._send_error_json(400, "Invalid JSON body")
@@ -365,6 +455,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     def _api_update_article(self, article_id):
         """PUT /api/articles/{id} — update an existing article (auth required)."""
         if not self._check_auth():
+            return
+        if not self._require_permission("articles.write"):
             return
         data = self._read_json_body()
         if not data or not isinstance(data, dict):
@@ -396,6 +488,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         """DELETE /api/articles/{id} — remove an article (auth required)."""
         if not self._check_auth():
             return
+        if not self._require_permission("articles.delete"):
+            return
 
         articles = _load_articles()
         new_articles = [a for a in articles if str(a.get("id")) != article_id]
@@ -408,6 +502,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     def _api_upload(self, article_id):
         """POST /api/upload/{id} — upload image for an article (auth required)."""
         if not self._check_auth():
+            return
+        if not self._require_permission("uploads.write"):
             return
 
         content_type = self.headers.get("Content-Type", "")
@@ -483,6 +579,167 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         self._send_json(resp, status=201)
 
     # ------------------------------------------------------------------
+    # API: session
+    # ------------------------------------------------------------------
+
+    def _api_get_session(self):
+        """GET /api/session — return current authenticated account profile."""
+        if not self._check_auth():
+            return
+        self._send_json({"account": _public_account(self._auth_account)})
+
+    # ------------------------------------------------------------------
+    # API: accounts
+    # ------------------------------------------------------------------
+
+    def _validate_account_payload(self, data, *, require_username, require_password):
+        """Validate fields shared by create / update.  Returns (ok, error_msg)."""
+        if not isinstance(data, dict):
+            return False, "Invalid JSON body"
+
+        if require_username:
+            username = (data.get("username") or "").strip()
+            if not username or not re.match(r"^[A-Za-z0-9_.\-]{2,32}$", username):
+                return False, "Invalid username (2-32 chars, A-Z a-z 0-9 _ . -)"
+
+        if require_password or data.get("password"):
+            password = data.get("password") or ""
+            if len(password) < 6:
+                return False, "Password must be at least 6 characters"
+
+        if "role" in data and data["role"] not in VALID_ROLES:
+            return False, "Invalid role"
+
+        if "permissions" in data:
+            perms = data["permissions"]
+            if not isinstance(perms, list):
+                return False, "permissions must be a list"
+            for p in perms:
+                if p not in VALID_PERMISSIONS:
+                    return False, f"Invalid permission: {p}"
+        return True, None
+
+    def _api_list_accounts(self):
+        """GET /api/accounts — list all accounts (auth + accounts.manage)."""
+        if not self._check_auth():
+            return
+        if not self._require_permission("accounts.manage"):
+            return
+        accounts = _load_accounts()
+        self._send_json({"accounts": [_public_account(a) for a in accounts]})
+
+    def _api_create_account(self):
+        """POST /api/accounts — create a new account (auth + accounts.manage)."""
+        if not self._check_auth():
+            return
+        if not self._require_permission("accounts.manage"):
+            return
+
+        data = self._read_json_body()
+        ok, err = self._validate_account_payload(
+            data, require_username=True, require_password=True
+        )
+        if not ok:
+            self._send_error_json(400, err)
+            return
+
+        username = data["username"].strip()
+        accounts = _load_accounts()
+        if _find_account(accounts, username):
+            self._send_error_json(409, f"Account '{username}' already exists")
+            return
+
+        salt = _generate_salt()
+        now = time.strftime("%Y-%m-%dT%H:%M:%S")
+        new_account = {
+            "username": username,
+            "name": (data.get("name") or username).strip(),
+            "role": data.get("role") or "custom",
+            "enabled": bool(data.get("enabled", True)),
+            "permissions": list(data.get("permissions") or []),
+            "salt": salt,
+            "passwordHash": _hash_password(salt, data["password"]),
+            "createdAt": now,
+            "updatedAt": now,
+        }
+        accounts.append(new_account)
+        _save_accounts(accounts)
+        self._send_json({"account": _public_account(new_account)}, status=201)
+
+    def _api_update_account(self, username):
+        """PUT /api/accounts/{username} — update an existing account."""
+        if not self._check_auth():
+            return
+        if not self._require_permission("accounts.manage"):
+            return
+
+        data = self._read_json_body()
+        ok, err = self._validate_account_payload(
+            data, require_username=False, require_password=False
+        )
+        if not ok:
+            self._send_error_json(400, err)
+            return
+
+        accounts = _load_accounts()
+        account = _find_account(accounts, username)
+        if account is None:
+            self._send_error_json(404, "Account not found")
+            return
+
+        # Compute the post-update state to enforce last-admin invariant.
+        new_enabled = bool(data["enabled"]) if "enabled" in data else account.get("enabled", True)
+        new_perms = list(data["permissions"]) if "permissions" in data else (account.get("permissions") or [])
+        was_active_admin = account.get("enabled") and "accounts.manage" in (account.get("permissions") or [])
+        will_be_active_admin = new_enabled and "accounts.manage" in new_perms
+        if was_active_admin and not will_be_active_admin:
+            if _count_active_admins(accounts, exclude_username=username) == 0:
+                self._send_error_json(400, "Cannot demote the last active admin")
+                return
+
+        if "name" in data:
+            account["name"] = (data["name"] or username).strip()
+        if "role" in data:
+            account["role"] = data["role"]
+        if "enabled" in data:
+            account["enabled"] = new_enabled
+        if "permissions" in data:
+            account["permissions"] = new_perms
+        if data.get("password"):
+            account["salt"] = _generate_salt()
+            account["passwordHash"] = _hash_password(account["salt"], data["password"])
+        account["updatedAt"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+
+        _save_accounts(accounts)
+        self._send_json({"account": _public_account(account)})
+
+    def _api_delete_account(self, username):
+        """DELETE /api/accounts/{username} — remove an account."""
+        if not self._check_auth():
+            return
+        if not self._require_permission("accounts.manage"):
+            return
+
+        if self._auth_account.get("username") == username:
+            self._send_error_json(400, "Cannot delete your own account")
+            return
+
+        accounts = _load_accounts()
+        target = _find_account(accounts, username)
+        if target is None:
+            self._send_error_json(404, "Account not found")
+            return
+
+        was_active_admin = target.get("enabled") and "accounts.manage" in (target.get("permissions") or [])
+        if was_active_admin and _count_active_admins(accounts, exclude_username=username) == 0:
+            self._send_error_json(400, "Cannot delete the last active admin")
+            return
+
+        accounts = [a for a in accounts if a.get("username") != username]
+        _save_accounts(accounts)
+        self._send_json({"deleted": username})
+
+    # ------------------------------------------------------------------
     # Route dispatcher
     # ------------------------------------------------------------------
 
@@ -527,6 +784,35 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             article_id = path[len("/api/upload/"):]
             if article_id:
                 self._api_upload(article_id)
+                return True
+
+        # GET /api/session
+        if method == "GET" and path == "/api/session":
+            self._api_get_session()
+            return True
+
+        # GET /api/accounts
+        if method == "GET" and path == "/api/accounts":
+            self._api_list_accounts()
+            return True
+
+        # POST /api/accounts
+        if method == "POST" and path == "/api/accounts":
+            self._api_create_account()
+            return True
+
+        # PUT /api/accounts/{username}
+        if method == "PUT" and path.startswith("/api/accounts/"):
+            username = path[len("/api/accounts/"):]
+            if username:
+                self._api_update_account(username)
+                return True
+
+        # DELETE /api/accounts/{username}
+        if method == "DELETE" and path.startswith("/api/accounts/"):
+            username = path[len("/api/accounts/"):]
+            if username:
+                self._api_delete_account(username)
                 return True
 
         return False
@@ -783,10 +1069,18 @@ def main():
         _write_json_atomic(ARTICLES_PATH, [])
         print(f"[init] Created empty {ARTICLES_PATH}")
 
-    # Validate config
+    # Validate auth source: prefer accounts.json, fall back to config.json
+    accounts = _load_accounts()
     cfg = _load_config()
-    if not cfg.get("adminUser"):
-        print("[warn] data/config.json missing or incomplete — admin auth will reject all requests")
+    if accounts:
+        active_admins = _count_active_admins(accounts)
+        print(f"[auth] {len(accounts)} account(s) loaded ({active_admins} active admin(s))")
+        if active_admins == 0:
+            print("[warn] no active admin account — accounts.manage operations will be locked")
+    elif cfg.get("adminUser"):
+        print(f"[auth] legacy single-user mode (adminUser='{cfg.get('adminUser')}')")
+    else:
+        print("[warn] no accounts.json and no adminUser in config.json — admin auth will reject all requests")
 
     server = HTTPServer((args.bind, args.port), MurayamaHandler)
     print(f"Murayama server running on http://{args.bind}:{args.port}/")

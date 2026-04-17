@@ -11,9 +11,14 @@ Thumbs.db
 
 # Sensitive
 data/config.json
+data/accounts.json
 
 # Node
 node_modules/
+
+# Python
+__pycache__/
+*.pyc
 
 # Temp
 *.tmp

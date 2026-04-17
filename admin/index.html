@@ -18,6 +18,7 @@ a{color:var(--accent);text-decoration:none}
 .header{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:24px}
 .header h1{margin:0;font-size:1.4rem;font-weight:700}
 .header-right{display:flex;align-items:center;gap:12px}
+.session-pill{display:none;padding:6px 12px;border:1px solid var(--border);border-radius:999px;background:var(--bg3);color:var(--muted);font-size:12px}
 
 /* Login */
 .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh}
@@ -26,10 +27,12 @@ a{color:var(--accent);text-decoration:none}
 .login-box input{width:100%;padding:10px 12px;margin-bottom:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg3);color:var(--text);font-size:14px}
 .login-box button{width:100%;padding:12px;border:0;border-radius:var(--radius);background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer}
 .login-box .error{color:var(--accent);font-size:13px;margin-bottom:8px;display:none}
+.login-box .hint{color:var(--muted);font-size:12px;line-height:1.6;margin-top:12px}
 
 /* Buttons */
 .btn{padding:8px 16px;border:0;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s}
 .btn:hover{opacity:.85}
+.btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-primary{background:var(--accent);color:#fff}
 .btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
 .btn-sm{padding:5px 10px;font-size:12px}
@@ -59,6 +62,7 @@ tr:hover td{background:rgba(255,255,255,.03)}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
 .modal-overlay.is-open{display:flex}
 .modal{background:var(--bg2);border-radius:8px;width:100%;max-width:720px;padding:24px}
+.modal-wide{max-width:1120px}
 .modal h2{margin:0 0 20px;font-size:1.2rem}
 .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
 
@@ -71,6 +75,8 @@ tr:hover td{background:rgba(255,255,255,.03)}
 .field-check{display:flex;align-items:center;gap:8px}
 .field-check input{width:auto}
 .field-check label{margin:0;font-size:13px;color:var(--text)}
+.form-help{font-size:12px;color:var(--muted);line-height:1.6}
+.muted{color:var(--muted)}
 
 /* Hero upload */
 .hero-zone{position:relative;border:2px dashed var(--border);border-radius:var(--radius);padding:16px;text-align:center;cursor:pointer;transition:border-color .2s;min-height:120px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
@@ -86,7 +92,7 @@ tr:hover td{background:rgba(255,255,255,.03)}
 .gallery-section{margin-top:4px}
 .gallery-section label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500}
 .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:10px;min-height:40px}
-.gallery-item{position:relative;aspect-ratio:3/2;border-radius:4px;overflow:hidden;cursor:pointer;background:var(--bg3);border:2px solid transparent;transition:border-color .15s,box-shadow .15s}
+.gallery-item{position:relative;aspect-ratio:3/2;border-radius:4px;overflow:hidden;cursor:pointer;background:var(--bg3);border:2px solid transparent;transition:border-color .15s,box-shadow .15s;content-visibility:auto;contain-intrinsic-size:100px 66px;contain:layout paint}
 .gallery-item.sortable-ghost{opacity:.4}
 .gallery-item.is-hero{border-color:var(--gold);box-shadow:0 0 0 2px rgba(234,179,8,.3)}
 .gallery-item img{width:100%;height:100%;object-fit:cover;pointer-events:none}
@@ -145,6 +151,40 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
 .gallery-lightbox .lb-actions button{padding:8px 16px;border-radius:var(--radius);border:0;font-size:13px;font-weight:600;cursor:pointer}
 .gallery-lightbox .lb-set-hero{background:var(--gold);color:#000}
 .gallery-lightbox .lb-delete{background:#991b1b;color:#fff}
+
+/* Accounts */
+.accounts-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px}
+.accounts-head h2{margin-bottom:6px}
+.accounts-layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.9fr);gap:20px}
+.accounts-panel{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px}
+.accounts-table td,.accounts-table th{padding:10px 12px}
+.accounts-table tr{cursor:pointer}
+.accounts-table tr.is-selected td{background:rgba(229,9,20,.12)}
+.accounts-table tr.is-disabled td{opacity:.55}
+.accounts-table .row-title{display:flex;align-items:center;gap:8px}
+.role-pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--text);font-size:11px;font-weight:700}
+.role-pill.role-admin{background:rgba(229,9,20,.15);color:#fda4af}
+.role-pill.role-editor{background:rgba(37,99,235,.16);color:#93c5fd}
+.role-pill.role-viewer{background:rgba(255,255,255,.08);color:#d4d4d8}
+.role-pill.role-custom{background:rgba(234,179,8,.16);color:#fde68a}
+.status-chip{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700}
+.status-chip.is-enabled{background:rgba(22,163,74,.16);color:#86efac}
+.status-chip.is-disabled{background:rgba(153,27,27,.2);color:#fca5a5}
+.permission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.permission-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:rgba(255,255,255,.02)}
+.permission-item input{width:auto}
+.empty-state{padding:24px 12px;text-align:center;color:var(--muted)}
+
+@media (max-width:960px){
+  .accounts-layout{grid-template-columns:1fr}
+}
+
+@media (max-width:720px){
+  .header{align-items:flex-start;flex-direction:column;gap:12px}
+  .header-right{flex-wrap:wrap}
+  .field-row{grid-template-columns:1fr}
+  .permission-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -157,6 +197,7 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
     <input type="text" id="login-user" placeholder="帳號" autocomplete="username">
     <input type="password" id="login-pass" placeholder="密碼" autocomplete="current-password">
     <button onclick="doLogin()">登入</button>
+    <div class="hint">登入後會依帳戶權限顯示可操作功能。管理員可在後台新增、停用與調整帳戶權限。</div>
   </div>
 </div>
 
@@ -165,13 +206,15 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
   <div class="header">
     <h1>村山良作 CMS</h1>
     <div class="header-right">
+      <span class="session-pill" id="session-user"></span>
       <a href="/blog-netflix/" target="_blank">前台預覽</a>
+      <button class="btn btn-secondary btn-sm" id="accounts-btn" onclick="openAccountsModal()">帳戶管理</button>
       <button class="btn btn-secondary btn-sm" onclick="doLogout()">登出</button>
     </div>
   </div>
 
   <div class="toolbar">
-    <button class="btn btn-primary" onclick="openAdd()">+ 新增作品</button>
+    <button class="btn btn-primary" id="add-article-btn" onclick="openAdd()">+ 新增作品</button>
     <div class="cat-tabs" id="cat-tabs">
       <button class="cat-tab is-active" data-cat="" onclick="filterCat(this)">全部</button>
       <button class="cat-tab" data-cat="business" onclick="filterCat(this)">主題活動</button>
@@ -252,7 +295,7 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
           <img id="hero-preview" src="">
           <button class="hero-remove" onclick="removeHero(event)">&times;</button>
         </div>
-        <input type="file" accept="image/*" onchange="onHeroFileChange(event)">
+        <input type="file" id="hero-input" accept="image/*" onchange="onHeroFileChange(event)">
       </div>
       <input type="hidden" id="f-hero">
     </div>
@@ -264,7 +307,7 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
       <div class="gallery-upload-btn" id="gallery-upload-btn">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
         新增圖片
-        <input type="file" accept="image/*" multiple onchange="onGalleryFilesChange(event)">
+        <input type="file" id="gallery-input" accept="image/*" multiple onchange="onGalleryFilesChange(event)">
       </div>
       <div class="upload-progress" id="upload-progress">
         <span id="upload-progress-text">上傳中...</span>
@@ -285,6 +328,84 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal()">取消</button>
       <button class="btn btn-primary" id="modal-save-btn" onclick="saveArticle()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Accounts Modal -->
+<div class="modal-overlay" id="accounts-modal">
+  <div class="modal modal-wide">
+    <div class="accounts-head">
+      <div>
+        <h2>帳戶管理</h2>
+        <div class="muted" id="accounts-summary">讀取中...</div>
+      </div>
+      <button class="btn btn-primary" onclick="openAccountForm()">+ 新增帳戶</button>
+    </div>
+    <div class="accounts-layout">
+      <div class="accounts-panel">
+        <table class="accounts-table">
+          <thead>
+            <tr>
+              <th>帳戶</th>
+              <th>角色</th>
+              <th>狀態</th>
+              <th>權限</th>
+            </tr>
+          </thead>
+          <tbody id="accounts-list"></tbody>
+        </table>
+      </div>
+      <div class="accounts-panel">
+        <h3 id="account-form-title" style="margin-top:0">新增帳戶</h3>
+        <input type="hidden" id="acc-username-original">
+        <div class="field-row">
+          <div class="field">
+            <label>帳號</label>
+            <input type="text" id="acc-username" placeholder="例：admin.ops">
+          </div>
+          <div class="field">
+            <label>顯示名稱</label>
+            <input type="text" id="acc-name" placeholder="例：營運管理">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>角色</label>
+            <select id="acc-role" onchange="onAccountRoleChange()">
+              <option value="admin">管理員</option>
+              <option value="editor">編輯</option>
+              <option value="viewer">檢視者</option>
+              <option value="custom">自訂權限</option>
+            </select>
+          </div>
+          <div class="field-check" style="padding-top:20px">
+            <input type="checkbox" id="acc-enabled" checked>
+            <label for="acc-enabled">啟用帳戶</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>密碼</label>
+          <input type="password" id="acc-password" autocomplete="new-password" placeholder="新增帳戶必填，編輯帳戶留空代表不變更">
+          <div class="form-help">為避免覆蓋既有帳密，編輯帳戶時只有輸入新密碼才會更新。</div>
+        </div>
+        <div class="field">
+          <label>權限</label>
+          <div class="permission-grid" id="account-permissions">
+            <label class="permission-item"><input type="checkbox" name="acc-permission" value="articles.read">讀取作品列表</label>
+            <label class="permission-item"><input type="checkbox" name="acc-permission" value="articles.write">新增 / 編輯作品</label>
+            <label class="permission-item"><input type="checkbox" name="acc-permission" value="articles.delete">刪除作品</label>
+            <label class="permission-item"><input type="checkbox" name="acc-permission" value="uploads.write">上傳圖片</label>
+            <label class="permission-item"><input type="checkbox" name="acc-permission" value="accounts.manage">帳戶管理</label>
+          </div>
+          <div class="form-help" id="account-permission-note">預設角色會自動帶入權限組合；切到「自訂權限」後才可手動調整。</div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closeAccountsModal()">關閉</button>
+          <button class="btn btn-danger" id="account-delete-btn" onclick="deleteSelectedAccount()" style="display:none">刪除此帳戶</button>
+          <button class="btn btn-primary" onclick="saveAccount()">儲存帳戶</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -311,584 +432,11 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
   <img id="lb-img" src="" alt="">
   <div class="lb-info" id="lb-info"></div>
   <div class="lb-actions">
-    <button class="lb-set-hero" onclick="lbSetHero()">★ 設為封面</button>
-    <button class="lb-delete" onclick="lbDelete()">刪除此圖</button>
+    <button class="lb-set-hero" id="lb-set-hero-btn" onclick="lbSetHero()">★ 設為封面</button>
+    <button class="lb-delete" id="lb-delete-btn" onclick="lbDelete()">刪除此圖</button>
   </div>
 </div>
 
-<script>
-var articles = [];
-var authHeader = '';
-var editImages = []; // current gallery images for the article being edited
-var CAT_LABELS = {business:'主題活動',party:'春酒尾牙',magic:'魔法學院',civil:'戶政改造'};
-var CAT_CLASSES = {business:'badge-business',party:'badge-party',magic:'badge-magic',civil:'badge-civil'};
-var currentCatFilter = ''; // '' = all, 'business', 'party', 'civil'
-var rowDragSrcId = null;
-
-// ── Auth ──
-function doLogin() {
-  var user = document.getElementById('login-user').value.trim();
-  var pass = document.getElementById('login-pass').value;
-  authHeader = 'Basic ' + btoa(user + ':' + pass);
-  fetch('/api/articles', { headers: { 'Authorization': authHeader } })
-    .then(function(r) {
-      if (r.ok) {
-        sessionStorage.setItem('auth', authHeader);
-        showApp();
-      } else {
-        document.getElementById('login-error').style.display = 'block';
-      }
-    })
-    .catch(function() { showApp(); });
-}
-
-function doLogout() {
-  sessionStorage.removeItem('auth');
-  authHeader = '';
-  document.getElementById('app-screen').style.display = 'none';
-  document.getElementById('login-screen').style.display = '';
-}
-
-function showApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app-screen').style.display = '';
-  loadArticles();
-}
-
-(function() {
-  var saved = sessionStorage.getItem('auth');
-  if (saved) { authHeader = saved; showApp(); }
-})();
-
-// ── API ──
-function api(method, path, body) {
-  var opts = { method: method, headers: {} };
-  if (authHeader) opts.headers['Authorization'] = authHeader;
-  if (body) {
-    opts.headers['Content-Type'] = 'application/json';
-    opts.body = JSON.stringify(body);
-  }
-  return fetch(path, opts).then(function(r) {
-    if (!r.ok) throw new Error('API error: ' + r.status);
-    return r.status === 204 ? null : r.json();
-  });
-}
-
-function loadArticles() {
-  api('GET', '/api/articles').then(function(data) {
-    articles = (data && data.articles) || [];
-    renderList();
-  }).catch(function(e) { toast('載入失敗: ' + e.message, true); });
-}
-
-// ── Category filter ──
-function filterCat(btn) {
-  currentCatFilter = btn.dataset.cat;
-  document.querySelectorAll('.cat-tab').forEach(function(t) { t.classList.remove('is-active'); });
-  btn.classList.add('is-active');
-  renderList();
-}
-
-// ── Render List ──
-function renderList() {
-  var q = document.getElementById('search-input').value.toLowerCase();
-  var tbody = document.getElementById('article-list');
-  var filtered = articles.filter(function(a) {
-    if (currentCatFilter && a.category !== currentCatFilter) return false;
-    return !q || a.title.toLowerCase().includes(q) || (a.description || '').toLowerCase().includes(q);
-  });
-  var catOrder = {business:1, party:2, magic:3, civil:4};
-  filtered.sort(function(a, b) {
-    var ca = catOrder[a.category] || 99;
-    var cb = catOrder[b.category] || 99;
-    if (ca !== cb) return ca - cb;
-    return (a.sortOrder || 99) - (b.sortOrder || 99);
-  });
-
-  tbody.innerHTML = filtered.map(function(a) {
-    var cat = CAT_LABELS[a.category] || a.category;
-    var catClass = CAT_CLASSES[a.category] || '';
-    var featured = a.featured ? '<span class="badge badge-featured">\u2605 ' + (a.featuredOrder || '') + '</span>' : '';
-    var video = a.videoId ? (a.videoVertical ? '\uD83D\uDCF1' : '\uD83C\uDFAC') : '\u2014';
-    var heroSrc = a.heroImage || (a.images && a.images[0]) || '/assets/images/murayama-favicon.png';
-    var imgCount = (a.images || []).length;
-
-    return '<tr draggable="true" data-id="' + a.id + '">' +
-      '<td><span class="drag-handle">\u22EE\u22EE</span></td>' +
-      '<td><img class="thumb" src="' + heroSrc + '" alt="" onerror="this.style.display=\'none\'"></td>' +
-      '<td><strong>' + esc(a.title) + '</strong></td>' +
-      '<td><span class="badge ' + catClass + '">' + cat + '</span></td>' +
-      '<td>' + featured + '</td>' +
-      '<td>' + imgCount + ' 張</td>' +
-      '<td>' + video + '</td>' +
-      '<td>' +
-        '<button class="btn btn-secondary btn-sm" onclick="openEdit(\'' + a.id + '\')">編輯</button> ' +
-        '<button class="btn btn-danger btn-sm" onclick="confirmDelete(\'' + a.id + '\',\'' + esc(a.title) + '\')">刪除</button>' +
-      '</td>' +
-    '</tr>';
-  }).join('');
-
-  // Bind row drag events
-  bindRowDrag();
-}
-
-// ── Row Drag-and-Drop ──
-function bindRowDrag() {
-  var tbody = document.getElementById('article-list');
-  var rows = tbody.querySelectorAll('tr[draggable]');
-  rows.forEach(function(row) {
-    row.addEventListener('dragstart', function(e) {
-      rowDragSrcId = row.dataset.id;
-      row.classList.add('is-dragging');
-      e.dataTransfer.effectAllowed = 'move';
-    });
-    row.addEventListener('dragend', function() {
-      row.classList.remove('is-dragging');
-      tbody.querySelectorAll('tr').forEach(function(r) {
-        r.classList.remove('drag-above', 'drag-below');
-      });
-    });
-    row.addEventListener('dragover', function(e) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      var rect = row.getBoundingClientRect();
-      var mid = rect.top + rect.height / 2;
-      tbody.querySelectorAll('tr').forEach(function(r) { r.classList.remove('drag-above', 'drag-below'); });
-      if (e.clientY < mid) {
-        row.classList.add('drag-above');
-      } else {
-        row.classList.add('drag-below');
-      }
-    });
-    row.addEventListener('dragleave', function() {
-      row.classList.remove('drag-above', 'drag-below');
-    });
-    row.addEventListener('drop', function(e) {
-      e.preventDefault();
-      row.classList.remove('drag-above', 'drag-below');
-      var targetId = row.dataset.id;
-      if (!rowDragSrcId || rowDragSrcId === targetId) return;
-
-      var rect = row.getBoundingClientRect();
-      var mid = rect.top + rect.height / 2;
-      var insertBefore = e.clientY < mid;
-
-      reorderArticles(rowDragSrcId, targetId, insertBefore);
-    });
-  });
-}
-
-function reorderArticles(srcId, targetId, insertBefore) {
-  // Get visible filtered+sorted list to determine new order
-  var catOrder = {business:1, party:2, magic:3, civil:4};
-  var filtered = articles.filter(function(a) {
-    if (currentCatFilter && a.category !== currentCatFilter) return false;
-    return true;
-  });
-  filtered.sort(function(a, b) {
-    var ca = catOrder[a.category] || 99;
-    var cb = catOrder[b.category] || 99;
-    if (ca !== cb) return ca - cb;
-    return (a.sortOrder || 99) - (b.sortOrder || 99);
-  });
-
-  // Remove src from list and insert at target position
-  var srcIdx = filtered.findIndex(function(a) { return a.id === srcId; });
-  var tgtIdx = filtered.findIndex(function(a) { return a.id === targetId; });
-  if (srcIdx === -1 || tgtIdx === -1) return;
-
-  var moved = filtered.splice(srcIdx, 1)[0];
-  var newTgtIdx = filtered.findIndex(function(a) { return a.id === targetId; });
-  if (newTgtIdx === -1) newTgtIdx = filtered.length;
-  if (!insertBefore) newTgtIdx++;
-  filtered.splice(newTgtIdx, 0, moved);
-
-  // Reassign sortOrder per category group
-  var catGroups = {};
-  filtered.forEach(function(a) {
-    if (!catGroups[a.category]) catGroups[a.category] = [];
-    catGroups[a.category].push(a);
-  });
-
-  var updates = [];
-  Object.keys(catGroups).forEach(function(cat) {
-    catGroups[cat].forEach(function(a, i) {
-      var newOrder = i + 1;
-      if (a.sortOrder !== newOrder) {
-        a.sortOrder = newOrder;
-        updates.push(a);
-      }
-    });
-  });
-
-  renderList();
-
-  // Save changes to server
-  if (updates.length === 0) return;
-  toast('排序更新中...');
-  var pending = updates.length;
-  var failed = 0;
-  updates.forEach(function(a) {
-    api('PUT', '/api/articles/' + a.id, { sortOrder: a.sortOrder })
-      .then(function() {
-        pending--;
-        if (pending === 0) toast(failed ? '部分排序更新失敗' : '排序已儲存');
-      })
-      .catch(function() {
-        failed++;
-        pending--;
-        if (pending === 0) toast('部分排序更新失敗', true);
-      });
-  });
-}
-
-function esc(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-
-// ── Modal ──
-function openAdd() {
-  document.getElementById('modal-title').textContent = '新增作品';
-  document.getElementById('f-id').value = '';
-  document.getElementById('f-title').value = '';
-  document.getElementById('f-desc').value = '';
-  document.getElementById('f-category').value = 'business';
-  document.getElementById('f-sort').value = articles.length + 1;
-  document.getElementById('f-featured').checked = false;
-  document.getElementById('f-featured-order').value = '1';
-  document.getElementById('f-hero').value = '';
-  document.getElementById('f-video').value = '';
-  document.getElementById('f-vertical').checked = false;
-  editImages = [];
-  renderHeroPreview('');
-  renderGallery();
-  toggleFeaturedOrder();
-  document.getElementById('modal').classList.add('is-open');
-}
-
-function openEdit(id) {
-  var a = articles.find(function(x) { return x.id === id; });
-  if (!a) return;
-  document.getElementById('modal-title').textContent = '編輯：' + a.title;
-  document.getElementById('f-id').value = a.id;
-  document.getElementById('f-title').value = a.title || '';
-  document.getElementById('f-desc').value = a.description || '';
-  document.getElementById('f-category').value = a.category || 'business';
-  document.getElementById('f-sort').value = a.sortOrder || 1;
-  document.getElementById('f-featured').checked = !!a.featured;
-  document.getElementById('f-featured-order').value = a.featuredOrder || 1;
-  document.getElementById('f-hero').value = a.heroImage || '';
-  document.getElementById('f-video').value = a.videoId || '';
-  document.getElementById('f-vertical').checked = !!a.videoVertical;
-  editImages = (a.images || []).slice(); // clone
-  renderHeroPreview(a.heroImage || (a.images && a.images[0]) || '');
-  renderGallery();
-  toggleFeaturedOrder();
-  document.getElementById('modal').classList.add('is-open');
-}
-
-function closeModal() {
-  document.getElementById('modal').classList.remove('is-open');
-}
-
-function toggleFeaturedOrder() {
-  var show = document.getElementById('f-featured').checked;
-  document.getElementById('featured-order-field').style.display = show ? '' : 'none';
-}
-
-// ── Hero Image ──
-function renderHeroPreview(src) {
-  var wrap = document.getElementById('hero-preview-wrap');
-  var placeholder = document.getElementById('hero-placeholder');
-  var img = document.getElementById('hero-preview');
-  if (src) {
-    img.src = src;
-    wrap.style.display = '';
-    placeholder.style.display = 'none';
-  } else {
-    wrap.style.display = 'none';
-    placeholder.style.display = '';
-  }
-}
-
-function onHeroFileChange(e) {
-  var files = e.target.files;
-  if (!files || !files.length) return;
-  var articleId = document.getElementById('f-id').value;
-  if (!articleId) {
-    toast('請先儲存作品再上傳圖片', true);
-    e.target.value = '';
-    return;
-  }
-  uploadFiles(articleId, files, function(paths) {
-    if (paths.length > 0) {
-      var heroPath = paths[0].startsWith('/') ? paths[0] : '/' + paths[0];
-      document.getElementById('f-hero').value = heroPath;
-      renderHeroPreview(heroPath);
-      // Also add to gallery if not already
-      paths.forEach(function(p) {
-        var fullPath = p.startsWith('/') ? p : '/' + p;
-        if (editImages.indexOf(fullPath) === -1) {
-          editImages.unshift(fullPath); // hero goes first
-        }
-      });
-      renderGallery();
-    }
-  });
-  e.target.value = '';
-}
-
-function removeHero(e) {
-  e.stopPropagation();
-  document.getElementById('f-hero').value = '';
-  renderHeroPreview('');
-}
-
-// ── Gallery (SortableJS drag-to-reorder) ──
-var gallerySortable = null;
-
-function renderGallery() {
-  var grid = document.getElementById('gallery-grid');
-  var heroVal = document.getElementById('f-hero').value;
-  grid.innerHTML = editImages.map(function(src, i) {
-    var isHero = (src === heroVal);
-    return '<div class="gallery-item' + (isHero ? ' is-hero' : '') + '" data-index="' + i + '" onclick="openLightbox(' + i + ')">' +
-      '<img src="' + src + '" alt="">' +
-      (isHero ? '<span class="gallery-badge">★ 封面</span>' : '') +
-      '<span class="gallery-order">' + (i + 1) + '</span>' +
-      '<button class="gallery-remove" onclick="removeGalleryImage(' + i + ',event)">&times;</button>' +
-    '</div>';
-  }).join('');
-
-  // Init SortableJS
-  if (gallerySortable) gallerySortable.destroy();
-  gallerySortable = new Sortable(grid, {
-    animation: 200,
-    ghostClass: 'sortable-ghost',
-    onEnd: function(evt) {
-      var oldIdx = evt.oldIndex;
-      var newIdx = evt.newIndex;
-      if (oldIdx === newIdx) return;
-      var moved = editImages.splice(oldIdx, 1)[0];
-      editImages.splice(newIdx, 0, moved);
-      renderGallery();
-    }
-  });
-}
-
-function setHeroImage(index, e) {
-  if (e) e.stopPropagation();
-  var src = editImages[index];
-  if (!src) return;
-  document.getElementById('f-hero').value = src;
-  renderHeroPreview(src);
-  renderGallery();
-  toast('已設為封面圖');
-}
-
-// ── Gallery Lightbox ──
-var lbIndex = 0;
-
-function openLightbox(index) {
-  lbIndex = index;
-  updateLightbox();
-  document.getElementById('gallery-lightbox').classList.add('is-open');
-}
-
-function closeLightbox() {
-  document.getElementById('gallery-lightbox').classList.remove('is-open');
-}
-
-function navLightbox(dir) {
-  lbIndex = (lbIndex + dir + editImages.length) % editImages.length;
-  updateLightbox();
-}
-
-function updateLightbox() {
-  var src = editImages[lbIndex];
-  var heroVal = document.getElementById('f-hero').value;
-  document.getElementById('lb-img').src = src;
-  var isHero = (src === heroVal);
-  document.getElementById('lb-info').textContent = (lbIndex + 1) + ' / ' + editImages.length + (isHero ? '  ★ 目前封面' : '');
-}
-
-function lbSetHero() {
-  setHeroImage(lbIndex);
-  updateLightbox();
-}
-
-function lbDelete() {
-  removeGalleryImage(lbIndex, { stopPropagation: function(){} });
-  if (editImages.length === 0) { closeLightbox(); return; }
-  if (lbIndex >= editImages.length) lbIndex = editImages.length - 1;
-  updateLightbox();
-}
-
-// Keyboard nav for lightbox
-document.addEventListener('keydown', function(e) {
-  var lb = document.getElementById('gallery-lightbox');
-  if (!lb.classList.contains('is-open')) return;
-  if (e.key === 'Escape') closeLightbox();
-  if (e.key === 'ArrowLeft') navLightbox(-1);
-  if (e.key === 'ArrowRight') navLightbox(1);
-});
-
-function removeGalleryImage(index, e) {
-  e.stopPropagation();
-  editImages.splice(index, 1);
-  // If removed image was hero, update hero to new first
-  var heroVal = document.getElementById('f-hero').value;
-  if (editImages.length === 0) {
-    document.getElementById('f-hero').value = '';
-    renderHeroPreview('');
-  } else if (editImages.indexOf(heroVal) === -1) {
-    document.getElementById('f-hero').value = editImages[0];
-    renderHeroPreview(editImages[0]);
-  }
-  renderGallery();
-}
-
-function onGalleryFilesChange(e) {
-  var files = e.target.files;
-  if (!files || !files.length) return;
-  var articleId = document.getElementById('f-id').value;
-  if (!articleId) {
-    toast('請先儲存作品再上傳圖片', true);
-    e.target.value = '';
-    return;
-  }
-  uploadFiles(articleId, files, function(paths) {
-    paths.forEach(function(p) {
-      var fullPath = p.startsWith('/') ? p : '/' + p;
-      if (editImages.indexOf(fullPath) === -1) {
-        editImages.push(fullPath);
-      }
-    });
-    // If no hero set, use first image
-    if (!document.getElementById('f-hero').value && editImages.length > 0) {
-      document.getElementById('f-hero').value = editImages[0];
-      renderHeroPreview(editImages[0]);
-    }
-    renderGallery();
-  });
-  e.target.value = '';
-}
-
-// ── Upload ──
-function uploadFiles(articleId, files, callback) {
-  var progressEl = document.getElementById('upload-progress');
-  var progressText = document.getElementById('upload-progress-text');
-  var barFill = document.getElementById('upload-bar-fill');
-  progressEl.classList.add('is-active');
-  progressText.textContent = '上傳中... 0/' + files.length;
-  barFill.style.width = '0%';
-
-  var formData = new FormData();
-  for (var i = 0; i < files.length; i++) {
-    formData.append('file' + i, files[i], files[i].name);
-  }
-
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', '/api/upload/' + articleId);
-  if (authHeader) xhr.setRequestHeader('Authorization', authHeader);
-
-  xhr.upload.onprogress = function(e) {
-    if (e.lengthComputable) {
-      var pct = Math.round(e.loaded / e.total * 100);
-      barFill.style.width = pct + '%';
-      progressText.textContent = '上傳中... ' + pct + '%';
-    }
-  };
-
-  xhr.onload = function() {
-    progressEl.classList.remove('is-active');
-    if (xhr.status >= 200 && xhr.status < 300) {
-      var resp = JSON.parse(xhr.responseText);
-      toast('已上傳 ' + (resp.uploaded || []).length + ' 張圖片');
-      callback(resp.uploaded || []);
-    } else {
-      toast('上傳失敗: ' + xhr.status, true);
-      callback([]);
-    }
-  };
-
-  xhr.onerror = function() {
-    progressEl.classList.remove('is-active');
-    toast('上傳失敗', true);
-    callback([]);
-  };
-
-  xhr.send(formData);
-}
-
-// ── Save ──
-function saveArticle() {
-  var id = document.getElementById('f-id').value;
-  var title = document.getElementById('f-title').value.trim();
-  if (!title) { toast('請輸入標題', true); return; }
-
-  var heroImage = document.getElementById('f-hero').value.trim();
-  // Ensure hero is first in images array
-  if (heroImage && editImages.indexOf(heroImage) !== 0) {
-    editImages = editImages.filter(function(x) { return x !== heroImage; });
-    editImages.unshift(heroImage);
-  }
-
-  var data = {
-    title: title,
-    description: document.getElementById('f-desc').value.trim(),
-    category: document.getElementById('f-category').value,
-    sortOrder: parseInt(document.getElementById('f-sort').value) || 99,
-    featured: document.getElementById('f-featured').checked,
-    featuredOrder: document.getElementById('f-featured').checked ? parseInt(document.getElementById('f-featured-order').value) || 1 : 0,
-    heroImage: heroImage || (editImages[0] || ''),
-    images: editImages,
-    videoId: document.getElementById('f-video').value.trim() || null,
-    videoVertical: document.getElementById('f-vertical').checked
-  };
-
-  if (id) {
-    api('PUT', '/api/articles/' + id, data).then(function() {
-      toast('已更新：' + title);
-      closeModal();
-      loadArticles();
-    }).catch(function(e) { toast('更新失敗: ' + e.message, true); });
-  } else {
-    api('POST', '/api/articles', data).then(function(resp) {
-      toast('已新增：' + title);
-      // If we got back the new article with id, set it so user can upload images
-      if (resp && resp.id) {
-        document.getElementById('f-id').value = resp.id;
-      }
-      closeModal();
-      loadArticles();
-    }).catch(function(e) { toast('新增失敗: ' + e.message, true); });
-  }
-}
-
-// ── Delete ──
-function confirmDelete(id, title) {
-  document.getElementById('confirm-msg').textContent = '確定要刪除「' + title + '」？';
-  document.getElementById('confirm-dialog').classList.add('is-open');
-  document.getElementById('confirm-ok').onclick = function() {
-    api('DELETE', '/api/articles/' + id).then(function() {
-      toast('已刪除');
-      closeConfirm();
-      loadArticles();
-    }).catch(function(e) { toast('刪除失敗: ' + e.message, true); });
-  };
-}
-
-function closeConfirm() {
-  document.getElementById('confirm-dialog').classList.remove('is-open');
-}
-
-// ── Toast ──
-function toast(msg, isError) {
-  var el = document.getElementById('admin-toast');
-  el.textContent = msg;
-  el.style.background = isError ? '#991b1b' : '#16a34a';
-  el.classList.add('is-visible');
-  setTimeout(function() { el.classList.remove('is-visible'); }, 2500);
-}
-</script>
+<script src="/admin/app.js?v=20260417b"></script>
 </body>
 </html>
