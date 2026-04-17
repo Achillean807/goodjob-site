@@ -22,6 +22,7 @@ import json
 import os
 import subprocess
 import sys
+import urllib.parse
 import tempfile
 import time
 import urllib.request
@@ -86,7 +87,16 @@ def r2_upload(data_bytes, key):
 
 
 def fetch_original(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "generate_thumbs/1.0"})
+    # URL-encode the path so non-ASCII filenames (e.g. CJK) don't break the request line.
+    parts = urllib.parse.urlsplit(url)
+    encoded = urllib.parse.urlunsplit((
+        parts.scheme,
+        parts.netloc,
+        urllib.parse.quote(parts.path, safe="/"),
+        parts.query,
+        parts.fragment,
+    ))
+    req = urllib.request.Request(encoded, headers={"User-Agent": "generate_thumbs/1.0"})
     with urllib.request.urlopen(req, timeout=30) as r:
         return r.read()
 

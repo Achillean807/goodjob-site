@@ -533,18 +533,32 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self._send_error_json(404, "Article not found")
             return
 
+        # Compute next sequential index for this article's uploads.
+        # Scheme: {article_id}-{N}.webp — keeps all filenames ASCII and clearly
+        # tied to the owning article. Scans existing images (any `-\d+.webp` tail)
+        # so newly-uploaded files don't collide with legacy detail-N/scene-N.
+        seq_re = re.compile(r"-(\d+)\.webp(?:[?#].*)?$", re.IGNORECASE)
+        next_idx = 0
+        for url in (article.get("images") or []):
+            m = seq_re.search(url or "")
+            if m:
+                try:
+                    n = int(m.group(1))
+                    if n > next_idx:
+                        next_idx = n
+                except ValueError:
+                    pass
+
         saved_paths = []
         failed = []
         for part in parts:
             filename = part.get("filename")
             if not filename:
                 continue
-            safe_name = re.sub(r"[^\w.\-]", "_", filename)
             img_data = part["data"]
             thumb_data = None
 
             # Convert to WebP when Pillow is available (quality matches migration).
-            # Keep original bytes if conversion fails (e.g. unsupported format).
             if _PILLOW_AVAILABLE:
                 try:
                     img = _PILImage.open(io.BytesIO(img_data))
@@ -552,7 +566,6 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                     buf = io.BytesIO()
                     img.save(buf, format="WEBP", quality=WEBP_QUALITY, method=6)
                     img_data = buf.getvalue()
-                    safe_name = os.path.splitext(safe_name)[0] + ".webp"
                     # Generate small thumbnail for admin gallery preview.
                     try:
                         thumb_img = img.copy()
@@ -565,8 +578,10 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 except Exception as e:
                     sys.stderr.write(f"[upload] WebP conversion failed for {filename}: {e}\n")
 
-            # Derive R2 key under works/{article_id}/ and upload via rclone.
-            target_name = _classify_upload_name(safe_name, article_id)
+            # Auto-name as {article_id}-{N}.webp — drops any non-ASCII / raw
+            # client filename. R2 key + public URL stay clean ASCII.
+            next_idx += 1
+            target_name = f"{article_id}-{next_idx}.webp"
             r2_key = f"works/{article_id}/{target_name}"
             cdn_url = _upload_to_r2(img_data, r2_key)
             if cdn_url is None:
@@ -575,7 +590,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             saved_paths.append(cdn_url)
 
             # Upload thumbnail alongside (best-effort; skip log on failure).
-            if thumb_data and target_name.lower().endswith(".webp"):
+            if thumb_data:
                 thumb_key = f"works/{article_id}/{target_name[:-5]}-thumb.webp"
                 _upload_to_r2(thumb_data, thumb_key)
 
