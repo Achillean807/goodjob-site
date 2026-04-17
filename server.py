@@ -64,6 +64,10 @@ R2_REMOTE = os.environ.get("GOODJOB_R2_REMOTE", "r2:goodjob-images")
 CDN_DOMAIN = os.environ.get("GOODJOB_CDN_DOMAIN", "https://goodjob-img.weddingwishlove.com")
 RCLONE_BIN = os.environ.get("GOODJOB_RCLONE_BIN", "rclone")
 WEBP_QUALITY = int(os.environ.get("GOODJOB_WEBP_QUALITY", "90"))
+# Cap uploaded images at this pixel width before WebP encoding — huge raw photos
+# (iPhone ProRAW, mirrorless 8000px JPEGs) would otherwise stall Pillow for tens
+# of seconds and produce unnecessarily large output.
+MAX_UPLOAD_WIDTH = int(os.environ.get("GOODJOB_MAX_UPLOAD_WIDTH", "3000"))
 # Thumbnail config — small preview variant for admin gallery / table.
 THUMB_WIDTH = int(os.environ.get("GOODJOB_THUMB_WIDTH", "400"))
 THUMB_QUALITY = int(os.environ.get("GOODJOB_THUMB_QUALITY", "75"))
@@ -105,7 +109,7 @@ def _upload_to_r2(data_bytes, r2_key):
         tmp.close()
         result = subprocess.run(
             [RCLONE_BIN, "copyto", tmp.name, f"{R2_REMOTE}/{r2_key}"],
-            capture_output=True, text=True, timeout=60,
+            capture_output=True, text=True, timeout=300,
         )
         if result.returncode != 0:
             sys.stderr.write(f"[r2-upload] rclone failed: {result.stderr.strip()}\n")
@@ -563,15 +567,19 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 try:
                     img = _PILImage.open(io.BytesIO(img_data))
                     img = img.convert("RGBA" if img.mode in ("RGBA", "P") else "RGB")
+                    # Pre-resize oversized photos so encoding doesn't stall for 30+s.
+                    if img.width > MAX_UPLOAD_WIDTH:
+                        img.thumbnail((MAX_UPLOAD_WIDTH, MAX_UPLOAD_WIDTH * 10),
+                                      _PILImage.LANCZOS)
                     buf = io.BytesIO()
-                    img.save(buf, format="WEBP", quality=WEBP_QUALITY, method=6)
+                    img.save(buf, format="WEBP", quality=WEBP_QUALITY, method=4)
                     img_data = buf.getvalue()
                     # Generate small thumbnail for admin gallery preview.
                     try:
                         thumb_img = img.copy()
                         thumb_img.thumbnail((THUMB_WIDTH, THUMB_WIDTH * 10), _PILImage.LANCZOS)
                         thumb_buf = io.BytesIO()
-                        thumb_img.save(thumb_buf, format="WEBP", quality=THUMB_QUALITY, method=6)
+                        thumb_img.save(thumb_buf, format="WEBP", quality=THUMB_QUALITY, method=4)
                         thumb_data = thumb_buf.getvalue()
                     except Exception as e:
                         sys.stderr.write(f"[upload] thumb generation failed for {filename}: {e}\n")
