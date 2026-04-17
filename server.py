@@ -17,7 +17,9 @@ import hashlib
 import json
 import os
 import re
+import subprocess
 import sys
+import tempfile
 import time
 import io
 import uuid
@@ -27,6 +29,10 @@ try:
     _PILLOW_AVAILABLE = True
 except ImportError:
     _PILLOW_AVAILABLE = False
+try:
+    import pillow_avif  # noqa: F401 -- registers AVIF format with Pillow if installed
+except ImportError:
+    pass
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import unquote
 
@@ -38,6 +44,13 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 ARTICLES_PATH = os.path.join(DATA_DIR, "articles.json")
 CONFIG_PATH = os.path.join(DATA_DIR, "config.json")
 IMAGES_DIR = os.path.join(BASE_DIR, "assets", "images")
+
+# R2 / CDN config — admin uploads go directly to R2 object storage.
+# Override via env vars for dev / alternative deployments.
+R2_REMOTE = os.environ.get("GOODJOB_R2_REMOTE", "r2:goodjob-images")
+CDN_DOMAIN = os.environ.get("GOODJOB_CDN_DOMAIN", "https://goodjob-img.weddingwishlove.com")
+RCLONE_BIN = os.environ.get("GOODJOB_RCLONE_BIN", "rclone")
+WEBP_QUALITY = int(os.environ.get("GOODJOB_WEBP_QUALITY", "90"))
 
 
 # ---------------------------------------------------------------------------
@@ -62,6 +75,57 @@ def _write_json_atomic(path, data):
         fh.flush()
         os.fsync(fh.fileno())
     os.replace(tmp_path, path)
+
+
+def _upload_to_r2(data_bytes, r2_key):
+    """Upload raw bytes to R2 at the given object key.
+
+    Returns the public CDN URL on success, or None on failure.
+    Uses rclone subprocess so zero new Python dependencies are required.
+    """
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".bin")
+    try:
+        tmp.write(data_bytes)
+        tmp.close()
+        result = subprocess.run(
+            [RCLONE_BIN, "copyto", tmp.name, f"{R2_REMOTE}/{r2_key}"],
+            capture_output=True, text=True, timeout=60,
+        )
+        if result.returncode != 0:
+            sys.stderr.write(f"[r2-upload] rclone failed: {result.stderr.strip()}\n")
+            return None
+        return f"{CDN_DOMAIN}/{r2_key}"
+    except (OSError, subprocess.TimeoutExpired) as e:
+        sys.stderr.write(f"[r2-upload] exception: {e}\n")
+        return None
+    finally:
+        try:
+            os.unlink(tmp.name)
+        except OSError:
+            pass
+
+
+def _classify_upload_name(filename, article_id):
+    """Map an uploaded filename to a clean key under works/{article_id}/.
+
+    Mirrors migrate_to_r2.py logic so admin uploads share the same naming
+    convention as the initial bulk migration.
+    """
+    base, ext = os.path.splitext(filename)
+    ext = ext.lower()
+    out_ext = ".webp" if ext in {".jpg", ".jpeg", ".png"} else ext
+
+    m = re.search(r"-(hero|detail-\d+|scene-\d+)$", base)
+    if m:
+        return f"{m.group(1)}{out_ext}"
+    if base.startswith(f"{article_id}_"):
+        rest = re.sub(r"_+", "_", base[len(article_id) + 1:].strip("_"))
+        return f"{rest}{out_ext}"
+    m = re.match(r"^[0-9a-f]{8}_(.+)$", base)
+    if m:
+        return f"{m.group(1)}{out_ext}"
+    safe = re.sub(r"[^\w\-]", "_", base)
+    return f"{safe}{out_ext}"
 
 
 def _load_config():
@@ -371,32 +435,39 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             return
 
         saved_paths = []
+        failed = []
         for part in parts:
             filename = part.get("filename")
             if not filename:
                 continue
-            # Sanitise filename: keep only safe characters
             safe_name = re.sub(r"[^\w.\-]", "_", filename)
-            # Prefix with article id to organise images
-            target_name = f"{article_id}_{safe_name}"
-            # Convert to WebP if Pillow is available
             img_data = part["data"]
+
+            # Convert to WebP when Pillow is available (quality matches migration).
+            # Keep original bytes if conversion fails (e.g. unsupported format).
             if _PILLOW_AVAILABLE:
                 try:
                     img = _PILImage.open(io.BytesIO(img_data))
                     img = img.convert("RGBA" if img.mode in ("RGBA", "P") else "RGB")
                     buf = io.BytesIO()
-                    img.save(buf, format="WEBP", quality=85)
+                    img.save(buf, format="WEBP", quality=WEBP_QUALITY, method=6)
                     img_data = buf.getvalue()
-                    target_name = os.path.splitext(target_name)[0] + ".webp"
-                except Exception:
-                    pass  # fallback: keep original
-            target_path = os.path.join(IMAGES_DIR, target_name)
-            with open(target_path, "wb") as fh:
-                fh.write(img_data)
-            # Relative web path
-            web_path = f"/assets/images/{target_name}"
-            saved_paths.append(web_path)
+                    safe_name = os.path.splitext(safe_name)[0] + ".webp"
+                except Exception as e:
+                    sys.stderr.write(f"[upload] WebP conversion failed for {filename}: {e}\n")
+
+            # Derive R2 key under works/{article_id}/ and upload via rclone.
+            target_name = _classify_upload_name(safe_name, article_id)
+            r2_key = f"works/{article_id}/{target_name}"
+            cdn_url = _upload_to_r2(img_data, r2_key)
+            if cdn_url is None:
+                failed.append(filename)
+                continue
+            saved_paths.append(cdn_url)
+
+        if failed and not saved_paths:
+            self._send_error_json(500, f"All uploads failed: {failed}")
+            return
 
         # Update article images list
         if "images" not in article:
@@ -406,7 +477,10 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         articles[art_idx] = article
         _save_articles(articles)
 
-        self._send_json({"uploaded": saved_paths}, status=201)
+        resp = {"uploaded": saved_paths}
+        if failed:
+            resp["failed"] = failed
+        self._send_json(resp, status=201)
 
     # ------------------------------------------------------------------
     # Route dispatcher
