@@ -68,6 +68,20 @@
         "https://goodjob-img.weddingwishlove.com/works/chengmei-insect-exhibition/chengmei-insect-exhibition-11.webp"
       ],
       "linkUrl": "/pages/chengmei-insect-exhibition.html",
+      "awards": [
+        {
+          "name": "MUSE Design Awards",
+          "year": 2026,
+          "level": "Gold",
+          "category": "Experiential & Immersive / Cause Marketing",
+          "projectName": "Nature Takes Flight: Insect Art Party",
+          "role": "製作執行團隊",
+          "entrant": "ORIGINVISION INTERNATIONAL CO., LTD.",
+          "detailUrl": "/muse-2026.html",
+          "url": "https://museaward.com/winner-info.php?id=237076",
+          "label": "2026 MUSE 金獎作品"
+        }
+      ],
       "videoId": null,
       "videoVertical": false,
       "sortOrder": 2,

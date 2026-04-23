@@ -131,6 +131,21 @@
     });
   }
 
+  function buildAwardBadge(award) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'award-badge award-badge-' + (award.level || '').toLowerCase();
+    btn.textContent = (award.label || ((award.year || '') + ' ' + award.name + ' ' + award.level)).trim();
+    btn.title = '查看獎項介紹頁';
+    btn.setAttribute('aria-label', btn.textContent + '，點擊查看獎項介紹');
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.location.href = award.detailUrl || '/muse-2026.html';
+    });
+    return btn;
+  }
+
   // ── Render Category Shelf ──
   function renderShelf(category, articles) {
     var sectionId = { business: 'business', party: 'party', magic: 'magic', civil: 'civil' }[category];
@@ -162,6 +177,7 @@
       span.textContent = a.title;
 
       link.appendChild(img);
+      if (a.awards && a.awards.length) link.appendChild(buildAwardBadge(a.awards[0]));
       link.appendChild(span);
       rail.appendChild(link);
     });
