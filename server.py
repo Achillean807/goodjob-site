@@ -47,6 +47,7 @@ ARTICLES_PATH = os.path.join(DATA_DIR, "articles.json")
 CONFIG_PATH = os.path.join(DATA_DIR, "config.json")
 ACCOUNTS_PATH = os.path.join(DATA_DIR, "accounts.json")
 DB_PATH = os.path.join(DATA_DIR, "goodjob.sqlite3")
+DATABASE_URL = os.environ.get("GOODJOB_DATABASE_URL", "").strip()
 IMAGES_DIR = os.path.join(BASE_DIR, "assets", "images")
 
 VALID_ROLES = {"admin", "editor", "viewer", "custom"}
@@ -108,8 +109,27 @@ def _db_connect():
     return conn
 
 
+def _using_postgres():
+    return bool(DATABASE_URL)
+
+
+def _pg_connect():
+    try:
+        import psycopg2
+        import psycopg2.extras
+    except ImportError as exc:
+        raise RuntimeError(
+            "GOODJOB_DATABASE_URL is set, but psycopg2 is not installed"
+        ) from exc
+    return psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
+
+
 def _init_db():
-    """Create SQLite tables and import legacy JSON data on first boot."""
+    """Create database tables and import legacy JSON data on first boot."""
+    if _using_postgres():
+        _init_pg_db()
+        return
+
     os.makedirs(DATA_DIR, exist_ok=True)
     with _db_connect() as conn:
         conn.executescript("""
@@ -191,6 +211,79 @@ def _init_db():
             if cfg:
                 _replace_config(conn, cfg)
                 print("[db] imported legacy config JSON")
+
+
+def _init_pg_db():
+    with _pg_connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS articles (
+                id TEXT PRIMARY KEY,
+                title TEXT NOT NULL DEFAULT '',
+                description TEXT NOT NULL DEFAULT '',
+                category TEXT NOT NULL DEFAULT '',
+                featured INTEGER NOT NULL DEFAULT 0,
+                featured_order INTEGER NOT NULL DEFAULT 0,
+                hero_image TEXT NOT NULL DEFAULT '',
+                link_url TEXT,
+                video_id TEXT,
+                video_vertical INTEGER NOT NULL DEFAULT 0,
+                sort_order INTEGER NOT NULL DEFAULT 0,
+                created_at TEXT,
+                updated_at TEXT,
+                row_index INTEGER NOT NULL DEFAULT 0
+            )
+            """)
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS article_images (
+                article_id TEXT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+                position INTEGER NOT NULL,
+                url TEXT NOT NULL,
+                PRIMARY KEY (article_id, position)
+            )
+            """)
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS article_awards (
+                article_id TEXT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+                position INTEGER NOT NULL,
+                name TEXT,
+                year INTEGER,
+                level TEXT,
+                category TEXT,
+                project_name TEXT,
+                role TEXT,
+                entrant TEXT,
+                detail_url TEXT,
+                url TEXT,
+                label TEXT,
+                PRIMARY KEY (article_id, position)
+            )
+            """)
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS accounts (
+                username TEXT PRIMARY KEY,
+                name TEXT NOT NULL DEFAULT '',
+                role TEXT NOT NULL DEFAULT 'custom',
+                enabled INTEGER NOT NULL DEFAULT 1,
+                salt TEXT NOT NULL DEFAULT '',
+                password_hash TEXT NOT NULL DEFAULT '',
+                created_at TEXT,
+                updated_at TEXT
+            )
+            """)
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS account_permissions (
+                username TEXT NOT NULL REFERENCES accounts(username) ON DELETE CASCADE,
+                permission TEXT NOT NULL,
+                PRIMARY KEY (username, permission)
+            )
+            """)
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS config (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL DEFAULT ''
+            )
+            """)
 
 
 def _read_config_json():
@@ -379,6 +472,202 @@ def _replace_config(conn, cfg):
             )
 
 
+def _pg_replace_articles(conn, articles):
+    with conn.cursor() as cur:
+        cur.execute("DELETE FROM article_awards")
+        cur.execute("DELETE FROM article_images")
+        cur.execute("DELETE FROM articles")
+        for row_index, article in enumerate(articles):
+            article_id = str(article.get("id") or "")
+            if not article_id:
+                continue
+            cur.execute("""
+                INSERT INTO articles (
+                    id, title, description, category, featured, featured_order,
+                    hero_image, link_url, video_id, video_vertical, sort_order,
+                    created_at, updated_at, row_index
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                article_id,
+                article.get("title") or "",
+                article.get("description") or "",
+                article.get("category") or "",
+                1 if article.get("featured") else 0,
+                int(article.get("featuredOrder") or 0),
+                article.get("heroImage") or "",
+                article.get("linkUrl"),
+                article.get("videoId"),
+                1 if article.get("videoVertical") else 0,
+                int(article.get("sortOrder") or 0),
+                article.get("createdAt"),
+                article.get("updatedAt"),
+                row_index,
+            ))
+            for position, url in enumerate(article.get("images") or []):
+                if url:
+                    cur.execute(
+                        "INSERT INTO article_images (article_id, position, url) VALUES (%s, %s, %s)",
+                        (article_id, position, url),
+                    )
+            for position, award in enumerate(article.get("awards") or []):
+                cur.execute("""
+                    INSERT INTO article_awards (
+                        article_id, position, name, year, level, category,
+                        project_name, role, entrant, detail_url, url, label
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    article_id,
+                    position,
+                    award.get("name"),
+                    award.get("year"),
+                    award.get("level"),
+                    award.get("category"),
+                    award.get("projectName"),
+                    award.get("role"),
+                    award.get("entrant"),
+                    award.get("detailUrl"),
+                    award.get("url"),
+                    award.get("label"),
+                ))
+
+
+def _pg_article_from_row(conn, row):
+    article_id = row["id"]
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT url FROM article_images WHERE article_id = %s ORDER BY position",
+            (article_id,),
+        )
+        images = [r["url"] for r in cur.fetchall()]
+        cur.execute(
+            "SELECT * FROM article_awards WHERE article_id = %s ORDER BY position",
+            (article_id,),
+        )
+        award_rows = cur.fetchall()
+
+    awards = []
+    for r in award_rows:
+        award = {
+            "name": r["name"],
+            "year": r["year"],
+            "level": r["level"],
+            "category": r["category"],
+            "projectName": r["project_name"],
+            "role": r["role"],
+            "entrant": r["entrant"],
+            "detailUrl": r["detail_url"],
+            "url": r["url"],
+            "label": r["label"],
+        }
+        awards.append({k: v for k, v in award.items() if v is not None})
+
+    article = {
+        "id": article_id,
+        "title": row["title"],
+        "description": row["description"],
+        "category": row["category"],
+        "featured": bool(row["featured"]),
+        "featuredOrder": row["featured_order"],
+        "heroImage": row["hero_image"],
+        "images": images,
+        "linkUrl": row["link_url"],
+        "videoId": row["video_id"],
+        "videoVertical": bool(row["video_vertical"]),
+        "sortOrder": row["sort_order"],
+    }
+    if row["created_at"]:
+        article["createdAt"] = row["created_at"]
+    if row["updated_at"]:
+        article["updatedAt"] = row["updated_at"]
+    if awards:
+        article["awards"] = awards
+    return article
+
+
+def _pg_replace_accounts(conn, accounts):
+    with conn.cursor() as cur:
+        cur.execute("DELETE FROM account_permissions")
+        cur.execute("DELETE FROM accounts")
+        for account in accounts:
+            username = account.get("username")
+            if not username:
+                continue
+            cur.execute("""
+                INSERT INTO accounts (
+                    username, name, role, enabled, salt, password_hash, created_at, updated_at
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                username,
+                account.get("name") or username,
+                account.get("role") or "custom",
+                1 if account.get("enabled", True) else 0,
+                account.get("salt") or "",
+                account.get("passwordHash") or "",
+                account.get("createdAt"),
+                account.get("updatedAt"),
+            ))
+            for permission in account.get("permissions") or []:
+                cur.execute(
+                    "INSERT INTO account_permissions (username, permission) VALUES (%s, %s) ON CONFLICT DO NOTHING",
+                    (username, permission),
+                )
+
+
+def _pg_account_from_row(conn, row):
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT permission FROM account_permissions WHERE username = %s ORDER BY permission",
+            (row["username"],),
+        )
+        permissions = [r["permission"] for r in cur.fetchall()]
+    return {
+        "username": row["username"],
+        "name": row["name"],
+        "role": row["role"],
+        "enabled": bool(row["enabled"]),
+        "permissions": permissions,
+        "salt": row["salt"],
+        "passwordHash": row["password_hash"],
+        "createdAt": row["created_at"],
+        "updatedAt": row["updated_at"],
+    }
+
+
+def _pg_replace_config(conn, cfg):
+    with conn.cursor() as cur:
+        cur.execute("DELETE FROM config")
+        for key, value in (cfg or {}).items():
+            if value is not None:
+                cur.execute(
+                    "INSERT INTO config (key, value) VALUES (%s, %s)",
+                    (str(key), str(value)),
+                )
+
+
+def _export_runtime_data():
+    """Return all runtime data from the currently configured backend."""
+    return {
+        "articles": _load_articles(),
+        "accounts": _load_accounts(),
+        "config": _load_config(),
+    }
+
+
+def _import_runtime_data_to_postgres(database_url, payload):
+    """Replace PostgreSQL runtime tables with *payload*."""
+    global DATABASE_URL
+    previous = DATABASE_URL
+    DATABASE_URL = database_url
+    try:
+        _init_pg_db()
+        with _pg_connect() as conn:
+            _pg_replace_articles(conn, payload.get("articles") or [])
+            _pg_replace_accounts(conn, payload.get("accounts") or [])
+            _pg_replace_config(conn, payload.get("config") or {})
+    finally:
+        DATABASE_URL = previous
+
+
 def _upload_to_r2(data_bytes, r2_key):
     """Upload raw bytes to R2 at the given object key.
 
@@ -432,35 +721,66 @@ def _classify_upload_name(filename, article_id):
 
 def _load_config():
     """Return the legacy admin config dict, or an empty dict on failure."""
+    if _using_postgres():
+        with _pg_connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT key, value FROM config")
+                rows = cur.fetchall()
+        return {r["key"]: r["value"] for r in rows}
+
     with _db_connect() as conn:
         rows = conn.execute("SELECT key, value FROM config").fetchall()
     return {r["key"]: r["value"] for r in rows}
 
 
 def _load_articles():
-    """Return the articles list from SQLite, or an empty list."""
+    """Return the articles list from the configured database, or an empty list."""
+    if _using_postgres():
+        with _pg_connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT * FROM articles ORDER BY row_index, id")
+                rows = cur.fetchall()
+            return [_pg_article_from_row(conn, row) for row in rows]
+
     with _db_connect() as conn:
         rows = conn.execute("SELECT * FROM articles ORDER BY row_index, id").fetchall()
         return [_article_from_row(conn, row) for row in rows]
 
 
 def _save_articles(articles):
-    """Persist the articles list to SQLite atomically."""
+    """Persist the articles list to the configured database atomically."""
     os.makedirs(DATA_DIR, exist_ok=True)
+    if _using_postgres():
+        with _pg_connect() as conn:
+            _pg_replace_articles(conn, articles)
+        return
+
     with _db_connect() as conn:
         _replace_articles(conn, articles)
 
 
 def _load_accounts():
-    """Return the accounts list from SQLite, or [] if missing."""
+    """Return the accounts list from the configured database, or [] if missing."""
+    if _using_postgres():
+        with _pg_connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT * FROM accounts ORDER BY username")
+                rows = cur.fetchall()
+            return [_pg_account_from_row(conn, row) for row in rows]
+
     with _db_connect() as conn:
         rows = conn.execute("SELECT * FROM accounts ORDER BY username").fetchall()
         return [_account_from_row(conn, row) for row in rows]
 
 
 def _save_accounts(accounts):
-    """Persist the accounts list to SQLite atomically."""
+    """Persist the accounts list to the configured database atomically."""
     os.makedirs(DATA_DIR, exist_ok=True)
+    if _using_postgres():
+        with _pg_connect() as conn:
+            _pg_replace_accounts(conn, accounts)
+        return
+
     with _db_connect() as conn:
         _replace_accounts(conn, accounts)
 
@@ -1398,6 +1718,11 @@ def main():
     parser = argparse.ArgumentParser(description="Murayama Good Job Site Server")
     parser.add_argument("--port", type=int, default=10814, help="Port to listen on (default: 10814)")
     parser.add_argument("--bind", default="127.0.0.1", help="Address to bind to (default: 127.0.0.1)")
+    parser.add_argument(
+        "--migrate-runtime-to-postgres",
+        metavar="DATABASE_URL",
+        help="one-time migration: copy the current runtime backend into PostgreSQL and exit",
+    )
     args = parser.parse_args()
 
     # Ensure we serve files from the script's directory
@@ -1405,6 +1730,18 @@ def main():
 
     # Ensure data directory exists
     os.makedirs(DATA_DIR, exist_ok=True)
+
+    if args.migrate_runtime_to_postgres:
+        _init_db()
+        payload = _export_runtime_data()
+        _import_runtime_data_to_postgres(args.migrate_runtime_to_postgres, payload)
+        print(
+            "[migrate] copied runtime data to PostgreSQL: "
+            f"{len(payload['articles'])} article(s), "
+            f"{len(payload['accounts'])} account(s), "
+            f"{len(payload['config'])} config value(s)"
+        )
+        return
 
     _init_db()
 
@@ -1425,7 +1762,9 @@ def main():
     print(f"Murayama server running on http://{args.bind}:{args.port}/")
     print(f"  Static root : {BASE_DIR}")
     print(f"  Data dir    : {DATA_DIR}")
-    print(f"  SQLite DB   : {DB_PATH}")
+    print(f"  DB backend  : {'PostgreSQL' if _using_postgres() else 'SQLite'}")
+    if not _using_postgres():
+        print(f"  SQLite DB   : {DB_PATH}")
     print(f"  Press Ctrl+C to stop.\n")
 
     try:
