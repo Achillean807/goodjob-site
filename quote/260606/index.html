@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>山院先生的晚宴 — 古裝風派對佈置提案｜村山良作 MURAYAMA GOODJOB</title>
+<meta name="description" content="村山良作商業佈置 — 山院先生的晚宴・古裝風派對佈置提案報價書">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=LXGW+WenKai+TC:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════════════════
+   IMPERIAL SCROLL — 山院先生的晚宴 Proposal
+   Aesthetic: Song Dynasty scholar's study meets
+   contemporary luxury editorial
+   ════════════════════════════════════════════════════ */
+
+:root {
+  /* Ink & Paper */
+  --ink:          #1a1a18;
+  --ink-soft:     #3a3a35;
+  --ink-faint:    #6b6b63;
+  --paper:        #f0ead6;
+  --paper-light:  #f7f3e8;
+  --paper-dark:   #e4dcc5;
+  --rice:         #faf6ee;
+
+  /* Jade & Gold */
+  --jade:         #1a2f23;
+  --jade-mid:     #2d5a3d;
+  --jade-light:   #3d7a52;
+  --jade-glow:    rgba(61,122,82,0.12);
+  --gold:         #c4a35a;
+  --gold-light:   #d9c07a;
+  --gold-dark:    #a08840;
+  --gold-glow:    rgba(196,163,90,0.15);
+
+  /* Functional */
+  --radius:       8px;
+  --radius-lg:    16px;
+  --shadow-soft:  0 2px 20px rgba(26,26,24,0.06);
+  --shadow-md:    0 8px 40px rgba(26,26,24,0.08);
+  --shadow-heavy: 0 16px 60px rgba(26,26,24,0.12);
+  --transition:   0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'LXGW WenKai TC', 'Noto Serif TC', serif;
+  background: var(--rice);
+  color: var(--ink);
+  line-height: 1.9;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ─── Rice Paper Texture (CSS-generated) ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ─── Scroll-reveal Animation ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+.reveal-delay-6 { transition-delay: 0.6s; }
+.reveal-delay-7 { transition-delay: 0.7s; }
+.reveal-delay-8 { transition-delay: 0.8s; }
+
+/* ─── Utility ─── */
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ════════════════════════════════════════
+   HERO — Full-viewport scroll entrance
+   ════════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 2rem;
+  background: var(--jade);
+  overflow: hidden;
+}
+
+/* Layered atmospheric gradients */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 25% 40%, rgba(61,122,82,0.4) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 75% 30%, rgba(196,163,90,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 80% at 50% 100%, rgba(0,0,0,0.3) 0%, transparent 50%),
+    linear-gradient(175deg, #152a1c 0%, #1a2f23 35%, #0f1f16 70%, #0a1610 100%);
+  z-index: 0;
+}
+
+/* Subtle mountain silhouette */
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background:
+    linear-gradient(135deg, transparent 33%, rgba(196,163,90,0.03) 33%, rgba(196,163,90,0.03) 66%, transparent 66%),
+    linear-gradient(to top, rgba(0,0,0,0.2) 0%, transparent 100%);
+  z-index: 0;
+}
+
+/* SVG animation layers */
+.hero-clouds, .hero-particles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero-particles { z-index: 1; }
+
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+}
+
+.hero-logo {
+  width: 110px;
+  margin: 0 auto 2rem;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  animation: heroFadeIn 1.2s ease both;
+}
+
+.hero-overline {
+  font-family: 'LXGW WenKai TC', serif;
+  font-weight: 300;
+  font-size: 0.82rem;
+  letter-spacing: 0.5em;
+  color: var(--gold-light);
+  margin-bottom: 1.2rem;
+  opacity: 0;
+  animation: heroFadeIn 1s 0.3s ease both;
+}
+
+.hero-title {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 900;
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.06em;
+  text-shadow: 0 4px 30px rgba(0,0,0,0.25);
+  opacity: 0;
+  animation: heroSlideUp 1.2s 0.5s ease both;
+}
+
+/* 「山院」特別設計 — 金色書法大字 */
+.hero-title .shan-yuan {
+  display: block;
+  font-size: clamp(4.5rem, 12vw, 8rem);
+  color: var(--gold-light);
+  letter-spacing: 0.2em;
+  line-height: 1.1;
+  margin-bottom: 0.2rem;
+  text-shadow:
+    0 2px 20px rgba(196,163,90,0.3),
+    0 8px 40px rgba(0,0,0,0.2);
+  background: linear-gradient(180deg, #e8d494 0%, #c4a35a 40%, #a08840 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 4px 15px rgba(196,163,90,0.25));
+}
+
+.hero-subtitle {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 400;
+  font-size: clamp(0.95rem, 2.2vw, 1.25rem);
+  color: var(--gold-light);
+  letter-spacing: 0.15em;
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: heroFadeIn 1s 0.8s ease both;
+}
+
+/* Gold ornamental line */
+.hero-ornament {
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto 2.5rem;
+  opacity: 0;
+  animation: heroFadeIn 1s 0.7s ease both;
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  opacity: 0;
+  animation: heroFadeIn 1s 1s ease both;
+}
+
+.hero-meta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.hero-meta-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+}
+
+.hero-meta-value {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 500;
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.05em;
+}
+
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255,255,255,0.25);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  animation: heroScrollFloat 2.5s ease-in-out infinite;
+}
+
+.hero-scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, rgba(196,163,90,0.4), transparent);
+}
+
+@keyframes heroFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes heroSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes heroScrollFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-10px); }
+}
+
+/* ════════════════════════════════════════
+   CLOUD DIVIDER — Section separator
+   ════════════════════════════════════════ */
+.cloud-divider {
+  height: 80px;
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+}
+.cloud-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.cloud-divider .cloud-char {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.2rem;
+  color: var(--gold);
+  background: var(--paper);
+  padding: 0 1.5rem;
+  letter-spacing: 0.5em;
+  opacity: 0.5;
+}
+
+.cloud-divider.dark {
+  background: var(--jade);
+}
+.cloud-divider.dark::before {
+  background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+}
+.cloud-divider.dark .cloud-char {
+  background: var(--jade);
+  color: var(--gold-light);
+}
+
+.cloud-divider.cream {
+  background: var(--paper-dark);
+}
+.cloud-divider.cream::before {
+  background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+}
+.cloud-divider.cream .cloud-char {
+  background: var(--paper-dark);
+}
+
+/* ════════════════════════════════════════
+   SECTION — Common Patterns
+   ════════════════════════════════════════ */
+.section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.section-overline {
+  font-family: 'LXGW WenKai TC', serif;
+  font-weight: 300;
+  font-size: 0.72rem;
+  letter-spacing: 0.45em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+}
+
+.section-title {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  color: var(--ink);
+  letter-spacing: 0.04em;
+  margin-bottom: 1rem;
+}
+
+.section-desc {
+  font-family: 'LXGW WenKai TC', serif;
+  font-weight: 300;
+  color: var(--ink-faint);
+  max-width: 560px;
+  margin: 0 auto;
+  font-size: 0.95rem;
+  line-height: 2;
+}
+
+/* ════════════════════════════════════════
+   EVENT INFO — Calligraphic card grid
+   ════════════════════════════════════════ */
+.info-section {
+  background: var(--paper);
+  padding: 6rem 0;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+}
+
+.info-card {
+  background: var(--rice);
+  border: 1px solid rgba(196,163,90,0.15);
+  border-radius: var(--radius);
+  padding: 1.8rem 1.5rem;
+  text-align: center;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.info-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 2px;
+  background: var(--gold);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.info-card:hover::before {
+  opacity: 1;
+}
+
+.info-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(196,163,90,0.3);
+}
+
+.info-label {
+  font-family: 'LXGW WenKai TC', serif;
+  font-weight: 300;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+}
+
+.info-value {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+/* ════════════════════════════════════════
+   PLAN CARDS — Asymmetric scroll layout
+   ════════════════════════════════════════ */
+.plans-section {
+  background: var(--paper-light);
+  padding: 6rem 0;
+}
+
+.plan-card {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  background: var(--rice);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 3rem;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(196,163,90,0.08);
+  transition: var(--transition);
+}
+
+.plan-card:hover {
+  box-shadow: var(--shadow-heavy);
+  transform: translateY(-4px);
+}
+
+.plan-card.reverse {
+  direction: rtl;
+}
+.plan-card.reverse > * {
+  direction: ltr;
+}
+
+.plan-card.featured {
+  border: 1.5px solid var(--gold);
+  box-shadow: var(--shadow-md), 0 0 0 1px var(--gold-glow);
+}
+
+/* Image side */
+.plan-image-wrap {
+  position: relative;
+  min-height: 300px;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-dark);
+}
+
+.plan-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--paper-dark);
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.plan-card:hover .plan-image-wrap img {
+  transform: scale(1.04);
+}
+
+.plan-image-wrap .zoom-hint {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.plan-card:hover .zoom-hint {
+  opacity: 1;
+}
+
+/* Featured badge — jade seal stamp style */
+.plan-seal {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.2rem;
+  width: 60px;
+  height: 60px;
+  border: 2px solid rgba(196,163,90,0.7);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 900;
+  font-size: 0.72rem;
+  color: var(--gold);
+  background: rgba(26,47,35,0.85);
+  backdrop-filter: blur(6px);
+  transform: rotate(-3deg);
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  text-align: center;
+  z-index: 2;
+}
+
+/* Content side */
+.plan-body {
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.plan-name {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: var(--ink);
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.03em;
+}
+
+.plan-name-en {
+  font-family: 'LXGW WenKai TC', serif;
+  font-weight: 300;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.plan-desc {
+  font-family: 'LXGW WenKai TC', serif;
+  font-weight: 400;
+  color: var(--ink-faint);
+  font-size: 0.92rem;
+  margin-bottom: 2rem;
+  line-height: 1.9;
+}
+
+/* Price lockup */
+.plan-price-block {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--jade-glow), var(--gold-glow));
+  border-radius: var(--radius);
+  border-left: 3px solid var(--gold);
+}
+
+.plan-price-original {
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+  text-decoration: line-through;
+  margin-bottom: 0.2rem;
+}
+
+.plan-price-final {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 900;
+  font-size: 2.2rem;
+  color: var(--jade-mid);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.plan-price-note {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  margin-top: 0.3rem;
+  letter-spacing: 0.03em;
+}
+
+/* Included items */
+.plan-items {
+  list-style: none;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+
+.plan-items li {
+  padding: 0.35rem 0;
+  padding-left: 1.4rem;
+  position: relative;
+  font-family: 'LXGW WenKai TC', serif;
+}
+
+.plan-items li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.75rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0.6;
+}
+
+/* ════════════════════════════════════════
+   REFERENCE GALLERY — Broken grid masonry
+   ════════════════════════════════════════ */
+.gallery-section {
+  background: var(--paper-dark);
+  padding: 6rem 0;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+}
+
+.gallery-item {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 3/4;
+  box-shadow: var(--shadow-soft);
+  transition: var(--transition);
+}
+
+.gallery-item:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--shadow-heavy);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.06);
+}
+
+.gallery-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(26,47,35,0.3) 0%, transparent 50%);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.gallery-item:hover::after {
+  opacity: 1;
+}
+
+/* ════════════════════════════════════════
+   PRICING SUMMARY — Dark jade section
+   ════════════════════════════════════════ */
+.summary-section {
+  background: var(--jade);
+  padding: 6rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle pattern overlay */
+.summary-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(61,122,82,0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(196,163,90,0.08) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+.summary-section .section-overline {
+  color: var(--gold-light);
+}
+.summary-section .section-title {
+  color: #fff;
+}
+.summary-section .section-desc {
+  color: rgba(255,255,255,0.5);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.summary-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  backdrop-filter: blur(4px);
+}
+
+.summary-card-title {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--gold-light);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.04em;
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.summary-table tr {
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.summary-table tr:last-child {
+  border-bottom: none;
+}
+
+.summary-table td {
+  padding: 0.85rem 0;
+  font-family: 'LXGW WenKai TC', serif;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+}
+
+.summary-table td:last-child {
+  text-align: right;
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.summary-table tr.total td {
+  padding-top: 1.2rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  font-size: 1.2rem;
+  border-top: 1px solid rgba(196,163,90,0.3);
+}
+
+/* Jade seal stamp on summary */
+.summary-stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border: 2.5px solid var(--gold);
+  border-radius: 8px;
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 900;
+  font-size: 1rem;
+  color: var(--gold);
+  transform: rotate(-8deg);
+  margin-top: 1rem;
+  line-height: 1.2;
+  text-align: center;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+/* Notes */
+.summary-notes {
+  position: relative;
+  z-index: 1;
+  margin-top: 3rem;
+  padding: 2rem;
+  background: rgba(0,0,0,0.15);
+  border-radius: var(--radius);
+  border-left: 3px solid rgba(196,163,90,0.3);
+}
+
+.summary-notes ul {
+  list-style: none;
+  columns: 2;
+  column-gap: 3rem;
+}
+
+.summary-notes li {
+  font-family: 'LXGW WenKai TC', serif;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+  padding: 0.2rem 0;
+  break-inside: avoid;
+  line-height: 1.9;
+}
+
+.summary-notes li::before {
+  content: '※ ';
+  color: rgba(196,163,90,0.5);
+}
+
+/* ════════════════════════════════════════
+   FOOTER — Minimal ink wash
+   ════════════════════════════════════════ */
+.footer {
+  background: #0d1610;
+  text-align: center;
+  padding: 3.5rem 2rem;
+}
+
+.footer-logo {
+  width: 50px;
+  margin: 0 auto 1.5rem;
+  display: block;
+  opacity: 0.6;
+}
+
+.footer-brand {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.4rem;
+}
+
+.footer-tagline {
+  font-family: 'LXGW WenKai TC', serif;
+  font-weight: 300;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.15em;
+  margin-bottom: 1rem;
+}
+
+.footer a {
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.3s;
+}
+.footer a:hover {
+  color: var(--gold-light);
+}
+
+.footer-disclaimer {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.2);
+  margin-top: 1.5rem;
+  letter-spacing: 0.03em;
+}
+
+/* ════════════════════════════════════════
+   LIGHTBOX — Immersive image viewer
+   ════════════════════════════════════════ */
+.lightbox-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(10, 16, 12, 0.95);
+  backdrop-filter: blur(20px);
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  padding: 2rem;
+  animation: lbFadeIn 0.3s ease;
+}
+
+.lightbox-overlay.active {
+  display: flex;
+}
+
+.lightbox-overlay img {
+  max-width: 92vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: var(--radius);
+  box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.6);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+
+.lightbox-close:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+@keyframes lbFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .plan-card,
+  .plan-card.reverse {
+    grid-template-columns: 1fr;
+    direction: ltr;
+  }
+  .plan-image-wrap {
+    min-height: 280px;
+  }
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+  .summary-notes ul {
+    columns: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+  .info-card {
+    padding: 1.2rem;
+  }
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+  .plan-body {
+    padding: 2rem 1.5rem;
+  }
+  .hero-meta {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .container {
+    padding: 0 1.2rem;
+  }
+}
+
+/* ─── Print ─── */
+@media print {
+  .hero { min-height: auto; padding: 3rem 2rem; break-after: page; }
+  .plan-card:hover, .gallery-item:hover { transform: none; }
+  .lightbox-overlay { display: none !important; }
+  .hero-scroll-hint { display: none; }
+  body::before { display: none; }
+  .reveal { opacity: 1; transform: none; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════ -->
+<section class="hero">
+
+  <!-- ── SVG 祥雲飄動 ── -->
+  <svg class="hero-clouds" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="cloudGold" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#c4a35a" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#c4a35a" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="#c4a35a" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="cloudWhite" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#fff" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#fff" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+
+    <!-- 祥雲 1 — 大，金色，慢速右飄 -->
+    <g fill="url(#cloudGold)" stroke="rgba(196,163,90,0.3)" stroke-width="0.5">
+      <path d="M-200,180 Q-140,110 -60,150 Q0,80 80,130 Q140,60 220,110 Q280,50 360,100 Q400,130 360,170 Q320,210 260,195 Q200,220 140,195 Q80,220 20,195 Q-40,220 -100,195 Q-160,220 -200,195 Z">
+        <animateTransform attributeName="transform" type="translate" values="-300,0;1700,0" dur="35s" repeatCount="indefinite"/>
+      </path>
+    </g>
+
+    <!-- 祥雲 2 — 中，白色，反向飄 -->
+    <g fill="url(#cloudWhite)" stroke="rgba(255,255,255,0.08)" stroke-width="0.5">
+      <path d="M-150,380 Q-100,330 -30,360 Q20,310 90,345 Q140,300 200,340 Q230,365 200,385 Q160,410 110,395 Q60,415 10,395 Q-40,415 -90,395 Q-130,415 -150,400 Z">
+        <animateTransform attributeName="transform" type="translate" values="1800,0;-400,0" dur="42s" repeatCount="indefinite"/>
+      </path>
+    </g>
+
+    <!-- 祥雲 3 — 小，金色，慢 -->
+    <g fill="url(#cloudGold)" opacity="0.6">
+      <path d="M-80,560 Q-40,530 10,545 Q50,515 100,540 Q130,555 100,575 Q70,595 30,580 Q-10,595 -50,580 Q-80,590 -80,570 Z">
+        <animateTransform attributeName="transform" type="translate" values="-200,0;1600,0" dur="50s" repeatCount="indefinite"/>
+      </path>
+    </g>
+
+    <!-- 竹葉 1 — 大片，明顯綠色 -->
+    <g fill="rgba(61,122,82,0.5)">
+      <path d="M0,0 Q12,-25 4,-50 Q-4,-25 0,0 Z">
+        <animateTransform attributeName="transform" type="translate" values="350,-60;280,960" dur="16s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="rotate" values="0,0,0;360,0,0" dur="10s" repeatCount="indefinite" additive="sum"/>
+      </path>
+    </g>
+
+    <!-- 竹葉 2 -->
+    <g fill="rgba(61,122,82,0.4)">
+      <path d="M0,0 Q10,-20 3,-42 Q-4,-20 0,0 Z">
+        <animateTransform attributeName="transform" type="translate" values="850,-40;770,960" dur="20s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="rotate" values="30,0,0;390,0,0" dur="13s" repeatCount="indefinite" additive="sum"/>
+      </path>
+    </g>
+
+    <!-- 竹葉 3 — 金色葉 -->
+    <g fill="rgba(196,163,90,0.35)">
+      <path d="M0,0 Q8,-18 2,-38 Q-4,-18 0,0 Z">
+        <animateTransform attributeName="transform" type="translate" values="1150,-80;1050,960" dur="24s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="rotate" values="60,0,0;420,0,0" dur="16s" repeatCount="indefinite" additive="sum"/>
+      </path>
+    </g>
+
+    <!-- 竹葉 4 -->
+    <g fill="rgba(61,122,82,0.35)">
+      <path d="M0,0 Q9,-16 3,-35 Q-3,-16 0,0 Z">
+        <animateTransform attributeName="transform" type="translate" values="550,-100;500,960" dur="22s" begin="5s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="rotate" values="15,0,0;375,0,0" dur="14s" repeatCount="indefinite" additive="sum"/>
+      </path>
+    </g>
+
+    <!-- 遠山 — 層次山影呼吸動畫 -->
+    <path fill="rgba(10,22,16,0.35)">
+      <animate attributeName="d"
+        values="M0,780 Q100,700 240,730 Q380,660 500,710 Q620,650 740,700 Q860,640 980,690 Q1100,650 1220,700 Q1340,670 1440,710 L1440,900 L0,900 Z;
+                M0,770 Q100,710 240,725 Q380,670 500,705 Q620,660 740,705 Q860,650 980,695 Q1100,660 1220,705 Q1340,680 1440,715 L1440,900 L0,900 Z;
+                M0,780 Q100,700 240,730 Q380,660 500,710 Q620,650 740,700 Q860,640 980,690 Q1100,650 1220,700 Q1340,670 1440,710 L1440,900 L0,900 Z"
+        dur="7s" repeatCount="indefinite"/>
+    </path>
+    <path fill="rgba(10,22,16,0.2)">
+      <animate attributeName="d"
+        values="M0,820 Q180,770 360,800 Q540,760 720,790 Q900,755 1080,785 Q1260,760 1440,780 L1440,900 L0,900 Z;
+                M0,815 Q180,780 360,795 Q540,770 720,785 Q900,765 1080,780 Q1260,770 1440,785 L1440,900 L0,900 Z;
+                M0,820 Q180,770 360,800 Q540,760 720,790 Q900,755 1080,785 Q1260,760 1440,780 L1440,900 L0,900 Z"
+        dur="9s" repeatCount="indefinite"/>
+    </path>
+  </svg>
+
+  <!-- ── SVG 金色螢火粒子 ── -->
+  <svg class="hero-particles" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="glow">
+        <stop offset="0%" stop-color="#c4a35a" stop-opacity="0.8"/>
+        <stop offset="100%" stop-color="#c4a35a" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    <!-- 大粒子 -->
+    <circle cx="250" cy="280" r="4" fill="url(#glow)">
+      <animate attributeName="opacity" values="0;1;0" dur="4s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="280;250;280" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="700" cy="180" r="3.5" fill="url(#glow)">
+      <animate attributeName="opacity" values="0;0.8;0" dur="5s" begin="1.2s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="180;155;180" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="1100" cy="320" r="5" fill="url(#glow)">
+      <animate attributeName="opacity" values="0;0.7;0" dur="6s" begin="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="320;290;320" dur="8s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- 中粒子 -->
+    <circle cx="420" cy="450" r="3" fill="url(#glow)">
+      <animate attributeName="opacity" values="0;0.9;0" dur="3.5s" begin="0.5s" repeatCount="indefinite"/>
+      <animate attributeName="cx" values="420;430;420" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="950" cy="500" r="3" fill="url(#glow)">
+      <animate attributeName="opacity" values="0;0.6;0" dur="4.5s" begin="3s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="500;475;500" dur="7s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- 小粒子群 -->
+    <circle cx="150" cy="600" r="2" fill="url(#glow)">
+      <animate attributeName="opacity" values="0;0.7;0" dur="3s" begin="1s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="1300" cy="200" r="2.5" fill="url(#glow)">
+      <animate attributeName="opacity" values="0;0.8;0" dur="5.5s" begin="0.8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="550" cy="650" r="2" fill="url(#glow)">
+      <animate attributeName="opacity" values="0;0.5;0" dur="4s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="850" cy="120" r="2.5" fill="url(#glow)">
+      <animate attributeName="opacity" values="0;0.6;0" dur="6s" begin="1.5s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="120;100;120" dur="9s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="1200" cy="550" r="3" fill="url(#glow)">
+      <animate attributeName="opacity" values="0;0.7;0" dur="4s" begin="3.5s" repeatCount="indefinite"/>
+    </circle>
+  </svg>
+
+  <div class="hero-inner">
+    <p class="hero-overline">Proposal &amp; Quotation</p>
+    <h1 class="hero-title"><span class="shan-yuan">山院</span>先生的晚宴</h1>
+    <div class="hero-ornament"></div>
+    <p class="hero-subtitle">古裝風派對 ── 佈置提案報價書</p>
+
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Date</span>
+        <span class="hero-meta-value">2026. 06. 06（六）晚間</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Venue</span>
+        <span class="hero-meta-value">新竹國賓大飯店 Ballroom A</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Event</span>
+        <span class="hero-meta-value">24 級畢業生 謝師宴</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll-hint">
+    <div class="hero-scroll-line"></div>
+    SCROLL
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+     CLOUD DIVIDER
+     ═══════════════════════════════════════ -->
+<div class="cloud-divider">
+  <span class="cloud-char">壹</span>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     EVENT INFORMATION
+     ═══════════════════════════════════════ -->
+<section class="info-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-overline">Event Information</p>
+      <h2 class="section-title">活動資訊</h2>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card reveal reveal-delay-1">
+        <div class="info-label">活動主題</div>
+        <div class="info-value">山院先生的晚宴</div>
+      </div>
+      <div class="info-card reveal reveal-delay-2">
+        <div class="info-label">活動性質</div>
+        <div class="info-value">24 級畢業謝師宴</div>
+      </div>
+      <div class="info-card reveal reveal-delay-3">
+        <div class="info-label">風格定調</div>
+        <div class="info-value">古裝風派對<br><small style="font-size:0.78rem;color:var(--ink-faint)">（自行購買古裝）</small></div>
+      </div>
+      <div class="info-card reveal reveal-delay-4">
+        <div class="info-label">籌辦單位</div>
+        <div class="info-value">24 級畢業生</div>
+      </div>
+      <div class="info-card reveal reveal-delay-5">
+        <div class="info-label">日期時間</div>
+        <div class="info-value">2026 / 06 / 06（六）<br>晚間</div>
+      </div>
+      <div class="info-card reveal reveal-delay-6">
+        <div class="info-label">地點</div>
+        <div class="info-value">新竹國賓大飯店<br>Ballroom A</div>
+      </div>
+      <div class="info-card reveal reveal-delay-7">
+        <div class="info-label">提案方</div>
+        <div class="info-value">村山良作<br>商業佈置</div>
+      </div>
+      <div class="info-card reveal reveal-delay-8">
+        <div class="info-label">委託方</div>
+        <div class="info-value">霸北整合<br>創意公司</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<div class="cloud-divider">
+  <span class="cloud-char">貳</span>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     DESIGN PLANS
+     ═══════════════════════════════════════ -->
+<section class="plans-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-overline">Design Options</p>
+      <h2 class="section-title">佈置方案</h2>
+      <p class="section-desc">以下四款設計皆以古裝風為主軸，融合東方美學元素，<br>營造沉浸式謝師宴氛圍。色系與細節可依需求微調。</p>
+    </div>
+
+    <!-- ── Plan A ── -->
+    <div class="plan-card featured reveal">
+      <div class="plan-image-wrap" onclick="openLightbox('images/plan-a.jpg')">
+        <div class="plan-seal">推薦<br>方案</div>
+        <img src="images/plan-a.jpg" alt="方案 A — 墨山幽境">
+        <span class="zoom-hint">⌕</span>
+      </div>
+      <div class="plan-body">
+        <h3 class="plan-name">方案 A ── 墨山幽境</h3>
+        <p class="plan-name-en">Ink Mountain Sanctuary</p>
+        <p class="plan-desc">深綠水墨山水屏風背景、金色花藝、古典燈飾，營造文人雅集的東方意境。最貼合「山院先生的晚宴」主題氛圍。</p>
+        <div class="plan-price-block">
+          <p class="plan-price-original">原價 NT$60,000</p>
+          <p class="plan-price-final">NT$47,250</p>
+          <p class="plan-price-note">廠商優惠 7 折 ＋ 新竹車馬費 ＋ 最終價格加收 5% 服務費</p>
+        </div>
+        <ul class="plan-items">
+          <li>主背板含多層屏風設計</li>
+          <li>花藝佈置（白蘭花、黃花、草葉）</li>
+          <li>古典燈飾與竹編裝飾</li>
+          <li>地面造景（鋪草、石材擺件）</li>
+          <li>含搭設與撤場</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Plan B ── -->
+    <div class="plan-card reverse reveal">
+      <div class="plan-image-wrap" onclick="openLightbox('images/plan-b.jpg')">
+        <img src="images/plan-b.jpg" alt="方案 B — 青雲氣球">
+        <span class="zoom-hint">⌕</span>
+      </div>
+      <div class="plan-body">
+        <h3 class="plan-name">方案 B ── 青雲氣球</h3>
+        <p class="plan-name-en">Jade Cloud Balloons · Green</p>
+        <p class="plan-desc">中式窗花背板搭配綠白粉氣球柱（總寬約 6 米），柔美山水畫卷輔佐，以宋代絲竹之韻融入氣球造型，古典雅致中帶有節慶氣氛。</p>
+        <div class="plan-price-block">
+          <p class="plan-price-original">原價 NT$63,000</p>
+          <p class="plan-price-final">NT$49,455</p>
+          <p class="plan-price-note">廠商優惠 7 折 ＋ 新竹車馬費 ＋ 最終價格加收 5% 服務費</p>
+        </div>
+        <ul class="plan-items">
+          <li>主背板含中式窗花造型</li>
+          <li>雙側大型氣球柱（總寬約 6 米）</li>
+          <li>鮮花花藝裝飾</li>
+          <li>竹葉植栽點綴</li>
+          <li>含搭設與撤場</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Plan C ── -->
+    <div class="plan-card reveal">
+      <div class="plan-image-wrap" onclick="openLightbox('images/plan-c.jpg')">
+        <img src="images/plan-c.jpg" alt="方案 C — 暖陽氣球">
+        <span class="zoom-hint">⌕</span>
+      </div>
+      <div class="plan-body">
+        <h3 class="plan-name">方案 C ── 暖陽氣球</h3>
+        <p class="plan-name-en">Warm Sun Balloons · Orange</p>
+        <p class="plan-desc">同款中式窗花設計，改以暖橘白色氣球營造溫暖雅致的宴席氛圍，花藝搭配橘白色系，如秋日絲竹般溫潤典雅。</p>
+        <div class="plan-price-block">
+          <p class="plan-price-original">原價 NT$63,000</p>
+          <p class="plan-price-final">NT$49,455</p>
+          <p class="plan-price-note">廠商優惠 7 折 ＋ 新竹車馬費 ＋ 最終價格加收 5% 服務費</p>
+        </div>
+        <ul class="plan-items">
+          <li>主背板含中式窗花造型</li>
+          <li>雙側大型氣球柱（暖橘配色）</li>
+          <li>鮮花花藝裝飾</li>
+          <li>山石造景點綴</li>
+          <li>含搭設與撤場</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Plan D ── -->
+    <div class="plan-card reverse reveal">
+      <div class="plan-image-wrap" onclick="openLightbox('images/plan-d.jpg')">
+        <img src="images/plan-d.jpg" alt="方案 D — 翠竹庭院">
+        <span class="zoom-hint">⌕</span>
+      </div>
+      <div class="plan-body">
+        <h3 class="plan-name">方案 D ── 翠竹庭院</h3>
+        <p class="plan-name-en">Bamboo Garden Pavilion</p>
+        <p class="plan-desc">以竹簾、枝幹、蘭花構成庭院意境，搭配魚缸、古典燈籠等陳設，沉浸感最強，彷彿置身古代書院。</p>
+        <div class="plan-price-block">
+          <p class="plan-price-original">原價 NT$68,000</p>
+          <p class="plan-price-final">NT$53,130</p>
+          <p class="plan-price-note">廠商優惠 7 折 ＋ 新竹車馬費 ＋ 最終價格加收 5% 服務費</p>
+        </div>
+        <ul class="plan-items">
+          <li>主背板含山水畫卷與竹簾</li>
+          <li>大型花藝與枝幹造型</li>
+          <li>古典燈籠、書卷裝飾</li>
+          <li>魚缸造景（無活體魚）、石材等氛圍陳設</li>
+          <li>含搭設與撤場</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<div class="cloud-divider cream">
+  <span class="cloud-char">參</span>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     REFERENCE GALLERY
+     ═══════════════════════════════════════ -->
+<section class="gallery-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-overline">Style References</p>
+      <h2 class="section-title">可換布景參考</h2>
+      <p class="section-desc">以下為古裝風格延伸參考，可依現場空間與氛圍需求替換布景元素。<br><strong style="color:var(--gold);">＊ 可換布景價格另外報價</strong></p>
+    </div>
+
+    <div class="gallery-grid">
+      <div class="gallery-item reveal reveal-delay-1" onclick="openLightbox('images/003.jpg')">
+        <img src="images/003.jpg" alt="東方秘境佈置參考">
+      </div>
+      <div class="gallery-item reveal reveal-delay-2" onclick="openLightbox('images/004.jpg')">
+        <img src="images/004.jpg" alt="平安喜樂佈置參考">
+      </div>
+      <div class="gallery-item reveal reveal-delay-3" onclick="openLightbox('images/005.jpg')">
+        <img src="images/005.jpg" alt="山水畫卷佈置參考">
+      </div>
+      <div class="gallery-item reveal reveal-delay-4" onclick="openLightbox('images/006.jpg')">
+        <img src="images/006.jpg" alt="青綠山水佈置參考">
+      </div>
+      <div class="gallery-item reveal reveal-delay-5" onclick="openLightbox('images/007.jpg')">
+        <img src="images/007.jpg" alt="東方秘境綠色佈置參考">
+      </div>
+      <div class="gallery-item reveal reveal-delay-6" onclick="openLightbox('images/009.jpg')">
+        <img src="images/009.jpg" alt="蘭花畫卷佈置參考">
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<div class="cloud-divider dark">
+  <span class="cloud-char">肆</span>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     PRICING SUMMARY
+     ═══════════════════════════════════════ -->
+<section class="summary-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-overline">Pricing Summary</p>
+      <h2 class="section-title">報價明細</h2>
+    </div>
+
+    <div class="summary-grid" style="grid-template-columns: repeat(3, 1fr);">
+      <!-- A -->
+      <div class="summary-card reveal">
+        <h3 class="summary-card-title">方案 A</h3>
+        <table class="summary-table">
+          <tr><td>佈置設計（原價）</td><td>NT$60,000</td></tr>
+          <tr><td>廠商優惠 7 折</td><td>NT$42,000</td></tr>
+          <tr><td>新竹地區車馬費</td><td>+NT$3,000</td></tr>
+          <tr><td>小計</td><td>NT$45,000</td></tr>
+          <tr><td>晚宴服務費 5%</td><td>+NT$2,250</td></tr>
+          <tr class="total"><td>報價總計</td><td>NT$47,250</td></tr>
+        </table>
+      </div>
+
+      <!-- B/C -->
+      <div class="summary-card reveal reveal-delay-2">
+        <h3 class="summary-card-title">方案 B / C</h3>
+        <table class="summary-table">
+          <tr><td>佈置設計（原價）</td><td>NT$63,000</td></tr>
+          <tr><td>廠商優惠 7 折</td><td>NT$44,100</td></tr>
+          <tr><td>新竹地區車馬費</td><td>+NT$3,000</td></tr>
+          <tr><td>小計</td><td>NT$47,100</td></tr>
+          <tr><td>晚宴服務費 5%</td><td>+NT$2,355</td></tr>
+          <tr class="total"><td>報價總計</td><td>NT$49,455</td></tr>
+        </table>
+      </div>
+
+      <!-- D -->
+      <div class="summary-card reveal reveal-delay-4">
+        <h3 class="summary-card-title">方案 D</h3>
+        <table class="summary-table">
+          <tr><td>佈置設計（原價）</td><td>NT$68,000</td></tr>
+          <tr><td>廠商優惠 7 折</td><td>NT$47,600</td></tr>
+          <tr><td>新竹地區車馬費</td><td>+NT$3,000</td></tr>
+          <tr><td>小計</td><td>NT$50,600</td></tr>
+          <tr><td>晚宴服務費 5%</td><td>+NT$2,530</td></tr>
+          <tr class="total"><td>報價總計</td><td>NT$53,130</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="summary-notes reveal">
+      <ul>
+        <li>以上報價皆含稅、搭設與撤場費用</li>
+        <li style="color:var(--gold-light);font-weight:700;">廠商優惠價為原價之 7 折</li>
+        <li>晚宴服務費依本公司規定，於最終價格加收 5%</li>
+        <li>新竹地區車馬費 NT$3,000（含來回運輸）</li>
+        <li>布景色系與細節可依需求微調，歡迎討論</li>
+        <li>本報價有效期限：收到報價後一週內</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════ -->
+<footer class="footer">
+  <img src="https://goodjob.weddingwishlove.com/assets/murayama-logo-white.png"
+       alt="村山良作 MURAYAMA GOODJOB" class="footer-logo">
+  <p class="footer-brand">村山良作商業佈置 MURAYAMA GOODJOB</p>
+  <p class="footer-tagline">品牌活動 ・ 主題場景 ・ 展場空間</p>
+  <p><a href="https://goodjob.weddingwishlove.com" target="_blank" rel="noopener">goodjob.weddingwishlove.com</a></p>
+  <p class="footer-disclaimer">本提案為 霸北整合創意公司 專屬報價，未經同意請勿轉載。</p>
+</footer>
+
+
+<!-- ═══════════════════════════════════════
+     LIGHTBOX
+     ═══════════════════════════════════════ -->
+<div class="lightbox-overlay" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="關閉">✕</button>
+  <img id="lightbox-img" src="" alt="放大檢視">
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     SCRIPTS
+     ═══════════════════════════════════════ -->
+<script>
+/* ── Lightbox ── */
+function openLightbox(src) {
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  img.src = src;
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  const lb = document.getElementById('lightbox');
+  lb.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this || e.target === document.getElementById('lightbox-img')) {
+    closeLightbox();
+  }
+});
+
+/* ── Scroll Reveal with IntersectionObserver ── */
+(function() {
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(function(el) { el.classList.add('visible'); });
+    return;
+  }
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  els.forEach(function(el) { observer.observe(el); });
+})();
+</script>
+
+</body>
+</html>
