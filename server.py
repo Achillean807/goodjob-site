@@ -890,7 +890,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         # Fall through to static file serving
         super().do_GET()
 
-    def _serve_works_page(self, article_id):
+    def _serve_works_page(self, article_id, head_only=False):
         """Dynamically generate an SEO-friendly HTML page for a work."""
         articles = _load_articles()
         article = next((a for a in articles if a.get("id") == article_id), None)
@@ -898,7 +898,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self.send_response(404)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
-            self.wfile.write(b"<h1>404 Not Found</h1>")
+            if not head_only:
+                self.wfile.write(b"<h1>404 Not Found</h1>")
             return
 
         site_url = "https://goodjob.weddingwishlove.com"
@@ -1018,7 +1019,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
-        self.wfile.write(body)
+        if not head_only:
+            self.wfile.write(body)
 
     def _serve_sitemap(self):
         """Dynamically generate sitemap.xml with all works pages."""
@@ -1052,6 +1054,12 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             return
         if self._is_admin_page():
             self.path = "/admin/index.html"
+        clean_path = self.path.split("?")[0].split("#")[0]
+        if clean_path.startswith("/works/"):
+            article_id = clean_path[len("/works/"):].strip("/")
+            if article_id:
+                self._serve_works_page(article_id, head_only=True)
+                return
         super().do_HEAD()
 
     def do_POST(self):

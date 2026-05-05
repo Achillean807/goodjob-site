@@ -91,6 +91,12 @@
     return window.location.origin + article.linkUrl;
   }
 
+  function getAbsoluteArticleUrl(article) {
+    var url = getArticleUrl(article);
+    if (/^https?:\/\//i.test(url)) return url;
+    return window.location.origin + url;
+  }
+
   // ── Render Top 10 ──
   function renderTop10(articles) {
     var rail = document.querySelector('.top10-rail');
@@ -107,7 +113,7 @@
 
       var link = document.createElement('a');
       link.className = 'poster-card';
-      link.href = '#';
+      link.href = getArticleUrl(a);
       link.setAttribute('data-article-id', a.id);
       link.setAttribute('data-hero-img', a.heroImage);
       if (a.videoId) {
@@ -160,7 +166,7 @@
     articles.forEach(function (a) {
       var link = document.createElement('a');
       link.className = 'landscape-card';
-      link.href = '#';
+      link.href = getArticleUrl(a);
       link.setAttribute('data-article-id', a.id);
       link.setAttribute('data-hero-img', a.heroImage);
       if (a.videoId) {
@@ -436,7 +442,7 @@
     popupLinkBtn.onclick = function (e) {
       e.preventDefault();
       e.stopPropagation();
-      var url = window.location.origin + window.location.pathname + '#detail/' + article.id;
+      var url = getAbsoluteArticleUrl(article);
       navigator.clipboard.writeText(url).then(function () {
         showToast('已複製連結');
       });
