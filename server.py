@@ -894,9 +894,33 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         stripped = self.path.split("?")[0].split("#")[0]
         return stripped in ("/admin", "/admin/")
 
+    def _is_quote_path(self):
+        """Proposal pages are private client-facing previews, not search results."""
+        stripped = unquote(self.path.split("?")[0].split("#")[0])
+        return stripped == "/quote" or stripped.startswith("/quote/")
+
+    def _is_robots_path(self):
+        stripped = unquote(self.path.split("?")[0].split("#")[0])
+        return stripped == "/robots.txt"
+
     # ------------------------------------------------------------------
     # Response helpers
     # ------------------------------------------------------------------
+
+    def end_headers(self):
+        if self._is_quote_path():
+            self.send_header(
+                "X-Robots-Tag",
+                "noindex, nofollow, noarchive, nosnippet, noimageindex",
+            )
+            self.send_header("Cache-Control", "private, no-store, max-age=0")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
+        elif self._is_robots_path():
+            self.send_header("Cache-Control", "private, no-store, max-age=0")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
+        super().end_headers()
 
     def _send_json(self, data, status=200):
         body = _json_bytes(data)
@@ -1629,7 +1653,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if not head_only:
             self.wfile.write(body)
 
-    def _serve_sitemap(self):
+    def _serve_sitemap(self, head_only=False):
         """Dynamically generate sitemap.xml with all works pages."""
         import xml.etree.ElementTree as ET
         articles = _load_articles()
@@ -1652,7 +1676,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "application/xml; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
-        self.wfile.write(body)
+        if not head_only:
+            self.wfile.write(body)
 
     def do_HEAD(self):
         if self._is_api():
@@ -1668,6 +1693,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
+            return
+        if clean_path == "/sitemap.xml":
+            self._serve_sitemap(head_only=True)
             return
         if clean_path.startswith("/works/"):
             article_id = clean_path[len("/works/"):].strip("/")

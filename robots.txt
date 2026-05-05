@@ -1,4 +1,5 @@
 User-agent: *
+Disallow: /quote/
 Allow: /
 
 Sitemap: https://goodjob.weddingwishlove.com/sitemap.xml
