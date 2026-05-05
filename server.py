@@ -1512,8 +1512,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         page_url = f"{site_url}/works/{article_id}"
         title = article.get("title", "")
         description = article.get("description", "")
-        # Truncate description for meta (160 chars)
-        meta_desc = description[:157] + "..." if len(description) > 160 else description
+        # Keep crawler/share summaries compact even when the CMS copy has paragraphs.
+        meta_source = re.sub(r"\s+", " ", description).strip()
+        meta_desc = meta_source[:157] + "..." if len(meta_source) > 160 else meta_source
         # Hero image
         hero = article.get("heroImage") or ""
         if hero and not hero.startswith("http"):
