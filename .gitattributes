@@ -1,0 +1,5 @@
+data/articles.json export-ignore
+data/accounts.json export-ignore
+data/config.json export-ignore
+data/*.bak export-ignore
+data/*.pre-* export-ignore
