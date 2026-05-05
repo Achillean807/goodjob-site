@@ -841,7 +841,19 @@
     .pick-seal{print-color-adjust:exact;-webkit-print-color-adjust:exact}
     .item, .robe{break-inside:avoid}
     .item-img img{max-height:300px}
+    .robe-bundle-btn{display:none}
   }
+  .robe-bundle-btn{
+    display:block;margin:24px auto 0;padding:12px 32px;
+    background:linear-gradient(135deg,var(--gold-deep),var(--gold));
+    color:var(--parchment);border:1.5px solid var(--gold-bright);border-radius:4px;
+    font-family:'Noto Serif TC',serif;font-size:15px;letter-spacing:.1em;
+    cursor:pointer;transition:opacity .2s, background .2s;
+  }
+  .robe-bundle-btn:hover{opacity:.85}
+  .robe-bundle-btn.active{background:linear-gradient(135deg,#1a4d3a,#2d7a5a);border-color:#4aaa80}
+  .totals-row.discount .amt{color:#4aaa80 !important}
+  .totals-row.discount .name{color:#4aaa80}
 </style>
 </head>
 <body>
@@ -966,12 +978,12 @@
         </p>
         <div class="item-price-row">
           <label class="pick">
-            <input type="checkbox" data-id="B1" data-name="B-1 學院旗幟 × 4" data-price="12000">
+            <input type="checkbox" data-id="B1" data-name="B-1 學院旗幟 × 4" data-price="8000">
             <span class="pick-seal"><span class="pick-mark">B1</span></span>
             <span class="pick-label">SELECT</span>
           </label>
           <div>
-            <div class="item-price"><span class="ntd">NT$</span><span class="num">12,000</span></div>
+            <div class="item-price"><span class="ntd">NT$</span><span class="num">8,000</span></div>
           </div>
         </div>
       </div>
@@ -990,12 +1002,12 @@
         </p>
         <div class="item-price-row">
           <label class="pick">
-            <input type="checkbox" data-id="B2" data-name="B-2 加購客製化魔法旗幟 × 1" data-price="6000">
+            <input type="checkbox" data-id="B2" data-name="B-2 加購客製化魔法旗幟 × 1" data-price="4000">
             <span class="pick-seal"><span class="pick-mark">B2</span></span>
             <span class="pick-label">ADD ON</span>
           </label>
           <div>
-            <div class="item-price"><span class="ntd">NT$</span><span class="num">6,000</span></div>
+            <div class="item-price"><span class="ntd">NT$</span><span class="num">4,000</span></div>
             <div class="item-price-note">＊ 加購價</div>
           </div>
         </div>
@@ -1026,12 +1038,12 @@
         </p>
         <div class="item-price-row">
           <label class="pick">
-            <input type="checkbox" data-id="C1" data-name="C-1 獎盃桌＋學院桌旗（公版）" data-price="8000">
+            <input type="checkbox" data-id="C1" data-name="C-1 獎盃桌＋學院桌旗（公版）" data-price="4000">
             <span class="pick-seal"><span class="pick-mark">C1</span></span>
             <span class="pick-label">SELECT</span>
           </label>
           <div>
-            <div class="item-price"><span class="ntd">NT$</span><span class="num">8,000</span></div>
+            <div class="item-price"><span class="ntd">NT$</span><span class="num">4,000</span></div>
           </div>
         </div>
       </div>
@@ -1161,6 +1173,9 @@
         </div>
       </div>
     </div>
+    <button class="robe-bundle-btn" id="robe-bundle-btn" type="button">
+      ✦ 一鍵全加（四學院全數）・省 NT$2,000
+    </button>
   </section>
 
   <!-- ============ 總計 ============ -->
@@ -1236,6 +1251,7 @@ const IMG = {
 
   // ── 報價計算 ──
   const ROBE_PRICE = 500;
+  var robePackageActive = false;
   const robeDefaults = {
     gryffindor: 0,
     slytherin: 0,
@@ -1296,14 +1312,20 @@ const IMG = {
       total += robeTotal;
     }
 
+    // 四學院全加優惠
+    if (robePackageActive && robeTotal > 0){
+      rows.push({code: '✦', name: '四學院全加優惠', amt: -2000, discount: true});
+      total -= 1000;
+    }
+
     // 渲染
     if (rows.length === 0){
       list.innerHTML = '<div class="totals-empty">— 尚未挑選任何項目，請於上方點選 —</div>';
     } else {
       list.innerHTML = rows.map(r =>
-        `<div class="totals-row">
+        `<div class="totals-row${r.discount ? ' discount' : ''}">
           <span class="name"><code>${r.code}</code>${r.name}</span>
-          <span class="amt">$${r.amt.toLocaleString()}</span>
+          <span class="amt">${r.discount ? '−' : ''}$${Math.abs(r.amt).toLocaleString()}</span>
         </div>`
       ).join('');
     }
@@ -1339,6 +1361,20 @@ const IMG = {
     if (minusBtn) minusBtn.disabled = (n <= 0);
     if (plusBtn) plusBtn.disabled = (n >= max);
   }
+
+  // 一鍵全加優惠
+  document.getElementById('robe-bundle-btn').addEventListener('click', function(){
+    robePackageActive = !robePackageActive;
+    this.classList.toggle('active', robePackageActive);
+    if (robePackageActive){
+      Object.keys(robeDefaults).forEach(function(h){ setRobeCount(h, robeMax[h]); updateCounterState(h); });
+      this.textContent = '✦ 取消全加優惠';
+    } else {
+      Object.keys(robeDefaults).forEach(function(h){ setRobeCount(h, 0); updateCounterState(h); });
+      this.textContent = '✦ 一鍵全加（四學院全數）・省 NT$2,000';
+    }
+    calc();
+  });
 
   function resetAll(){
     document.querySelectorAll('.pick input[type="checkbox"]:not(:disabled)').forEach(cb => cb.checked = false);
