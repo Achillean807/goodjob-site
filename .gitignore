@@ -22,4 +22,5 @@ __pycache__/
 *.pyc
 
 # Temp
+tmp/
 *.tmp
