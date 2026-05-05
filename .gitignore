@@ -12,6 +12,7 @@ Thumbs.db
 # Sensitive
 data/config.json
 data/accounts.json
+data/goodjob.sqlite3*
 
 # Node
 node_modules/

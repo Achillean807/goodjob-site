@@ -18,6 +18,7 @@ import json
 import os
 import re
 import secrets
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -45,6 +46,7 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 ARTICLES_PATH = os.path.join(DATA_DIR, "articles.json")
 CONFIG_PATH = os.path.join(DATA_DIR, "config.json")
 ACCOUNTS_PATH = os.path.join(DATA_DIR, "accounts.json")
+DB_PATH = os.path.join(DATA_DIR, "goodjob.sqlite3")
 IMAGES_DIR = os.path.join(BASE_DIR, "assets", "images")
 
 VALID_ROLES = {"admin", "editor", "viewer", "custom"}
@@ -95,6 +97,286 @@ def _write_json_atomic(path, data):
         fh.flush()
         os.fsync(fh.fileno())
     os.replace(tmp_path, path)
+
+
+def _db_connect():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
+    conn.execute("PRAGMA journal_mode = WAL")
+    conn.execute("PRAGMA busy_timeout = 5000")
+    return conn
+
+
+def _init_db():
+    """Create SQLite tables and import legacy JSON data on first boot."""
+    os.makedirs(DATA_DIR, exist_ok=True)
+    with _db_connect() as conn:
+        conn.executescript("""
+        CREATE TABLE IF NOT EXISTS articles (
+            id TEXT PRIMARY KEY,
+            title TEXT NOT NULL DEFAULT '',
+            description TEXT NOT NULL DEFAULT '',
+            category TEXT NOT NULL DEFAULT '',
+            featured INTEGER NOT NULL DEFAULT 0,
+            featured_order INTEGER NOT NULL DEFAULT 0,
+            hero_image TEXT NOT NULL DEFAULT '',
+            link_url TEXT,
+            video_id TEXT,
+            video_vertical INTEGER NOT NULL DEFAULT 0,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT,
+            updated_at TEXT,
+            row_index INTEGER NOT NULL DEFAULT 0
+        );
+        CREATE TABLE IF NOT EXISTS article_images (
+            article_id TEXT NOT NULL,
+            position INTEGER NOT NULL,
+            url TEXT NOT NULL,
+            PRIMARY KEY (article_id, position),
+            FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE
+        );
+        CREATE TABLE IF NOT EXISTS article_awards (
+            article_id TEXT NOT NULL,
+            position INTEGER NOT NULL,
+            name TEXT,
+            year INTEGER,
+            level TEXT,
+            category TEXT,
+            project_name TEXT,
+            role TEXT,
+            entrant TEXT,
+            detail_url TEXT,
+            url TEXT,
+            label TEXT,
+            PRIMARY KEY (article_id, position),
+            FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE
+        );
+        CREATE TABLE IF NOT EXISTS accounts (
+            username TEXT PRIMARY KEY,
+            name TEXT NOT NULL DEFAULT '',
+            role TEXT NOT NULL DEFAULT 'custom',
+            enabled INTEGER NOT NULL DEFAULT 1,
+            salt TEXT NOT NULL DEFAULT '',
+            password_hash TEXT NOT NULL DEFAULT '',
+            created_at TEXT,
+            updated_at TEXT
+        );
+        CREATE TABLE IF NOT EXISTS account_permissions (
+            username TEXT NOT NULL,
+            permission TEXT NOT NULL,
+            PRIMARY KEY (username, permission),
+            FOREIGN KEY (username) REFERENCES accounts(username) ON DELETE CASCADE
+        );
+        CREATE TABLE IF NOT EXISTS config (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL DEFAULT ''
+        );
+        """)
+
+        if conn.execute("SELECT COUNT(*) FROM articles").fetchone()[0] == 0:
+            articles = _read_articles_json()
+            if articles:
+                _replace_articles(conn, articles)
+                print(f"[db] imported {len(articles)} article(s) from legacy JSON")
+
+        if conn.execute("SELECT COUNT(*) FROM accounts").fetchone()[0] == 0:
+            accounts = _read_accounts_json()
+            if accounts:
+                _replace_accounts(conn, accounts)
+                print(f"[db] imported {len(accounts)} account(s) from legacy JSON")
+
+        if conn.execute("SELECT COUNT(*) FROM config").fetchone()[0] == 0:
+            cfg = _read_config_json()
+            if cfg:
+                _replace_config(conn, cfg)
+                print("[db] imported legacy config JSON")
+
+
+def _read_config_json():
+    return _read_json(CONFIG_PATH) or {}
+
+
+def _read_articles_json():
+    data = _read_json(ARTICLES_PATH)
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict) and isinstance(data.get("articles"), list):
+        return data["articles"]
+    return []
+
+
+def _read_accounts_json():
+    data = _read_json(ACCOUNTS_PATH)
+    if isinstance(data, dict) and isinstance(data.get("accounts"), list):
+        return data["accounts"]
+    return []
+
+
+def _replace_articles(conn, articles):
+    conn.execute("DELETE FROM article_awards")
+    conn.execute("DELETE FROM article_images")
+    conn.execute("DELETE FROM articles")
+    for row_index, article in enumerate(articles):
+        article_id = str(article.get("id") or "")
+        if not article_id:
+            continue
+        conn.execute("""
+            INSERT INTO articles (
+                id, title, description, category, featured, featured_order,
+                hero_image, link_url, video_id, video_vertical, sort_order,
+                created_at, updated_at, row_index
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            article_id,
+            article.get("title") or "",
+            article.get("description") or "",
+            article.get("category") or "",
+            1 if article.get("featured") else 0,
+            int(article.get("featuredOrder") or 0),
+            article.get("heroImage") or "",
+            article.get("linkUrl"),
+            article.get("videoId"),
+            1 if article.get("videoVertical") else 0,
+            int(article.get("sortOrder") or 0),
+            article.get("createdAt"),
+            article.get("updatedAt"),
+            row_index,
+        ))
+        for position, url in enumerate(article.get("images") or []):
+            if url:
+                conn.execute(
+                    "INSERT INTO article_images (article_id, position, url) VALUES (?, ?, ?)",
+                    (article_id, position, url),
+                )
+        for position, award in enumerate(article.get("awards") or []):
+            conn.execute("""
+                INSERT INTO article_awards (
+                    article_id, position, name, year, level, category, project_name,
+                    role, entrant, detail_url, url, label
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                article_id,
+                position,
+                award.get("name"),
+                award.get("year"),
+                award.get("level"),
+                award.get("category"),
+                award.get("projectName"),
+                award.get("role"),
+                award.get("entrant"),
+                award.get("detailUrl"),
+                award.get("url"),
+                award.get("label"),
+            ))
+
+
+def _article_from_row(conn, row):
+    article_id = row["id"]
+    images = [
+        r["url"] for r in conn.execute(
+            "SELECT url FROM article_images WHERE article_id = ? ORDER BY position",
+            (article_id,),
+        )
+    ]
+    awards = []
+    for r in conn.execute(
+        "SELECT * FROM article_awards WHERE article_id = ? ORDER BY position",
+        (article_id,),
+    ):
+        award = {
+            "name": r["name"],
+            "year": r["year"],
+            "level": r["level"],
+            "category": r["category"],
+            "projectName": r["project_name"],
+            "role": r["role"],
+            "entrant": r["entrant"],
+            "detailUrl": r["detail_url"],
+            "url": r["url"],
+            "label": r["label"],
+        }
+        awards.append({k: v for k, v in award.items() if v is not None})
+
+    article = {
+        "id": article_id,
+        "title": row["title"],
+        "description": row["description"],
+        "category": row["category"],
+        "featured": bool(row["featured"]),
+        "featuredOrder": row["featured_order"],
+        "heroImage": row["hero_image"],
+        "images": images,
+        "linkUrl": row["link_url"],
+        "videoId": row["video_id"],
+        "videoVertical": bool(row["video_vertical"]),
+        "sortOrder": row["sort_order"],
+    }
+    if row["created_at"]:
+        article["createdAt"] = row["created_at"]
+    if row["updated_at"]:
+        article["updatedAt"] = row["updated_at"]
+    if awards:
+        article["awards"] = awards
+    return article
+
+
+def _replace_accounts(conn, accounts):
+    conn.execute("DELETE FROM account_permissions")
+    conn.execute("DELETE FROM accounts")
+    for account in accounts:
+        username = account.get("username")
+        if not username:
+            continue
+        conn.execute("""
+            INSERT INTO accounts (
+                username, name, role, enabled, salt, password_hash, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            username,
+            account.get("name") or username,
+            account.get("role") or "custom",
+            1 if account.get("enabled", True) else 0,
+            account.get("salt") or "",
+            account.get("passwordHash") or "",
+            account.get("createdAt"),
+            account.get("updatedAt"),
+        ))
+        for permission in account.get("permissions") or []:
+            conn.execute(
+                "INSERT OR IGNORE INTO account_permissions (username, permission) VALUES (?, ?)",
+                (username, permission),
+            )
+
+
+def _account_from_row(conn, row):
+    permissions = [
+        r["permission"] for r in conn.execute(
+            "SELECT permission FROM account_permissions WHERE username = ? ORDER BY permission",
+            (row["username"],),
+        )
+    ]
+    return {
+        "username": row["username"],
+        "name": row["name"],
+        "role": row["role"],
+        "enabled": bool(row["enabled"]),
+        "permissions": permissions,
+        "salt": row["salt"],
+        "passwordHash": row["password_hash"],
+        "createdAt": row["created_at"],
+        "updatedAt": row["updated_at"],
+    }
+
+
+def _replace_config(conn, cfg):
+    conn.execute("DELETE FROM config")
+    for key, value in (cfg or {}).items():
+        if value is not None:
+            conn.execute(
+                "INSERT INTO config (key, value) VALUES (?, ?)",
+                (str(key), str(value)),
+            )
 
 
 def _upload_to_r2(data_bytes, r2_key):
@@ -149,38 +431,38 @@ def _classify_upload_name(filename, article_id):
 
 
 def _load_config():
-    """Return the admin config dict, or an empty dict on failure."""
-    return _read_json(CONFIG_PATH) or {}
+    """Return the legacy admin config dict, or an empty dict on failure."""
+    with _db_connect() as conn:
+        rows = conn.execute("SELECT key, value FROM config").fetchall()
+    return {r["key"]: r["value"] for r in rows}
 
 
 def _load_articles():
-    """Return the articles list from disk, or an empty list."""
-    data = _read_json(ARTICLES_PATH)
-    if isinstance(data, list):
-        return data
-    if isinstance(data, dict) and isinstance(data.get("articles"), list):
-        return data["articles"]
-    return []
+    """Return the articles list from SQLite, or an empty list."""
+    with _db_connect() as conn:
+        rows = conn.execute("SELECT * FROM articles ORDER BY row_index, id").fetchall()
+        return [_article_from_row(conn, row) for row in rows]
 
 
 def _save_articles(articles):
-    """Persist the articles list to disk atomically."""
+    """Persist the articles list to SQLite atomically."""
     os.makedirs(DATA_DIR, exist_ok=True)
-    _write_json_atomic(ARTICLES_PATH, {"articles": articles})
+    with _db_connect() as conn:
+        _replace_articles(conn, articles)
 
 
 def _load_accounts():
-    """Return the accounts list from accounts.json, or [] if missing."""
-    data = _read_json(ACCOUNTS_PATH)
-    if isinstance(data, dict) and isinstance(data.get("accounts"), list):
-        return data["accounts"]
-    return []
+    """Return the accounts list from SQLite, or [] if missing."""
+    with _db_connect() as conn:
+        rows = conn.execute("SELECT * FROM accounts ORDER BY username").fetchall()
+        return [_account_from_row(conn, row) for row in rows]
 
 
 def _save_accounts(accounts):
-    """Persist the accounts list to disk atomically."""
+    """Persist the accounts list to SQLite atomically."""
     os.makedirs(DATA_DIR, exist_ok=True)
-    _write_json_atomic(ACCOUNTS_PATH, {"accounts": accounts})
+    with _db_connect() as conn:
+        _replace_accounts(conn, accounts)
 
 
 def _hash_password(salt, password):
@@ -881,6 +1163,10 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if clean_path == "/sitemap.xml":
             self._serve_sitemap()
             return
+        # Keep the legacy public JSON URL backed by SQLite instead of a file.
+        if clean_path == "/data/articles.json":
+            self._send_json({"articles": _load_articles()})
+            return
         # Serve /works/{id} as dynamic SEO page
         if clean_path.startswith("/works/"):
             article_id = clean_path[len("/works/"):].strip("/")
@@ -1055,6 +1341,13 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if self._is_admin_page():
             self.path = "/admin/index.html"
         clean_path = self.path.split("?")[0].split("#")[0]
+        if clean_path == "/data/articles.json":
+            body = _json_bytes({"articles": _load_articles()})
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            return
         if clean_path.startswith("/works/"):
             article_id = clean_path[len("/works/"):].strip("/")
             if article_id:
@@ -1113,12 +1406,9 @@ def main():
     # Ensure data directory exists
     os.makedirs(DATA_DIR, exist_ok=True)
 
-    # Create articles.json if missing
-    if not os.path.isfile(ARTICLES_PATH):
-        _write_json_atomic(ARTICLES_PATH, [])
-        print(f"[init] Created empty {ARTICLES_PATH}")
+    _init_db()
 
-    # Validate auth source: prefer accounts.json, fall back to config.json
+    # Validate auth source: prefer accounts table, fall back to legacy config table
     accounts = _load_accounts()
     cfg = _load_config()
     if accounts:
@@ -1135,6 +1425,7 @@ def main():
     print(f"Murayama server running on http://{args.bind}:{args.port}/")
     print(f"  Static root : {BASE_DIR}")
     print(f"  Data dir    : {DATA_DIR}")
+    print(f"  SQLite DB   : {DB_PATH}")
     print(f"  Press Ctrl+C to stop.\n")
 
     try:
