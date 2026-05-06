@@ -194,6 +194,13 @@ def _init_db():
         );
         """)
 
+        # 修補 C：SQLite 從 JSON seed 預設禁用 — 避免「SQLite 為空 + 舊版
+        # data/articles.json 殘留」的組合在主機端誤觸覆蓋線上資料的災難。
+        # 啟用這條 seed 路徑必須顯式設 GOODJOB_ALLOW_JSON_SEED=1，
+        # migrate 流程會自動開啟。
+        if os.environ.get("GOODJOB_ALLOW_JSON_SEED", "").strip() != "1":
+            return
+
         if conn.execute("SELECT COUNT(*) FROM articles").fetchone()[0] == 0:
             articles = _read_articles_json()
             if articles:
@@ -664,6 +671,42 @@ def _import_runtime_data_to_postgres(database_url, payload):
             _pg_replace_articles(conn, payload.get("articles") or [])
             _pg_replace_accounts(conn, payload.get("accounts") or [])
             _pg_replace_config(conn, payload.get("config") or {})
+    finally:
+        DATABASE_URL = previous
+
+
+def _pg_count_articles(database_url):
+    """Return the article count in the target PostgreSQL, or 0 if the table is
+    missing / unreachable. Used by --migrate-runtime-to-postgres to refuse
+    overwriting a populated runtime DB without --force-replace.
+
+    Note: only PG-side errors (table missing, connection refused) are swallowed
+    as "target is empty". psycopg2 import failure (RuntimeError from
+    _pg_connect) is re-raised so the caller sees a clear environment problem
+    instead of silently bypassing the --force-replace guard.
+    """
+    global DATABASE_URL
+    previous = DATABASE_URL
+    DATABASE_URL = database_url
+    try:
+        try:
+            with _pg_connect() as conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT COUNT(*) AS n FROM articles")
+                    row = cur.fetchone()
+                    if row is None:
+                        return 0
+                    # RealDictCursor returns dict-like rows
+                    return int(row.get("n") if hasattr(row, "get") else row[0])
+        except RuntimeError:
+            # _pg_connect raises RuntimeError when psycopg2 isn't installed.
+            # That's an environment / setup problem, not "target is empty" —
+            # surface it instead of silently bypassing the --force-replace guard.
+            raise
+        except Exception:
+            # PG-side errors (table doesn't exist, can't connect) — treat as
+            # empty so a fresh migration into a brand-new DB still works.
+            return 0
     finally:
         DATABASE_URL = previous
 
@@ -1752,6 +1795,11 @@ def main():
         metavar="DATABASE_URL",
         help="one-time migration: copy the current runtime backend into PostgreSQL and exit",
     )
+    parser.add_argument(
+        "--force-replace",
+        action="store_true",
+        help="(with --migrate-runtime-to-postgres) overwrite target PostgreSQL even if it already has articles. dangerous — make a pg_dump first.",
+    )
     args = parser.parse_args()
 
     # Ensure we serve files from the script's directory
@@ -1761,9 +1809,25 @@ def main():
     os.makedirs(DATA_DIR, exist_ok=True)
 
     if args.migrate_runtime_to_postgres:
+        # migrate 是顯式請求，允許從 SQLite / JSON 為來源
+        os.environ["GOODJOB_ALLOW_SQLITE"] = "1"
+        os.environ["GOODJOB_ALLOW_JSON_SEED"] = "1"
+
+        # 修補 D：防呆 — 偵測目標 PostgreSQL 是否已經有資料，避免誤覆蓋線上
+        target_url = args.migrate_runtime_to_postgres
+        existing_count = _pg_count_articles(target_url)
+        if existing_count > 0 and not args.force_replace:
+            sys.stderr.write(
+                f"[fatal] target PostgreSQL already has {existing_count} article(s).\n"
+                "  refusing to wipe runtime data without --force-replace.\n"
+                "  if you really mean to overwrite, take a pg_dump first, then re-run\n"
+                "  with both --migrate-runtime-to-postgres AND --force-replace.\n"
+            )
+            sys.exit(1)
+
         _init_db()
         payload = _export_runtime_data()
-        _import_runtime_data_to_postgres(args.migrate_runtime_to_postgres, payload)
+        _import_runtime_data_to_postgres(target_url, payload)
         print(
             "[migrate] copied runtime data to PostgreSQL: "
             f"{len(payload['articles'])} article(s), "
@@ -1771,6 +1835,20 @@ def main():
             f"{len(payload['config'])} config value(s)"
         )
         return
+
+    # 修補 B：runtime 預設必須走 PostgreSQL — 避免 systemd override 失效時
+    # 偷偷 fallback 到 SQLite 並從舊 JSON seed 把線上資料覆蓋掉。
+    # 本機 dev / 故意走 SQLite，需顯式 GOODJOB_ALLOW_SQLITE=1。
+    if not _using_postgres() and os.environ.get("GOODJOB_ALLOW_SQLITE", "").strip() != "1":
+        sys.stderr.write(
+            "[fatal] GOODJOB_DATABASE_URL is not set.\n"
+            "  Production runtime requires PostgreSQL — refusing to start on SQLite\n"
+            "  fallback because past incidents wiped article data.\n"
+            "  If this is an intentional dev run on SQLite, set GOODJOB_ALLOW_SQLITE=1.\n"
+            "  On the live host, check /etc/systemd/system/murayama-goodjob.service.d/postgres.conf\n"
+            "  and run: sudo systemctl daemon-reload && sudo systemctl restart murayama-goodjob.service\n"
+        )
+        sys.exit(1)
 
     _init_db()
 

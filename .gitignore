@@ -9,7 +9,10 @@ Thumbs.db
 # Claude Code
 .claude/
 
-# Sensitive
+# Sensitive / runtime data — 正式站 runtime 走 PostgreSQL，這些檔僅作本機 fallback / 歷史備份
+# 切勿讓 git 散播到部署目錄，避免覆蓋線上資料庫
+data/articles.json
+data/wp_texts.json
 data/config.json
 data/accounts.json
 data/goodjob.sqlite3*
@@ -24,3 +27,9 @@ __pycache__/
 # Temp
 tmp/
 *.tmp
+
+# Backups（PG dump、R2 listing snapshots）
+backups/
+
+# 工作中的暫存資料夾
+analysis_tmp/
