@@ -931,63 +931,94 @@ function uploadFiles(articleId, files, callback) {
     return;
   }
 
+  if (!files || !files.length) {
+    callback([]);
+    return;
+  }
+
   var progressEl = document.getElementById('upload-progress');
   var progressText = document.getElementById('upload-progress-text');
   var barFill = document.getElementById('upload-bar-fill');
-  var formData = new FormData();
-  var i;
+  var total = files.length;
+  var paths = [];
+  var failed = [];
+  var unauthorized = false;
 
   progressEl.classList.add('is-active');
-  progressText.textContent = '上傳中... 0/' + files.length;
   barFill.style.width = '0%';
+  progressText.textContent = '上傳中... (0/' + total + ') 0%';
 
-  for (i = 0; i < files.length; i++) {
-    formData.append('file' + i, files[i], files[i].name);
-  }
-
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', '/api/upload/' + encodeURIComponent(articleId));
-  if (authHeader) {
-    xhr.setRequestHeader('Authorization', authHeader);
-  }
-
-  xhr.upload.onprogress = function(event) {
-    if (!event.lengthComputable) {
-      return;
-    }
-    var pct = Math.round(event.loaded / event.total * 100);
-    barFill.style.width = pct + '%';
-    progressText.textContent = '上傳中... ' + pct + '%';
-  };
-
-  xhr.onload = function() {
+  function finish() {
     progressEl.classList.remove('is-active');
-    if (xhr.status >= 200 && xhr.status < 300) {
-      var resp;
-      try {
-        resp = JSON.parse(xhr.responseText);
-      } catch (error) {
-        resp = {};
-      }
-      toast('已上傳 ' + ((resp.uploaded || []).length) + ' 張圖片');
-      callback(resp.uploaded || []);
-      return;
-    }
-
-    if (xhr.status === 401) {
+    if (unauthorized) {
       handleUnauthorized();
+    } else if (!failed.length && paths.length) {
+      toast('已上傳 ' + paths.length + ' 張圖片');
+    } else if (failed.length && !paths.length) {
+      toast('上傳失敗：' + failed.join('、'), true);
+    } else if (failed.length) {
+      toast('已上傳 ' + paths.length + ' 張，失敗 ' + failed.length + ' 張', true);
     }
-    toast('上傳失敗：' + xhr.status, true);
-    callback([]);
-  };
+    callback(paths);
+  }
 
-  xhr.onerror = function() {
-    progressEl.classList.remove('is-active');
-    toast('上傳失敗', true);
-    callback([]);
-  };
+  function uploadOne(index) {
+    if (unauthorized || index >= total) {
+      finish();
+      return;
+    }
 
-  xhr.send(formData);
+    var file = files[index];
+    var displayName = file.name || ('檔案 ' + (index + 1));
+    var formData = new FormData();
+    formData.append('file0', file, file.name);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/upload/' + encodeURIComponent(articleId));
+    if (authHeader) {
+      xhr.setRequestHeader('Authorization', authHeader);
+    }
+
+    xhr.upload.onprogress = function(event) {
+      if (!event.lengthComputable) {
+        return;
+      }
+      var filePct = Math.round(event.loaded / event.total * 100);
+      var overall = Math.round(((index + event.loaded / event.total) / total) * 100);
+      barFill.style.width = overall + '%';
+      progressText.textContent = '上傳中... (' + (index + 1) + '/' + total + ') ' + filePct + '%';
+    };
+
+    xhr.onload = function() {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        var resp;
+        try {
+          resp = JSON.parse(xhr.responseText);
+        } catch (error) {
+          resp = {};
+        }
+        var uploaded = resp.uploaded || [];
+        for (var j = 0; j < uploaded.length; j++) {
+          paths.push(uploaded[j]);
+        }
+      } else {
+        failed.push(displayName);
+        if (xhr.status === 401) {
+          unauthorized = true;
+        }
+      }
+      uploadOne(index + 1);
+    };
+
+    xhr.onerror = function() {
+      failed.push(displayName);
+      uploadOne(index + 1);
+    };
+
+    xhr.send(formData);
+  }
+
+  uploadOne(0);
 }
 
 function saveArticle() {
