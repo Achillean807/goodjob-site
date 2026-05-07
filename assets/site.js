@@ -764,7 +764,7 @@
   // ══════════════════════════════════════════
 
   function bindDragScroll() {
-    var rails = Array.from(document.querySelectorAll('.top10-rail, .content-rail'));
+    var rails = Array.from(document.querySelectorAll('.top10-rail'));
     rails.forEach(function (rail) {
       var isDown = false, startX, scrollLeft, hasDragged;
 
@@ -813,7 +813,7 @@
   }
 
   function bindShelfArrows() {
-    var rails = Array.from(document.querySelectorAll('.top10-rail, .content-rail'));
+    var rails = Array.from(document.querySelectorAll('.top10-rail'));
 
     rails.forEach(function (rail) {
       var head = rail.parentElement.querySelector('.section-head');

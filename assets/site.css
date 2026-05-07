@@ -313,17 +313,24 @@ img {
 .top10-rail,
 .content-rail {
   display: grid;
-  grid-auto-flow: column;
   gap: 12px;
-  overflow-x: auto;
   padding: 8px 4px 8px;
+}
+
+.top10-rail {
+  grid-auto-flow: column;
+  overflow-x: auto;
   scrollbar-width: none;
   cursor: grab;
 }
 
-.top10-rail::-webkit-scrollbar,
-.content-rail::-webkit-scrollbar {
+.top10-rail::-webkit-scrollbar {
   display: none;
+}
+
+.content-rail {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  row-gap: 18px;
 }
 
 /* ── Top 10 ── */
@@ -463,10 +470,6 @@ img {
   font-size: 1rem;
   font-weight: 700;
   text-shadow: 0 10px 24px rgba(0, 0, 0, 0.9);
-}
-
-.content-rail {
-  grid-auto-columns: calc((var(--wrap) - 60px) / 6);
 }
 
 .landscape-card img {
@@ -1204,7 +1207,7 @@ img {
   }
 
   .content-rail {
-    grid-auto-columns: 76vw;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   }
 }
 
@@ -1245,6 +1248,10 @@ img {
 
   .top10-rail {
     grid-auto-columns: 196px;
+  }
+
+  .content-rail {
+    grid-template-columns: 1fr;
   }
 
   .top10-rank {
