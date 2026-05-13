@@ -21,22 +21,24 @@
 | 欄位 | 值 |
 |------|----|
 | 當前 Milestone | v1.0 — SEO / AEO 90 天能見度提升 |
-| 當前 Phase | 尚未啟動（pending Phase 1） |
-| 當前 Plan | 尚未產生（等待 `/gsd-plan-phase 1`） |
-| 狀態 | Ingest 完成、Roadmap 已合成、待 Phase 1 規劃 |
-| 進度條 | `[░░░░░░░░░░░░░░░░░░░░] 0 / 7 phases` |
+| 當前 Phase | Phase 1（P0 技術修補）— **規劃完成、待執行** |
+| 當前 Plan | `.planning/phases/01-p0-tech-fix/01-PLAN.md`（5 plans, 640 行；CHECK 通過 PASS-AFTER-REVISION）|
+| 狀態 | CONTEXT + PLAN + CHECK 三件式完成；可進入 `/gsd-execute-phase 1` |
+| 進度條 | `[▓░░░░░░░░░░░░░░░░░░░] 0 / 7 phases（Phase 1 已規劃）` |
 
 ### 下一步動作
 
 ```
-/gsd-plan-phase 1
+/gsd-execute-phase 1
 ```
 
-執行前須先處理 Phase 1 的前置 gate：
-- **GATE-1A** ✅ **已解果 2026-05-13**：SSH ach-clawhome → `SELECT COUNT(*) FROM articles` 結果為 **62 篇**（無 `published` 欄位，全部已上架；舊紀錄 27 / PRD 推估 29 皆為過時值）
-  - 分類細項：`business` 27 篇、`party` 16 篇、`civil` 14 篇、`magic` 5 篇
-  - 影響：sitemap 驗收基準改為 ≥ 62；`REQ-prod-sitemap-verify` 驗收條件已用此值對齊
-- **GATE-1B**：Cloudflare CDN 對 `/sitemap.xml` cache purge（待 Phase 1 上線時執行）
+執行順序（PLAN L21 已論證）：**1.2 admin noindex → 1.5 首頁 SSR → 1.1 sitemap + CF purge → 1.3 4 頁 metadata → 1.4 Rich Results 驗收**
+
+Phase 1 的前置 gate：
+- **GATE-1A** ✅ **已解果 2026-05-13**：SSH ach-clawhome → `SELECT COUNT(*) FROM articles` 結果為 **62 篇**
+  - 分類細項：`business` 27 / `party` 16 / `civil` 14 / `magic` 5
+  - 影響：sitemap 驗收基準 = ≥ 69（62 篇 works + 7 個靜態頁）
+- **GATE-1B**：Cloudflare CDN 對 `/sitemap.xml` cache purge（Phase 1.1 部署後執行，PLAN 已含 `scripts/cf-purge.ps1` 設計）
 
 ---
 
@@ -135,6 +137,8 @@
 - 2026-05-13 22:44：`gsd-roadmapper` 確認衝突 gate 通過、PROJECT.md 欄位收集完成
 - 2026-05-13 22:44+：本次 ingest 寫出 PROJECT.md / REQUIREMENTS.md / ROADMAP.md / STATE.md
 - 2026-05-13 23:09：✅ **GATE-1A 解果** — SSH `ach-clawhome` 跑 `SELECT COUNT(*) FROM articles` 得 **62 篇**（business 27 / party 16 / civil 14 / magic 5）；同步修正 CLAUDE.md / README.md / DESIGN.md 過時值（27/29 → 62）
+- 2026-05-13 23:20：📋 Phase 1 規劃完成 — `01-CONTEXT.md`（216 行）+ `01-PLAN.md`（640 行，5 plans）+ `01-CHECK.md` goal-backward 驗證
+- 2026-05-13 23:30：✅ `gsd-plan-checker` 找出 1 Blocker（SQL camelCase 拼錯部署即崩）+ 3 Warning（teabar FAQPage 漏實作、sitemap URL 數歧義、缺 Rollback）；Opus 親自修正並 spot-check 全綠 → PLAN PASS-AFTER-REVISION
 
 ### 下次 Session 必讀
 

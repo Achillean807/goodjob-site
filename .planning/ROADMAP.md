@@ -186,7 +186,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. P0 技術修補 | 0/? | Not started | — |
+| 1. P0 技術修補 | 0/5 | **Planned — 待執行** | 2026-05-13 plan 完成 |
 | 2. P1-A 內容集群骨架 | 0/? | Not started | — |
 | 3. P1-B 作品模板與 FAQ | 0/? | Not started | — |
 | 4. P2-A AI Citation Baseline | 0/? | Not started | — |
