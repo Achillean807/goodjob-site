@@ -933,9 +933,22 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         return self.path.startswith("/api/")
 
     def _is_admin_page(self):
-        """Check if requesting /admin or /admin/"""
+        """Check if requesting /admin or /admin/ — used for path rewrite to /admin/index.html.
+
+        Do NOT extend this to subpaths; doing so would rewrite /admin/app.js → /admin/index.html
+        and break the admin SPA. For noindex header logic, use _is_admin_path() instead.
+        """
         stripped = self.path.split("?")[0].split("#")[0]
         return stripped in ("/admin", "/admin/")
+
+    def _is_admin_path(self):
+        """Check if request targets /admin or any subpath under /admin/ — used for X-Robots-Tag noindex.
+
+        Covers /admin, /admin/, /admin/index.html, /admin/app.js, /admin/anything.
+        Decoded via unquote to defeat URL-escape evasion (e.g., %2fadmin%2f).
+        """
+        stripped = unquote(self.path.split("?")[0].split("#")[0])
+        return stripped == "/admin" or stripped.startswith("/admin/")
 
     def _is_quote_path(self):
         """Proposal pages are private client-facing previews, not search results."""
@@ -956,6 +969,11 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 "X-Robots-Tag",
                 "noindex, nofollow, noarchive, nosnippet, noimageindex",
             )
+            self.send_header("Cache-Control", "private, no-store, max-age=0")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
+        elif self._is_admin_path():
+            self.send_header("X-Robots-Tag", "noindex, nofollow, noarchive")
             self.send_header("Cache-Control", "private, no-store, max-age=0")
             self.send_header("Pragma", "no-cache")
             self.send_header("Expires", "0")
