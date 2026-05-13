@@ -139,6 +139,56 @@ img {
   font-weight: 800;
 }
 
+/* ── SSR Featured (Phase 1.5, hidden after JS hydration) ── */
+
+.ssr-featured {
+  padding: 80px 0 40px;
+  background: var(--bg-deep, #0a0a0a);
+  color: rgba(255, 255, 255, 0.92);
+}
+.ssr-featured-title {
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  margin: 0 0 24px;
+  letter-spacing: 0.04em;
+}
+.ssr-featured-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+.ssr-featured .featured-case {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+.ssr-featured .featured-case:hover {
+  transform: translateY(-2px);
+}
+.ssr-featured .featured-case img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  display: block;
+}
+.ssr-featured .featured-case-title {
+  font-size: 1rem;
+  margin: 0;
+  padding: 12px 14px;
+  font-weight: 500;
+}
+.ssr-featured-note {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 16px 0 0;
+}
+body.js-ready .ssr-featured {
+  display: none;
+}
+
 /* ── Hero ── */
 
 .hero {

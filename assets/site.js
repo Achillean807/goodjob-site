@@ -910,6 +910,8 @@
   // ══════════════════════════════════════════
 
   document.addEventListener('DOMContentLoaded', function () {
+    // Phase 1.5: mark JS-hydrated so the SSR featured block can hide via CSS.
+    document.body.classList.add('js-ready');
     heroBg = document.querySelector('.hero-bg');
     heroVideoLayer = document.getElementById('hero-video-layer');
     heroMuteBtn = document.getElementById('hero-mute-toggle');

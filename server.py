@@ -802,6 +802,23 @@ def _save_articles(articles):
         _replace_articles(conn, articles)
 
 
+def _load_featured_articles(limit=6):
+    """Return featured articles for homepage SSR injection.
+
+    Reuses _load_articles() which already maps schema -> camelCase dict and
+    coerces INTEGER featured -> bool. Sorting: featuredOrder asc (None last),
+    then existing row_index order preserved from _load_articles().
+    """
+    try:
+        articles = _load_articles()
+    except Exception:
+        return []
+    featured = [a for a in articles if a.get("featured")]
+    featured.sort(key=lambda a: (a.get("featuredOrder") is None,
+                                 a.get("featuredOrder") or 0))
+    return featured[:limit]
+
+
 def _load_accounts():
     """Return the accounts list from the configured database, or [] if missing."""
     if _using_postgres():
@@ -1564,6 +1581,10 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if self._is_admin_page():
             self.path = "/admin/index.html"
         clean_path = self.path.split("?")[0].split("#")[0]
+        # Serve homepage with featured-cases SSR injection (Phase 1.5)
+        if clean_path in ("/", "/index.html"):
+            self._serve_homepage_ssr()
+            return
         # Serve /sitemap.xml dynamically
         if clean_path == "/sitemap.xml":
             self._serve_sitemap()
@@ -1580,6 +1601,52 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 return
         # Fall through to static file serving
         super().do_GET()
+
+    def _serve_homepage_ssr(self, head_only=False):
+        """Inject featured cases into index.html for non-JS crawlers (Phase 1.5).
+
+        Reads index.html template and replaces the SSR placeholder marker
+        <!--{{SSR_FEATURED_CASES}}--> with anchor cards for up to 6 featured
+        articles. JS hydration still drives the full SPA grid.
+        """
+        import html as _html
+        index_path = os.path.join(BASE_DIR, "index.html")
+        try:
+            with open(index_path, "r", encoding="utf-8") as f:
+                template = f.read()
+        except OSError:
+            self.send_response(500)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.end_headers()
+            if not head_only:
+                self.wfile.write(b"index.html not found")
+            return
+
+        featured = _load_featured_articles(limit=6)
+        if featured:
+            parts = []
+            for a in featured:
+                aid = _html.escape(a.get("id") or "")
+                title = _html.escape(a.get("title") or "")
+                hero = _html.escape(a.get("heroImage") or "")
+                parts.append(
+                    f'<a class="featured-case" href="/works/{aid}">'
+                    f'<img src="{hero}" alt="{title}" loading="lazy" decoding="async">'
+                    f'<h3 class="featured-case-title">{title}</h3>'
+                    f'</a>'
+                )
+            cases_html = "\n".join(parts)
+        else:
+            cases_html = "<!-- no featured articles -->"
+
+        body = template.replace("<!--{{SSR_FEATURED_CASES}}-->", cases_html).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "public, max-age=300")
+        self.end_headers()
+        if not head_only:
+            self.wfile.write(body)
 
     def _serve_works_page(self, article_id, head_only=False):
         """Dynamically generate an SEO-friendly HTML page for a work."""
@@ -1748,6 +1815,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if self._is_admin_page():
             self.path = "/admin/index.html"
         clean_path = self.path.split("?")[0].split("#")[0]
+        if clean_path in ("/", "/index.html"):
+            self._serve_homepage_ssr(head_only=True)
+            return
         if clean_path == "/data/articles.json":
             body = _json_bytes({"articles": _load_articles()})
             self.send_response(200)
