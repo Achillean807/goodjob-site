@@ -1790,7 +1790,15 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         lines = ['<?xml version="1.0" encoding="UTF-8"?>',
                  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
         # Static pages
-        for loc in ["", "/teabar.html", "/workflow.html", "/wedding-packages/", "/wedding-packages/outdoor.html"]:
+        for loc in [
+            "",
+            "/teabar.html",
+            "/workflow.html",
+            "/wedding-packages/",
+            "/wedding-packages/outdoor.html",
+            "/sort-hat/",
+            "/muse-2026.html",
+        ]:
             lines.append(f"  <url><loc>{site_url}{loc}</loc></url>")
         # Dynamic works pages
         for a in articles:
