@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>村山良作 SEO / AEO 改善計畫報告｜2026-05-13</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1f241f;
+      --muted: #667064;
+      --paper: #fbfaf6;
+      --panel: #ffffff;
+      --line: #ded8ca;
+      --brand: #526b4d;
+      --gold: #b8914f;
+      --red: #a85043;
+      --blue: #3e6478;
+      --green: #557b58;
+      --chip: #f0eadc;
+      --shadow: 0 16px 50px rgba(41, 34, 20, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.72;
+    }
+
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .hero {
+      padding: 56px 28px 44px;
+      background:
+        linear-gradient(135deg, rgba(82, 107, 77, 0.94), rgba(44, 55, 42, 0.96)),
+        radial-gradient(circle at 82% 20%, rgba(184, 145, 79, 0.28), transparent 34%);
+      color: #fff;
+    }
+
+    .hero-inner,
+    main {
+      width: min(1120px, calc(100vw - 40px));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      font-size: 0.82rem;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.76);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 880px;
+      font-size: clamp(2.1rem, 4.6vw, 4.1rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 820px;
+      margin: 22px 0 0;
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 1.08rem;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 6px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.11);
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.9rem;
+    }
+
+    main {
+      padding: 34px 0 72px;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .toc a {
+      display: block;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      font-weight: 700;
+    }
+
+    section {
+      margin-top: 28px;
+      padding: 28px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 1.55rem;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      font-size: 1.08rem;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    p { margin: 0 0 14px; }
+    ul, ol { margin: 10px 0 0; padding-left: 1.25rem; }
+    li { margin: 6px 0; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .score-card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fcfbf8;
+    }
+
+    .score {
+      display: block;
+      margin: 8px 0;
+      color: var(--brand);
+      font-size: 2rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 9px;
+      margin-right: 5px;
+      border-radius: 999px;
+      background: var(--chip);
+      color: #4f493c;
+      font-size: 0.82rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tag.high { background: #f5ddd8; color: var(--red); }
+    .tag.mid { background: #efe3c7; color: #795b20; }
+    .tag.low { background: #dfeadc; color: var(--green); }
+    .tag.measure { background: #dce8ee; color: var(--blue); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.94rem;
+    }
+
+    th, td {
+      padding: 11px 10px;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+    }
+
+    th {
+      color: #3f483e;
+      background: #f5f1e8;
+      font-weight: 800;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .priority-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .priority-item {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--brand);
+      border-radius: 8px;
+      background: #fcfbf8;
+    }
+
+    .priority-item.p0 { border-left-color: var(--red); }
+    .priority-item.p1 { border-left-color: var(--gold); }
+    .priority-item.p2 { border-left-color: var(--blue); }
+
+    .priority-title {
+      margin: 0 0 6px;
+      font-weight: 900;
+    }
+
+    code, pre {
+      font-family: Consolas, "SFMono-Regular", Menlo, monospace;
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: #f0eadc;
+      color: #533f18;
+      font-size: 0.92em;
+    }
+
+    pre {
+      overflow: auto;
+      padding: 14px;
+      border-radius: 8px;
+      background: #252821;
+      color: #f6f0df;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .timebox {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fcfbf8;
+    }
+
+    .timebox strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--brand);
+    }
+
+    .source-list {
+      display: grid;
+      gap: 8px;
+      padding-left: 1.15rem;
+    }
+
+    .footer-note {
+      margin-top: 26px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    @media (max-width: 860px) {
+      .toc,
+      .score-grid,
+      .grid-2,
+      .timeline {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 22px 18px;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">SEO / AEO Improvement Plan</p>
+      <h1>村山良作搜尋與 AI 引用能見度改善計畫</h1>
+      <p class="lead">本報告依據 2026-05-13 本地程式碼盤點、既有文件、Google Search Central、OpenAI 與 Perplexity crawler 文件，提出 90 天改善方案。重點不是堆關鍵字，而是讓搜尋引擎與 AI 回答引擎都能穩定理解「村山良作是誰、服務什麼、有哪些可信案例」。</p>
+      <div class="meta-row">
+        <span class="meta-pill">站台：goodjob.weddingwishlove.com</span>
+        <span class="meta-pill">產出日期：2026-05-13</span>
+        <span class="meta-pill">範圍：SEO、AEO/GEO、技術與內容計畫</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <nav class="toc" aria-label="報告章節">
+      <a href="#summary">總覽</a>
+      <a href="#findings">現況發現</a>
+      <a href="#plan">改善計畫</a>
+      <a href="#measurement">衡量方式</a>
+    </nav>
+
+    <section id="summary">
+      <h2>一、執行摘要</h2>
+      <div class="score-grid">
+        <div class="score-card">
+          <strong>SEO 現況推估</strong>
+          <span class="score">7.4 / 10</span>
+          <p class="note">首頁、合作流程、囍茶、MUSE 與作品 SSR 已有 metadata、canonical、OG/Twitter 與部分 schema；缺口集中在支援頁 metadata、私有頁 noindex、內容集群與 Search Console 驗證。</p>
+        </div>
+        <div class="score-card">
+          <strong>AEO/GEO 現況推估</strong>
+          <span class="score">6.2 / 10</span>
+          <p class="note">已具備 <code>llms.txt</code>、LocalBusiness、Service、FAQPage、CreativeWork 基礎，但尚未建立 ChatGPT、Claude、Gemini、Perplexity 的引用基準，無法量化 AI 可見度。</p>
+        </div>
+        <div class="score-card">
+          <strong>90 天目標</strong>
+          <span class="score">8.5+</span>
+          <p class="note">讓所有可索引頁有明確主題、可驗證結構化資料、可爬取文字內容與明確內鏈；建立 AI citation baseline，並用同一組 prompts 追蹤改善。</p>
+        </div>
+      </div>
+
+      <h3>主要策略</h3>
+      <p>先修技術風險，再建立服務主題集群，最後針對 AI 回答常見提問補齊「可被引用的答案型內容」。SEO 與 AEO 是互補關係：SEO 先確保索引與可信度，AEO 再透過清楚的實體、FAQ、比較表、案例方法論與第三方訊號提高被引用機率。</p>
+    </section>
+
+    <section id="findings">
+      <h2>二、現況發現</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>項目</th>
+            <th>目前狀態</th>
+            <th>風險</th>
+            <th>建議</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>首頁基礎 SEO</td>
+            <td>已有 <code>title</code>、description、canonical、OG/Twitter、LocalBusiness、Service、FAQPage。</td>
+            <td>首頁 description 偏短，首頁作品卡由 JS/API 渲染，非 Google 類 crawler 可能較難完整讀到作品列表。</td>
+            <td>補一段可見文字型服務摘要與精選案例內鏈；首頁 description 可擴充到 70-110 中文字。</td>
+          </tr>
+          <tr>
+            <td>動態作品頁 <code>/works/{id}</code></td>
+            <td><code>server.py</code> 會產生 SSR 頁面，含 title、description、canonical、OG/Twitter、CreativeWork schema。</td>
+            <td>本地舊資料有 29 件作品；README 顯示正式環境改用 PostgreSQL，需確認正式 sitemap 是否吃到正式資料源。</td>
+            <td>上線環境抽查 10 個作品 URL：HTTP 200、canonical 正確、GSC 可檢索、schema 無錯。</td>
+          </tr>
+          <tr>
+            <td>Sitemap</td>
+            <td>靜態 <code>sitemap.xml</code> 只列 4 個 URL；<code>server.py</code> 動態路由會列靜態頁與作品頁。</td>
+            <td>若部署或 CDN 直接服務靜態檔，作品頁可能不在 sitemap；若走 Python server，需確認 Cloudflare 沒快取舊檔。</td>
+            <td>以正式站 <code>curl https://goodjob.weddingwishlove.com/sitemap.xml</code> 驗證；提交到 Google Search Console。</td>
+          </tr>
+          <tr>
+            <td>Robots / 私有頁</td>
+            <td><code>robots.txt</code> 封鎖 <code>/quote/</code>，且 server 對 quote 頁送 <code>X-Robots-Tag</code>。</td>
+            <td><code>/admin/</code> 未在 robots 或 response header 明確 noindex；後台頁 title 為 CMS，可能被發現。</td>
+            <td>對 <code>/admin/</code> 加 <code>X-Robots-Tag: noindex, nofollow</code>，並在 robots disallow。</td>
+          </tr>
+          <tr>
+            <td>支援銷售頁</td>
+            <td><code>sort-hat/</code> 有 description 但無 canonical；<code>wedding-packages/*</code> 有 title 但缺 description/canonical/schema。</td>
+            <td>這些頁面有商業搜尋價值，但目前搜尋摘要與索引訊號不足。</td>
+            <td>補齊 canonical、OG/Twitter、Product/Service/FAQ/Breadcrumb schema，並納入內容集群。</td>
+          </tr>
+          <tr>
+            <td>AEO 基礎</td>
+            <td>已有 <code>llms.txt</code>，內容摘要清楚；首頁與流程頁有 FAQ。</td>
+            <td>沒有跨平台 citation baseline；無法知道 ChatGPT、Claude、Gemini、Perplexity 目前是否推薦競品。</td>
+            <td>先做 20-40 題 prompt 實測，再依 lost prompts 建立 FAQ、比較、選購指南、案例頁。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="plan">
+      <h2>三、優先級改善計畫</h2>
+      <div class="priority-list">
+        <article class="priority-item p0">
+          <p class="priority-title"><span class="tag high">P0</span>7 天內：索引安全與技術基礎校正</p>
+          <ul>
+            <li>確認正式站 <code>/sitemap.xml</code> 是否包含 PostgreSQL 中所有正式作品頁，並排除舊靜態 sitemap 被 CDN 快取的可能。</li>
+            <li>為 <code>/admin/</code> 加入 <code>X-Robots-Tag: noindex, nofollow, noarchive</code>，robots 同步 disallow。</li>
+            <li>補齊 <code>sort-hat/</code>、<code>wedding-packages/</code>、<code>wedding-packages/outdoor.html</code> 的 description、canonical、OG/Twitter 與 schema。</li>
+            <li>用 Google Rich Results Test 驗證首頁、流程頁、MUSE 頁與 5 個作品頁的 JSON-LD，確認 schema 內容與頁面可見文字一致。</li>
+            <li>在首頁加入伺服器或靜態 HTML 可讀的精選案例摘要與服務內鏈，降低純 JS 渲染對 AI crawler 的不確定性。</li>
+          </ul>
+        </article>
+
+        <article class="priority-item p1">
+          <p class="priority-title"><span class="tag mid">P1</span>30 天內：服務主題集群與內容 ownership</p>
+          <ul>
+            <li>從 Search Console 匯出最近 3 個月 <code>page + query</code> 資料，先做 cannibalization audit，再決定 title/H1/內容調整。</li>
+            <li>建立 5 個 pillar 頁：品牌活動佈置、展場空間設計、春酒尾牙佈置、戶政空間改造、婚禮場景佈置。</li>
+            <li>將 29+ 件作品頁歸到對應 cluster，作品頁加回連到 pillar 頁，pillar 頁連到代表作品與 FAQ。</li>
+            <li>作品頁模板擴充為案例格式：活動背景、場地限制、設計策略、製作亮點、適合產業、成果照片。</li>
+            <li>每個服務 cluster 建立 4-6 題實務 FAQ，答案以 60-120 字直接回答，方便 AI 摘錄。</li>
+          </ul>
+        </article>
+
+        <article class="priority-item p2">
+          <p class="priority-title"><span class="tag measure">P2</span>60 天內：AEO / GEO 引用率提升</p>
+          <ul>
+            <li>建立跨平台 citation baseline：ChatGPT、Claude、Gemini、Perplexity 各測 20-40 題，記錄品牌是否被提及、是否被引用、競品是誰。</li>
+            <li>針對 lost prompts 製作答案型內容：活動佈置公司怎麼選、品牌活動佈置預算、展場設計與拍照牆差異、春酒尾牙主題提案。</li>
+            <li>新增比較表與決策框架，讓 AI 有可摘錄的 criteria，例如預算區間、施工時間、撤場、場地尺寸、互動需求。</li>
+            <li>更新 <code>llms.txt</code>：加入服務分類、代表作品 URL、獎項頁、聯絡方式與最近更新日期；每月檢查一次。</li>
+            <li>確認 robots / WAF 允許 <code>OAI-SearchBot</code>、<code>PerplexityBot</code> 與一般搜尋 crawler 讀取公開內容。</li>
+          </ul>
+        </article>
+
+        <article class="priority-item p2">
+          <p class="priority-title"><span class="tag low">P3</span>90 天內：權威訊號與持續成長</p>
+          <ul>
+            <li>建立「得獎與媒體」頁，集中 MUSE、合作策展、第三方報導與高可信外部連結。</li>
+            <li>推動可被引用的外部訊號：合作單位頁面、媒體稿、案例採訪、Google Business Profile、社群固定貼文。</li>
+            <li>每月發布 2 篇長尾內容，聚焦真實業主問題，不做泛用靈感文。</li>
+            <li>建立 Looker Studio 或表格週報，追蹤 GSC、GA4、AI referral、表單/LINE 點擊。</li>
+          </ul>
+        </article>
+      </div>
+
+      <h3>建議 robots.txt 調整方向</h3>
+      <pre><code>User-agent: *
+Disallow: /quote/
+Disallow: /admin/
+Allow: /
+
+User-agent: OAI-SearchBot
+Disallow: /quote/
+Disallow: /admin/
+Allow: /
+
+User-agent: PerplexityBot
+Disallow: /quote/
+Disallow: /admin/
+Allow: /
+
+Sitemap: https://goodjob.weddingwishlove.com/sitemap.xml
+LLMs-Txt: https://goodjob.weddingwishlove.com/llms.txt</code></pre>
+      <p class="note">註：robots 只是抓取指引，不等於 noindex。私有或不應出現在搜尋結果的頁面仍應搭配 <code>X-Robots-Tag</code> 或 meta noindex；quote 頁目前已有 response header，admin 建議補上。</p>
+    </section>
+
+    <section id="content">
+      <h2>四、內容集群與頁面規劃</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Cluster</th>
+            <th>目標搜尋意圖</th>
+            <th>Pillar 頁建議</th>
+            <th>支援內容 / 作品頁</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>品牌活動佈置</td>
+            <td>找活動佈置公司、品牌發表會、快閃活動、拍照區。</td>
+            <td><code>/services/brand-event-decoration/</code></td>
+            <td>Lativ、Wacoal、CXO、瓶蓋工廠、曾師傅等案例；補「品牌活動佈置流程與預算」。</td>
+          </tr>
+          <tr>
+            <td>展場空間設計</td>
+            <td>展覽、園區、沉浸式體驗、互動裝置。</td>
+            <td><code>/services/exhibition-space-design/</code></td>
+            <td>成美文化園昆蟲展、MUSE 得獎頁；補「沉浸式展場如何規劃動線」。</td>
+          </tr>
+          <tr>
+            <td>春酒尾牙佈置</td>
+            <td>企業尾牙主題、年會佈置、舞台與拍照區。</td>
+            <td><code>/services/year-end-party-decoration/</code></td>
+            <td>海運尾牙、特務舞會、政大企家班；補「尾牙佈置要準備哪些資料」。</td>
+          </tr>
+          <tr>
+            <td>戶政空間改造</td>
+            <td>公部門空間美化、打卡牆、地方特色設計。</td>
+            <td><code>/services/civil-office-transformation/</code></td>
+            <td>大安、中正、暖暖、仁愛、中山、大同、七堵戶政案例。</td>
+          </tr>
+          <tr>
+            <td>婚禮場景佈置</td>
+            <td>送客背景、戶外證婚、婚禮套組、迎賓茶。</td>
+            <td><code>/wedding-packages/</code> 與 <code>/teabar.html</code></td>
+            <td>補 description/canonical/schema；讓囍茶與婚禮套組互相內鏈。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>作品頁模板建議</h3>
+      <div class="grid-2">
+        <div>
+          <p><strong>必備區塊</strong></p>
+          <ul>
+            <li>一句話摘要：這是什麼活動、服務對象、場地類型。</li>
+            <li>需求與限制：預算、時間、場地、品牌規範、動線。</li>
+            <li>解法：主視覺、材質、花藝、施工、互動。</li>
+            <li>結果：照片、社群擴散、現場體驗、得獎或客戶回饋。</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Schema 建議</strong></p>
+          <ul>
+            <li><code>CreativeWork</code> 或 <code>Article</code>：案例內容。</li>
+            <li><code>ImageObject</code>：重要圖片與 caption。</li>
+            <li><code>BreadcrumbList</code>：首頁 > 服務 > 案例。</li>
+            <li><code>FAQPage</code>：該類案例常見問題。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="aeo">
+      <h2>五、AEO / GEO 引用策略</h2>
+      <p>AI 回答引擎的重點是「能不能把品牌放進答案裡，並把站內或第三方頁面當成可信來源」。這無法保證，只能提高引用機率，所以第一步必須建立基準測量。</p>
+
+      <h3>Baseline prompt 組</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>意圖</th>
+            <th>測試 prompt 範例</th>
+            <th>期望內容資產</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>推薦</td>
+            <td>「台灣有哪些適合品牌發表會的活動佈置公司？」</td>
+            <td>品牌活動 pillar、代表案例、公司介紹、第三方提及。</td>
+          </tr>
+          <tr>
+            <td>比較</td>
+            <td>「品牌活動佈置和展場設計公司要怎麼選？」</td>
+            <td>比較表、選擇框架、服務邊界說明。</td>
+          </tr>
+          <tr>
+            <td>預算</td>
+            <td>「企業尾牙拍照區和舞台佈置通常要準備哪些資訊？」</td>
+            <td>流程頁 FAQ、需求清單、預算影響因子。</td>
+          </tr>
+          <tr>
+            <td>案例</td>
+            <td>「有沒有沉浸式昆蟲展或花藝展場設計案例？」</td>
+            <td>MUSE 得獎頁、成美文化園案例頁、圖片 caption。</td>
+          </tr>
+          <tr>
+            <td>地方/公部門</td>
+            <td>「戶政事務所打卡牆或公共空間改造有哪些做法？」</td>
+            <td>戶政 cluster、各區案例、設計方法論。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>AI 引用修補包</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>修補包</th>
+            <th>內容</th>
+            <th>預期影響</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Entity clarity</td>
+            <td>統一品牌名「村山良作 MURAYAMA GOODJOB」、母品牌「村花弄囍」、服務範圍、所在地、sameAs。</td>
+            <td>讓 AI 與搜尋引擎穩定識別品牌實體。</td>
+          </tr>
+          <tr>
+            <td>Prompt-matched FAQ</td>
+            <td>把「怎麼選、多少錢、要準備什麼、多久前洽詢、適合哪些活動」做成短答案。</td>
+            <td>提高 FAQ 型、how-to 型問題被摘錄機率。</td>
+          </tr>
+          <tr>
+            <td>Comparison pages</td>
+            <td>建立「品牌活動佈置 vs 展場設計」、「客製佈置 vs 套組方案」等中立比較頁。</td>
+            <td>回應 AI 常見比較型 prompt。</td>
+          </tr>
+          <tr>
+            <td>Third-party proof</td>
+            <td>整理 MUSE 得獎、合作單位、媒體報導、社群案例，並取得外部頁面連回。</td>
+            <td>增加可信來源與非自家內容佐證。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="measurement">
+      <h2>六、衡量方式與 90 天時程</h2>
+      <div class="timeline">
+        <div class="timebox">
+          <strong>第 1-2 週</strong>
+          <p>技術修補、正式 sitemap 驗證、admin noindex、支援頁 metadata/schema、GSC URL Inspection。</p>
+        </div>
+        <div class="timebox">
+          <strong>第 3-4 週</strong>
+          <p>GSC query/page 匯出、cannibalization map、服務 pillar 架構、內鏈規劃。</p>
+        </div>
+        <div class="timebox">
+          <strong>第 5-8 週</strong>
+          <p>上線 pillar 頁、改作品案例模板、補 FAQ/比較表、更新 <code>llms.txt</code>。</p>
+        </div>
+        <div class="timebox">
+          <strong>第 9-12 週</strong>
+          <p>AI citation recheck、競品 gap 分析、外部權威訊號、月報與下一輪內容排程。</p>
+        </div>
+      </div>
+
+      <h3>KPI</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>面向</th>
+            <th>指標</th>
+            <th>90 天目標</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Indexation</td>
+            <td>有效索引頁數、sitemap 收錄率、URL Inspection 狀態。</td>
+            <td>公開頁 90%+ 可索引；私有頁 0 筆索引。</td>
+          </tr>
+          <tr>
+            <td>Organic</td>
+            <td>非品牌 impressions/clicks、前 10 名關鍵字數、CTR。</td>
+            <td>建立 baseline 後每月成長；先看 impressions，再看 clicks。</td>
+          </tr>
+          <tr>
+            <td>Technical</td>
+            <td>LCP、INP、CLS、HTTP 200、schema validation。</td>
+            <td>Core Web Vitals 達 Good；主要 schema 無錯誤。</td>
+          </tr>
+          <tr>
+            <td>AEO/GEO</td>
+            <td>跨平台 citation rate、lost prompts、競品 share of voice、AI referral。</td>
+            <td>第 1 次只建 baseline；第 2 次追蹤引用率與品牌提及率提升。</td>
+          </tr>
+          <tr>
+            <td>Conversion</td>
+            <td>LINE 點擊、詢問表單、電話/社群點擊、作品頁停留。</td>
+            <td>把搜尋與 AI 流量連到可追蹤的詢問動作。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>必要資料缺口</h3>
+      <ul>
+        <li>Google Search Console 最近 3-6 個月 query/page 資料。</li>
+        <li>GA4 或伺服器 log：自然搜尋、ChatGPT/Perplexity referral、LINE CTA 點擊。</li>
+        <li>正式 PostgreSQL 作品數與正式 sitemap 實際輸出。</li>
+        <li>4 個 AI 平台同一組 prompts 的 citation baseline。</li>
+      </ul>
+    </section>
+
+    <section id="sources">
+      <h2>七、參考依據</h2>
+      <ul class="source-list">
+        <li><a href="https://developers.google.com/search/docs/appearance/ai-features?hl=en">Google Search Central：AI features and your website</a>。重點：AI Overviews / AI Mode 仍以 SEO fundamentals、可索引、可讀文字、內鏈、page experience、structured data 與可見文字一致為基礎。</li>
+        <li><a href="https://developers.google.com/search/docs/essentials/technical">Google Search Technical Requirements</a>。重點：公開可存取、Googlebot 不被封鎖、HTTP 200、具可索引內容。</li>
+        <li><a href="https://developers.google.com/search/docs/appearance/structured-data/search-gallery">Google Structured Data Markup Supported Features</a>。重點：Organization、LocalBusiness、FAQ、Breadcrumb、Article、Image metadata 等可支援 rich result 或理解頁面內容。</li>
+        <li><a href="https://help.openai.com/en/articles/12627856-publishers-and-developers-faq">OpenAI Publishers and Developers FAQ</a>。重點：公開網站可出現在 ChatGPT search，需避免封鎖 <code>OAI-SearchBot</code>，可用 analytics 追蹤 <code>utm_source=chatgpt.com</code> referral。</li>
+        <li><a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">Perplexity Crawlers</a>。重點：<code>PerplexityBot</code> 用於搜尋結果索引與連結，若有 WAF/CDN 需明確允許 bot 與官方 IP。</li>
+      </ul>
+    </section>
+
+    <p class="footer-note">報告檔：docs/seo-aeo-improvement-plan-20260513.html。此報告為改善計畫，不宣稱能保證 AI 引用；AI 回答與引用具有非決定性，需以固定 prompt baseline 重測。</p>
+  </main>
+</body>
+</html>

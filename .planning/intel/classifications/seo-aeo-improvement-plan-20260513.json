@@ -1,0 +1,43 @@
+{
+  "source_path": "E:\\ai_website\\goodjob-site\\docs\\seo-aeo-improvement-plan-20260513.html",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "村山良作搜尋與 AI 引用能見度改善計畫",
+  "summary": "外部 SEO 顧問製作的 90 天 SEO/AEO 改善計畫報告（2026-05-13），涵蓋現況盤點、P0~P3 優先級任務、5 大內容集群規劃、AI 引用基線測量策略與 KPI 衡量框架。",
+  "scope": [
+    "SEO 技術基礎（sitemap、robots、canonical、metadata、schema）",
+    "AEO/GEO 引用率提升（ChatGPT、Claude、Gemini、Perplexity）",
+    "內容集群與 pillar 頁規劃（5 大服務分類）",
+    "作品頁案例模板與結構化資料",
+    "私有頁索引控制（/admin/、/quote/）",
+    "90 天時程與 KPI 衡量",
+    "支援銷售頁強化（sort-hat、wedding-packages、teabar）"
+  ],
+  "cross_refs": [
+    "server.py",
+    "robots.txt",
+    "llms.txt",
+    "sitemap.xml",
+    "/works/{id}",
+    "/admin/",
+    "/quote/",
+    "/sort-hat/",
+    "/wedding-packages/",
+    "/wedding-packages/outdoor.html",
+    "/teabar.html",
+    "/services/brand-event-decoration/",
+    "/services/exhibition-space-design/",
+    "/services/year-end-party-decoration/",
+    "/services/civil-office-transformation/",
+    "data/articles.json (PostgreSQL 取代)",
+    "https://developers.google.com/search/docs/appearance/ai-features",
+    "https://developers.google.com/search/docs/essentials/technical",
+    "https://developers.google.com/search/docs/appearance/structured-data/search-gallery",
+    "https://help.openai.com/en/articles/12627856-publishers-and-developers-faq",
+    "https://docs.perplexity.ai/docs/resources/perplexity-crawlers"
+  ],
+  "locked": false,
+  "precedence": 0,
+  "notes": "Manifest 指定 type=PRD 與 precedence=0，已接受並寫入。HTML 文件結構完整，無 frontmatter（HTML 而非 Markdown），改以 <title> + <h1> 取得標題。主要章節：(1) 執行摘要 + 評分卡（SEO 7.4、AEO 6.2、目標 8.5+），(2) 現況發現（6 項風險表格），(3) 優先級改善計畫（P0 7 天技術修補 / P1 30 天服務集群 / P2 60 天 AEO 引用 / P3 90 天權威訊號），(4) 5 大 content cluster pillar，(5) AEO baseline prompt 組 + 4 類 AI 引用修補包（Entity clarity / Prompt-matched FAQ / Comparison pages / Third-party proof），(6) 4 階段時程 + 5 大 KPI 面向（Indexation / Organic / Technical / AEO/GEO / Conversion），(7) Google/OpenAI/Perplexity 官方文件參考。文件特性偏向商業/產品需求與優先級規劃（明確的目標、驗收條件、時程），PRD 分類恰當。"
+}
