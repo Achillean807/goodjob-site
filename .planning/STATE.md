@@ -28,7 +28,7 @@
 
 ### 下一步動作
 
-1. **可選插隊：** Phase 1.6 — GA4 + Microsoft Clarity 埋碼（Phase 7 GATE-7A 前置，零延後零成本）
+1. ~~Phase 1.6 — GA4 + Microsoft Clarity 埋碼~~ ✅ **2026-05-14 02:00 已完成**（GA4 `G-FVG726LELF` + Clarity `wqkwwcp7kt` 上線，dataLayer / window.clarity 驗證 OK）
 2. **可選自動化：** GATE-2A — Playwright 操作 GSC 匯出（村長一次性 login）
 3. **主路線：** 執行 `/gsd-plan-phase 2`（P1-A 內容集群骨架建立）
 
@@ -73,6 +73,8 @@ Phase 1 的前置 gate：
 | 私有頁索引筆數 | 待 GSC 確認 | 0 | — |
 | 4 平台 AI baseline | 尚未建立 | 已建立並可重測 | 尚未建立 |
 | Core Web Vitals | 未量測 | LCP/INP/CLS 全 Good | — |
+| GA4 Measurement ID | — | 已部署 | `G-FVG726LELF`（2026-05-14 上線）|
+| Microsoft Clarity Project ID | — | 已部署 | `wqkwwcp7kt`（2026-05-14 上線）|
 
 ---
 
@@ -144,6 +146,7 @@ Phase 1 的前置 gate：
 - 2026-05-14 00:35：✅ **Plan 1.4 自動化前置完成** — 8 URL 線上 HTML 抓取 + JSON-LD parse 全綠；報告骨架 `01-RICH-RESULTS-REPORT.md` 已建好供村長手動填截圖結果
 - 2026-05-14 00:38：📝 **Phase 1 SUMMARY 產出** — 5 plans 自動化部分全綠；STATE 進度條 0/7 → 1/7
 - 2026-05-14 01:30：✅ **Phase 1.4 完整收尾** — Playwright MCP 對 12 URL（8 必驗 + 4 支援頁）跑 Google Rich Results Test 全綠；過程中發現 teabar.html Product schema 3 critical errors（Offer 缺 `price`），改寫為 Service+OfferCatalog（B2B 客製化服務語義更貼），部署 + CF purge + 重測 → 2 個有效項目 0 錯誤 0 警告；evidence/ 內 13 張截圖（含修補前後對照）
+- 2026-05-14 02:00：✅ **Phase 1.6 GA4 + Microsoft Clarity 埋碼完成** — Playwright 自動化建立兩家帳號／專案：GA4 `村山良作 - GA4` Measurement ID `G-FVG726LELF`（藝術與娛樂分類，台灣時區，目標 lead generation + traffic）+ Clarity 專案 `村山良作 Goodjob` Project ID `wqkwwcp7kt`（娛樂分類）；雙追蹤碼埋入 7 個對外 HTML（index, teabar, workflow, muse-2026, sort-hat, wedding-packages × 2）+ `server.py` `_serve_works_page` SSR 模板（f-string `{{` escape 通過 syntax check），共 8 檔 +128 行；部署 + cf-purge 8 URL + Playwright 跑 production 驗 `window.dataLayer`（含 `config G-FVG726LELF`）/ `window.gtag` / `window.clarity` 皆已 ready；Cloudflare Rocket Loader 雖改了 script type 但仍正確 evaluate，不需加 `data-cfasync="false"`
 
 ### 下次 Session 必讀
 

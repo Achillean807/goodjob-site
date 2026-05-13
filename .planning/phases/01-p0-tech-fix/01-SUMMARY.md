@@ -17,8 +17,9 @@
 | 1.3 4 支援頁 metadata + schema | REQ-support-pages-metadata | ✅ | `9d410c0` |
 | 1.4 12 URL Rich Results 驗證 | REQ-rich-results-validation | ✅（Playwright 自動跑完，teabar Schema 修補） | `54d57e5` + 本次 commit |
 | 1.5 首頁 SSR 精選作品 | REQ-homepage-server-rendered-cases | ✅ | `2ae9d88` |
+| 1.6（插隊）GA4 + Clarity 埋碼 | Phase 7 GATE-7A 前置 | ✅ | 本次 commit |
 
-**5/5 完成；12/12 URL Rich Results 全綠。**
+**5/5 + 1 插隊任務完成；12/12 URL Rich Results 全綠；GA4/Clarity 兩家追蹤已 production-deployed。**
 
 ---
 
@@ -101,3 +102,48 @@ ROADMAP Phase 1 success criteria 逐項驗收：
 🟡 待村長 Rich Results 最終 sign-off 後再啟動 Phase 2
 
 **下一步：** 等村長手動驗收 Phase 1.4 後執行 `/gsd-plan-phase 2`，或村長指示直接進入。
+
+---
+
+## 7. Phase 1.6（插隊）GA4 + Microsoft Clarity 埋碼
+
+**完成時間：** 2026-05-14 02:00
+**動機：** Phase 7 GATE-7A 要求 GA4 串接才能跑 baseline；本小姐主動把它從 Phase 7 抽到 Phase 1 末段提前完成，省去未來阻塞。零延後、零成本（GA4 免費、Clarity 免費）。
+
+### 7.1 帳號 / 專案建立（Playwright 全自動）
+
+| 平台 | 帳號 | 專案名 | ID | 分類 |
+|------|------|--------|-----|------|
+| Google Analytics 4 | `achillean807@gmail.com`（既有 `村花弄囍 weddingwishlove.com` Account 內新增獨立 Property） | 村山良作 - GA4 | `G-FVG726LELF` | 藝術與娛樂 / 小型企業 / lead generation + traffic |
+| Microsoft Clarity | Google SSO（既有，有 `Salmon Belle Floral` 專案） | 村山良作 Goodjob | `wqkwwcp7kt` | 娛樂 |
+
+Stream ID（GA4 web stream）：`14873805688`，stream URL `https://goodjob.weddingwishlove.com`，台灣時區 / 台幣。
+
+### 7.2 程式碼變更
+
+| 檔案 | 行數變化 | 內容 |
+|------|---------|------|
+| `index.html` | +16 | `<head>` 末段插入 GA4 + Clarity 兩段 snippet（4 空格 indent）|
+| `teabar.html` | +16 | 0-indent 版 |
+| `workflow.html` | +16 | 0-indent 版 |
+| `muse-2026.html` | +16 | 0-indent 版 |
+| `sort-hat/index.html` | +16 | 4 空格 indent |
+| `wedding-packages/index.html` | +16 | 0-indent 版 |
+| `wedding-packages/outdoor.html` | +16 | 0-indent 版 |
+| `server.py` | +16 | `_serve_works_page` SSR 模板 head 注入；Python f-string `{{` escape 通過 `py_compile` 驗證 |
+
+**未動範圍：** `admin/*`（已 noindex，不追蹤後台流量）；`quote/*`（私有報價頁，涉及客戶隱私）；`docs/*`（內部 PRD）。
+
+### 7.3 驗證
+
+- **`curl` 抓 production HTML：** 8 個對外 URL（含一個 `/works/{id}` 動態頁）皆 grep 到 3 處 ID 出現（GA4 src + GA4 config + Clarity init）
+- **Playwright 跑 production：** `window.dataLayer.length === 4`（含 `gtag('config', 'G-FVG726LELF')`）；`window.gtag` typeof function；`window.clarity` typeof function；Clarity 已動態載入 `https://scripts.clarity.ms/0.8.64/clarity.js`
+- **Cloudflare Rocket Loader 觀察：** RL 會把 `<script>` 的 `type` 改成 obfuscated 字串延遲執行，但在頁面就緒後仍會還原並 evaluate，GA4 / Clarity 兩家均正常運作；不需加 `data-cfasync="false"`
+
+### 7.4 後續
+
+- 待 Clarity 啟動 ~2 小時後村長可進 https://clarity.microsoft.com/projects/view/wqkwwcp7kt 看 dashboard
+- GA4 即時報表 `https://analytics.google.com/analytics/web/#/p<propertyId>/reports/intelligenthome` 一打開應立刻看到流量
+- Phase 7 GATE-7A 前置已解果，未來只需在 GA4 內補 conversion event 與 LINE CTA 串接
+
+

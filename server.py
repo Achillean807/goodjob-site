@@ -1728,6 +1728,22 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   <link rel="canonical" href="{page_url}">
   <link rel="stylesheet" href="/assets/site.css?v={css_v}">
   <script type="application/ld+json">{jsonld_str}</script>
+  <!-- Google Analytics 4 (村山良作 Property) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FVG726LELF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){{dataLayer.push(arguments);}}
+    gtag('js', new Date());
+    gtag('config', 'G-FVG726LELF');
+  </script>
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){{
+        c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    }})(window, document, "clarity", "script", "wqkwwcp7kt");
+  </script>
   <style>
     .works-page {{ max-width: 960px; margin: 0 auto; padding: 100px 24px 60px; }}
     .works-hero {{ width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; display: block; }}
