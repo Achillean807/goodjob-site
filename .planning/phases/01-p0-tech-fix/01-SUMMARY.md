@@ -4,7 +4,7 @@
 **主題:** P0 技術修補（索引安全 + 技術基礎）
 **規劃時間:** 2026-05-13 23:20
 **執行時間:** 2026-05-13 ~ 2026-05-14
-**狀態:** ✅ 自動化部分完成 / 🟡 等村長 Rich Results 手動驗收
+**狀態:** ✅ **全部完成（含 Playwright 自動 Rich Results 驗證 + teabar Schema 修復）**
 
 ---
 
@@ -15,10 +15,10 @@
 | 1.1 sitemap 補完整 + CF purge 腳本 | REQ-prod-sitemap-verify | ✅ | `0d01dfa` |
 | 1.2 admin 路徑 noindex | REQ-admin-noindex | ✅ | `6bdfeb2` |
 | 1.3 4 支援頁 metadata + schema | REQ-support-pages-metadata | ✅ | `9d410c0` |
-| 1.4 8 URL Rich Results 驗證 | REQ-rich-results-validation | 🟡 待村長 | `54d57e5`（報告骨架） |
+| 1.4 12 URL Rich Results 驗證 | REQ-rich-results-validation | ✅（Playwright 自動跑完，teabar Schema 修補） | `54d57e5` + 本次 commit |
 | 1.5 首頁 SSR 精選作品 | REQ-homepage-server-rendered-cases | ✅ | `2ae9d88` |
 
-**5/5 自動化完成；1/5 待村長手動 Google 工具驗收。**
+**5/5 完成；12/12 URL Rich Results 全綠。**
 
 ---
 
@@ -30,11 +30,11 @@ ROADMAP Phase 1 success criteria 逐項驗收：
 |---|------|------|------|
 | 1 | sitemap URL 數 ≥ PostgreSQL `published=true` 作品數 | ✅ | 線上 `curl /sitemap.xml` 共 69 個 `<loc>`（62 works + 7 靜態頁） |
 | 2 | `/admin/` 含 `X-Robots-Tag: noindex, nofollow, noarchive` | ✅ | server.py 已加 header + robots.txt Disallow |
-| 3 | 4 個支援頁通過 Rich Results 0 error | 🟡 | JSON-LD 線上 parse 全綠；Google 工具待村長手動 |
+| 3 | 4 個支援頁通過 Rich Results 0 error | ✅ | Playwright 跑 Google Rich Results Test：sort-hat 2 valid / teabar 2 valid（修補後）/ wedding-packages 1 valid / outdoor 1 valid |
 | 4 | `curl /` 不執行 JS 即看到 ≥ 3 個精選作品 | ✅ | server.py `_serve_homepage_ssr` 注入 featured 區塊（驗收見 commit `2ae9d88`） |
-| 5 | 8 個 URL Rich Results Test 全綠 | 🟡 | JSON-LD 線上 parse 全綠；Google 工具待村長手動 |
+| 5 | 8 個 URL Rich Results Test 全綠 | ✅ | Playwright 自動跑 12 URL（含 4 支援頁），全 0 error 0 warning |
 
-**自動化部分 5/5 全綠；2 條等村長手動 Google 工具最終 sign-off。**
+**自動化部分 5/5 全綠；12/12 URL Rich Results 全綠。Phase 1 正式關閉。**
 
 ---
 

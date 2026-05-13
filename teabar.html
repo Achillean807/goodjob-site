@@ -944,17 +944,27 @@ a { color: var(--accent); text-decoration: none; }
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Product",
+  "@type": "Service",
+  "serviceType": "客製化迎賓花果茶",
   "name": "村花囍茶",
   "description": "天然花果迎賓茶，客製化 LOGO 標籤，400ml 瓶裝，50 瓶起訂。",
-  "brand": { "@type": "Brand", "name": "村花囍茶" },
+  "provider": {
+    "@type": "Organization",
+    "name": "村花弄囍",
+    "url": "https://goodjob.weddingwishlove.com/"
+  },
   "image": "https://goodjob.weddingwishlove.com/assets/images/teabar/brand-event.jpg",
   "url": "https://goodjob.weddingwishlove.com/teabar.html",
-  "offers": [
-    { "@type": "Offer", "name": "六月青果", "priceCurrency": "TWD", "availability": "https://schema.org/InStock", "url": "https://goodjob.weddingwishlove.com/teabar.html" },
-    { "@type": "Offer", "name": "鮮果蜜境", "priceCurrency": "TWD", "availability": "https://schema.org/InStock", "url": "https://goodjob.weddingwishlove.com/teabar.html" },
-    { "@type": "Offer", "name": "玫目清秀", "priceCurrency": "TWD", "availability": "https://schema.org/InStock", "url": "https://goodjob.weddingwishlove.com/teabar.html" }
-  ]
+  "areaServed": { "@type": "Country", "name": "Taiwan" },
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "村花囍茶口味方案",
+    "itemListElement": [
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "六月青果", "description": "青蘋果＋翠玉檸檬＋蜂蜜，清新解膩。" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "鮮果蜜境", "description": "蘋果＋鳳梨＋洛神＋蜂蜜，酸甜飽滿。" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "玫目清秀", "description": "玫瑰＋藍莓＋蜂蜜，浪漫花香。" } }
+    ]
+  }
 }
 </script>
 <script type="application/ld+json">

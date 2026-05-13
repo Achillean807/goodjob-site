@@ -21,15 +21,16 @@
 | 欄位 | 值 |
 |------|----|
 | 當前 Milestone | v1.0 — SEO / AEO 90 天能見度提升 |
-| 當前 Phase | Phase 1（P0 技術修補）— **✅ 自動化執行完成，🟡 待村長 Rich Results 手動驗收** |
-| 當前 Plan | `.planning/phases/01-p0-tech-fix/01-SUMMARY.md`（執行總結；5/5 plans 自動化部分綠燈） |
-| 狀態 | 1.1/1.2/1.3/1.5 已 production-deployed + curl 驗證綠燈；1.4 等村長手動 Google Rich Results Test |
-| 進度條 | `[▓▓▓░░░░░░░░░░░░░░░░░] 1 / 7 phases（Phase 1 結尾驗收中）` |
+| 當前 Phase | Phase 1（P0 技術修補）— **✅ 全部完成（Playwright 自動跑完 12 URL + teabar 重大錯誤修復）** |
+| 當前 Plan | `.planning/phases/01-p0-tech-fix/01-SUMMARY.md`（執行總結；5/5 plans 全綠 + 12/12 URL 通過） |
+| 狀態 | 1.1/1.2/1.3/1.4/1.5 全 production-deployed + Rich Results 驗證 0 錯誤 |
+| 進度條 | `[▓▓▓▓░░░░░░░░░░░░░░░░] 1 / 7 phases（Phase 1 結束，準備 Phase 2）` |
 
 ### 下一步動作
 
-1. **村長手動：** 跑 https://search.google.com/test/rich-results 對 8 必驗 URL + 4 建議支援頁，截圖填回 `.planning/phases/01-p0-tech-fix/01-RICH-RESULTS-REPORT.md`
-2. **驗收後：** 執行 `/gsd-plan-phase 2`（P1-A 內容集群骨架建立）
+1. **可選插隊：** Phase 1.6 — GA4 + Microsoft Clarity 埋碼（Phase 7 GATE-7A 前置，零延後零成本）
+2. **可選自動化：** GATE-2A — Playwright 操作 GSC 匯出（村長一次性 login）
+3. **主路線：** 執行 `/gsd-plan-phase 2`（P1-A 內容集群骨架建立）
 
 執行順序（已完成）：**1.2 admin noindex（6bdfeb2） → 1.5 首頁 SSR（2ae9d88） → 1.1 sitemap + CF purge（0d01dfa） → 1.3 4 頁 metadata（9d410c0） → 1.4 Rich Results 報告骨架（54d57e5）**
 
@@ -142,6 +143,7 @@ Phase 1 的前置 gate：
 - 2026-05-14 00:33：✅ **Plan 1.3 完成** — 4 支援頁 metadata + 9 個 JSON-LD schema 上線（sort-hat 2、teabar 3 含 FAQPage、wedding-packages × 2 各 2）
 - 2026-05-14 00:35：✅ **Plan 1.4 自動化前置完成** — 8 URL 線上 HTML 抓取 + JSON-LD parse 全綠；報告骨架 `01-RICH-RESULTS-REPORT.md` 已建好供村長手動填截圖結果
 - 2026-05-14 00:38：📝 **Phase 1 SUMMARY 產出** — 5 plans 自動化部分全綠；STATE 進度條 0/7 → 1/7
+- 2026-05-14 01:30：✅ **Phase 1.4 完整收尾** — Playwright MCP 對 12 URL（8 必驗 + 4 支援頁）跑 Google Rich Results Test 全綠；過程中發現 teabar.html Product schema 3 critical errors（Offer 缺 `price`），改寫為 Service+OfferCatalog（B2B 客製化服務語義更貼），部署 + CF purge + 重測 → 2 個有效項目 0 錯誤 0 警告；evidence/ 內 13 張截圖（含修補前後對照）
 
 ### 下次 Session 必讀
 
