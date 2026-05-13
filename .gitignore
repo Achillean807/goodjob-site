@@ -40,3 +40,8 @@ cf-create-*.png
 cf-login.png
 cf-token-edit-*.png
 cf-tokens-*.png
+
+# GSD planning evidence — 截圖類證據檔（手動填，README.md 仍提交）
+.planning/phases/**/evidence/*.png
+.planning/phases/**/evidence/*.jpg
+.planning/phases/**/evidence/*.webp
