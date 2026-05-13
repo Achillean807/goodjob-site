@@ -23,7 +23,7 @@
 
 ## Phases（總覽 Checklist）
 
-- [ ] **Phase 1：P0 技術修補** — sitemap 驗證、admin noindex、支援頁 metadata、Rich Results 驗證、首頁 SSR 案例
+- [x] **Phase 1：P0 技術修補** — sitemap 驗證、admin noindex、支援頁 metadata、Rich Results 驗證、首頁 SSR 案例 ✅ 自動化完成 2026-05-14（1.4 等村長手動 Google 工具最終 sign-off）
 - [ ] **Phase 2：P1-A 內容集群骨架建立** — GSC 匯出與 cannibalization、5 個 pillar 頁上線
 - [ ] **Phase 3：P1-B 作品模板擴充與 FAQ** — 作品 cluster mapping、6 區塊模板、5 cluster × 4-6 題 FAQ
 - [ ] **Phase 4：P2-A AI Citation Baseline** — 4 平台 × 20-40 題、robots/WAF AI bot 允許、llms.txt 更新

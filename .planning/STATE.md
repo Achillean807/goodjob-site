@@ -21,18 +21,17 @@
 | 欄位 | 值 |
 |------|----|
 | 當前 Milestone | v1.0 — SEO / AEO 90 天能見度提升 |
-| 當前 Phase | Phase 1（P0 技術修補）— **規劃完成、待執行** |
-| 當前 Plan | `.planning/phases/01-p0-tech-fix/01-PLAN.md`（5 plans, 640 行；CHECK 通過 PASS-AFTER-REVISION）|
-| 狀態 | CONTEXT + PLAN + CHECK 三件式完成；可進入 `/gsd-execute-phase 1` |
-| 進度條 | `[▓░░░░░░░░░░░░░░░░░░░] 0 / 7 phases（Phase 1 已規劃）` |
+| 當前 Phase | Phase 1（P0 技術修補）— **✅ 自動化執行完成，🟡 待村長 Rich Results 手動驗收** |
+| 當前 Plan | `.planning/phases/01-p0-tech-fix/01-SUMMARY.md`（執行總結；5/5 plans 自動化部分綠燈） |
+| 狀態 | 1.1/1.2/1.3/1.5 已 production-deployed + curl 驗證綠燈；1.4 等村長手動 Google Rich Results Test |
+| 進度條 | `[▓▓▓░░░░░░░░░░░░░░░░░] 1 / 7 phases（Phase 1 結尾驗收中）` |
 
 ### 下一步動作
 
-```
-/gsd-execute-phase 1
-```
+1. **村長手動：** 跑 https://search.google.com/test/rich-results 對 8 必驗 URL + 4 建議支援頁，截圖填回 `.planning/phases/01-p0-tech-fix/01-RICH-RESULTS-REPORT.md`
+2. **驗收後：** 執行 `/gsd-plan-phase 2`（P1-A 內容集群骨架建立）
 
-執行順序（PLAN L21 已論證）：**1.2 admin noindex → 1.5 首頁 SSR → 1.1 sitemap + CF purge → 1.3 4 頁 metadata → 1.4 Rich Results 驗收**
+執行順序（已完成）：**1.2 admin noindex（6bdfeb2） → 1.5 首頁 SSR（2ae9d88） → 1.1 sitemap + CF purge（0d01dfa） → 1.3 4 頁 metadata（9d410c0） → 1.4 Rich Results 報告骨架（54d57e5）**
 
 Phase 1 的前置 gate：
 - **GATE-1A** ✅ **已解果 2026-05-13**：SSH ach-clawhome → `SELECT COUNT(*) FROM articles` 結果為 **62 篇**
@@ -139,6 +138,10 @@ Phase 1 的前置 gate：
 - 2026-05-13 23:09：✅ **GATE-1A 解果** — SSH `ach-clawhome` 跑 `SELECT COUNT(*) FROM articles` 得 **62 篇**（business 27 / party 16 / civil 14 / magic 5）；同步修正 CLAUDE.md / README.md / DESIGN.md 過時值（27/29 → 62）
 - 2026-05-13 23:20：📋 Phase 1 規劃完成 — `01-CONTEXT.md`（216 行）+ `01-PLAN.md`（640 行，5 plans）+ `01-CHECK.md` goal-backward 驗證
 - 2026-05-13 23:30：✅ `gsd-plan-checker` 找出 1 Blocker（SQL camelCase 拼錯部署即崩）+ 3 Warning（teabar FAQPage 漏實作、sitemap URL 數歧義、缺 Rollback）；Opus 親自修正並 spot-check 全綠 → PLAN PASS-AFTER-REVISION
+- 2026-05-14 00:00：🚀 **Phase 1 執行開始** — 依序部署 Plan 1.2 → 1.5 → 1.1 → 1.3，每個都 commit + push + CF purge + curl 驗證
+- 2026-05-14 00:33：✅ **Plan 1.3 完成** — 4 支援頁 metadata + 9 個 JSON-LD schema 上線（sort-hat 2、teabar 3 含 FAQPage、wedding-packages × 2 各 2）
+- 2026-05-14 00:35：✅ **Plan 1.4 自動化前置完成** — 8 URL 線上 HTML 抓取 + JSON-LD parse 全綠；報告骨架 `01-RICH-RESULTS-REPORT.md` 已建好供村長手動填截圖結果
+- 2026-05-14 00:38：📝 **Phase 1 SUMMARY 產出** — 5 plans 自動化部分全綠；STATE 進度條 0/7 → 1/7
 
 ### 下次 Session 必讀
 
