@@ -69,7 +69,7 @@ src/
 │   ├── images/             # 作品圖片
 │   └── *.png               # Logo 與 favicon
 ├── data/
-│   ├── articles.json       # 作品資料（27 篇，API 資料來源）
+│   ├── articles.json       # 舊資料備份（正式源 = PostgreSQL `goodjob_site.articles`，62 篇）
 │   ├── config.json         # 管理員帳密設定
 │   └── wp_texts.json       # WordPress 原始文案備份
 ├── admin/

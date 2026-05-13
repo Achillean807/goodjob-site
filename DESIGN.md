@@ -81,7 +81,7 @@ admin UI ──POST /api/upload/{id}──→ server.py ──→ 存檔 assets/
 | 2026-03 | Python stdlib HTTP server | 零依賴，主機不需 pip install | 功能受限於 stdlib，但對靜態站足夠 |
 | 2026-03 | Netflix 深色主題 | 作品以攝影為主，深色背景凸顯圖片質感 | 所有頁面統一暗色調 |
 | 2026-03 | Hash-based SPA routing | 單一 index.html 即可處理所有作品頁，無需產生靜態頁 | SEO 不可見，需另行產生 `/works/*.html` 靜態頁（待辦） |
-| 2026-03 | JSON 檔案作為資料庫 | 27 篇文章規模不需 SQL，JSON 檔直接版控 | 不支援併發寫入，但單一管理員場景足夠 |
+| 2026-03 | JSON 檔案作為資料庫 | 27 篇文章規模不需 SQL，JSON 檔直接版控 | 不支援併發寫入，但單一管理員場景足夠（2026-05 已切換至 PostgreSQL，正式源共 62 篇） |
 | 2026-04 | 移除 `WWW-Authenticate` header | 避免瀏覽器彈出原生登入視窗，改由前端 CMS 自行處理 401 | 前端需自行管理 auth 狀態 |
 | 2026-04 | 圖片上傳改為扁平目錄 | 原本存到 `images/{id}/` 子目錄，前端讀取路徑不一致 | 所有圖片統一存放 `assets/images/` |
 

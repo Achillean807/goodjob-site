@@ -33,8 +33,10 @@
 ```
 
 執行前須先處理 Phase 1 的前置 gate：
-- **GATE-1A**：SSH `achilean@100.102.51.64` → `psql -d goodjob_site -c "SELECT COUNT(*) FROM articles WHERE published = true"`，取得正式作品數作為 sitemap 驗收基準
-- **GATE-1B**：Cloudflare CDN 對 `/sitemap.xml` cache purge
+- **GATE-1A** ✅ **已解果 2026-05-13**：SSH ach-clawhome → `SELECT COUNT(*) FROM articles` 結果為 **62 篇**（無 `published` 欄位，全部已上架；舊紀錄 27 / PRD 推估 29 皆為過時值）
+  - 分類細項：`business` 27 篇、`party` 16 篇、`civil` 14 篇、`magic` 5 篇
+  - 影響：sitemap 驗收基準改為 ≥ 62；`REQ-prod-sitemap-verify` 驗收條件已用此值對齊
+- **GATE-1B**：Cloudflare CDN 對 `/sitemap.xml` cache purge（待 Phase 1 上線時執行）
 
 ---
 
@@ -95,7 +97,7 @@
 
 | 缺口 | 對應 Gate | 對應 Phase |
 |------|----------|-----------|
-| PostgreSQL 正式作品數（27 vs 29 未對齊） | GATE-1A | Phase 1（必須） |
+| ~~PostgreSQL 正式作品數（27 vs 29 未對齊）~~ ✅ 已解果：62 篇 | GATE-1A | Phase 1（已通過） |
 | Google Search Console 3-6 個月 query/page 匯出 | GATE-2A | Phase 2（必須） |
 | GA4 自然搜尋 / AI referral / LINE CTA 串接 | GATE-7A | Phase 7（必須） |
 | 4 平台 AI baseline prompt 組（20-40 題/平台） | GATE-4A | Phase 4（必須） |
@@ -132,6 +134,7 @@
 - 2026-05-13 22:42：`gsd-doc-synthesizer` 完成 intel 萃取（6 個檔、715 行）
 - 2026-05-13 22:44：`gsd-roadmapper` 確認衝突 gate 通過、PROJECT.md 欄位收集完成
 - 2026-05-13 22:44+：本次 ingest 寫出 PROJECT.md / REQUIREMENTS.md / ROADMAP.md / STATE.md
+- 2026-05-13 23:09：✅ **GATE-1A 解果** — SSH `ach-clawhome` 跑 `SELECT COUNT(*) FROM articles` 得 **62 篇**（business 27 / party 16 / civil 14 / magic 5）；同步修正 CLAUDE.md / README.md / DESIGN.md 過時值（27/29 → 62）
 
 ### 下次 Session 必讀
 
