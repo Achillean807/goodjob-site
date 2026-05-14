@@ -186,8 +186,8 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. P0 技術修補 | 0/5 | **Planned — 待執行** | 2026-05-13 plan 完成 |
-| 2. P1-A 內容集群骨架 | 0/? | Not started | — |
+| 1. P0 技術修補 | 5/5 + 1 插隊任務（GA4 + Clarity） | ✅ **Complete（自動化部分）** | 2026-05-14（1.4 等村長手動 Google Rich Results Test 最終 sign-off） |
+| 2. P1-A 內容集群骨架 | 0/? | Not started — 待 GATE-2A（GSC 匯出）+ GATE-2B（pillar route 設計） | — |
 | 3. P1-B 作品模板與 FAQ | 0/? | Not started | — |
 | 4. P2-A AI Citation Baseline | 0/? | Not started | — |
 | 5. P2-B AI 引用修補包 | 0/? | Not started | — |

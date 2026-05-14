@@ -45,3 +45,6 @@ cf-tokens-*.png
 .planning/phases/**/evidence/*.png
 .planning/phases/**/evidence/*.jpg
 .planning/phases/**/evidence/*.webp
+
+# GSC raw exports — ZIP 是分析中間檔，CSV 已解壓且納入 repo 作為 baseline
+.planning/intel/gsc-export/*.zip
