@@ -3,5 +3,20 @@ Disallow: /quote/
 Disallow: /admin/
 Allow: /
 
+User-agent: OAI-SearchBot
+Disallow: /quote/
+Disallow: /admin/
+Allow: /
+
+User-agent: PerplexityBot
+Disallow: /quote/
+Disallow: /admin/
+Allow: /
+
+User-agent: GPTBot
+Disallow: /quote/
+Disallow: /admin/
+Allow: /
+
 Sitemap: https://goodjob.weddingwishlove.com/sitemap.xml
 LLMs-Txt: https://goodjob.weddingwishlove.com/llms.txt
