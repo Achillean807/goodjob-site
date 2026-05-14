@@ -565,6 +565,10 @@ function openAdd() {
   document.getElementById('f-id').value = '';
   document.getElementById('f-title').value = '';
   document.getElementById('f-desc').value = '';
+  ['background','constraint','strategy','highlight','industry','outcome'].forEach(function(k){
+    var el = document.getElementById('f-cb-' + k);
+    if (el) el.value = '';
+  });
   document.getElementById('f-category').value = 'business';
   document.getElementById('f-sort').value = articles.length + 1;
   document.getElementById('f-featured').checked = false;
@@ -605,6 +609,11 @@ function openEdit(id) {
   document.getElementById('f-id').value = article.id;
   document.getElementById('f-title').value = article.title || '';
   document.getElementById('f-desc').value = article.description || '';
+  var cb = article.caseBlocks || {};
+  ['background','constraint','strategy','highlight','industry','outcome'].forEach(function(k){
+    var el = document.getElementById('f-cb-' + k);
+    if (el) el.value = cb[k] || '';
+  });
   document.getElementById('f-category').value = article.category || 'business';
   document.getElementById('f-sort').value = article.sortOrder || 1;
   document.getElementById('f-featured').checked = !!article.featured;
@@ -1044,6 +1053,12 @@ function saveArticle() {
   var data = {
     title: title,
     description: document.getElementById('f-desc').value.replace(/^\s+|\s+$/g, ''),
+    caseBlocks: ['background','constraint','strategy','highlight','industry','outcome'].reduce(function(acc, k){
+      var el = document.getElementById('f-cb-' + k);
+      var v = el ? el.value.replace(/^\s+|\s+$/g, '') : '';
+      if (v) acc[k] = v;
+      return acc;
+    }, {}),
     category: document.getElementById('f-category').value,
     sortOrder: parseInt(document.getElementById('f-sort').value, 10) || 99,
     featured: document.getElementById('f-featured').checked,

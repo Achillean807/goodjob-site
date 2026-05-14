@@ -147,7 +147,8 @@ def _init_db():
             sort_order INTEGER NOT NULL DEFAULT 0,
             created_at TEXT,
             updated_at TEXT,
-            row_index INTEGER NOT NULL DEFAULT 0
+            row_index INTEGER NOT NULL DEFAULT 0,
+            case_blocks TEXT NOT NULL DEFAULT '{}'
         );
         CREATE TABLE IF NOT EXISTS article_images (
             article_id TEXT NOT NULL,
@@ -193,6 +194,13 @@ def _init_db():
             value TEXT NOT NULL DEFAULT ''
         );
         """)
+        article_columns = {
+            r["name"] for r in conn.execute("PRAGMA table_info(articles)")
+        }
+        if "case_blocks" not in article_columns:
+            conn.execute(
+                "ALTER TABLE articles ADD COLUMN case_blocks TEXT NOT NULL DEFAULT '{}'"
+            )
 
         # 修補 C：SQLite 從 JSON seed 預設禁用 — 避免「SQLite 為空 + 舊版
         # data/articles.json 殘留」的組合在主機端誤觸覆蓋線上資料的災難。
@@ -238,8 +246,13 @@ def _init_pg_db():
                 sort_order INTEGER NOT NULL DEFAULT 0,
                 created_at TEXT,
                 updated_at TEXT,
-                row_index INTEGER NOT NULL DEFAULT 0
+                row_index INTEGER NOT NULL DEFAULT 0,
+                case_blocks JSONB NOT NULL DEFAULT '{}'::jsonb
             )
+            """)
+            cur.execute("""
+            ALTER TABLE articles
+            ADD COLUMN IF NOT EXISTS case_blocks JSONB NOT NULL DEFAULT '{}'::jsonb
             """)
             cur.execute("""
             CREATE TABLE IF NOT EXISTS article_images (
@@ -325,8 +338,8 @@ def _replace_articles(conn, articles):
             INSERT INTO articles (
                 id, title, description, category, featured, featured_order,
                 hero_image, link_url, video_id, video_vertical, sort_order,
-                created_at, updated_at, row_index
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                created_at, updated_at, row_index, case_blocks
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             article_id,
             article.get("title") or "",
@@ -342,6 +355,7 @@ def _replace_articles(conn, articles):
             article.get("createdAt"),
             article.get("updatedAt"),
             row_index,
+            json.dumps(article.get("caseBlocks") or {}, ensure_ascii=False),
         ))
         for position, url in enumerate(article.get("images") or []):
             if url:
@@ -416,6 +430,18 @@ def _article_from_row(conn, row):
         article["createdAt"] = row["created_at"]
     if row["updated_at"]:
         article["updatedAt"] = row["updated_at"]
+    raw_cb = None
+    try:
+        raw_cb = row["case_blocks"]
+    except (KeyError, IndexError):
+        raw_cb = None
+    if raw_cb:
+        try:
+            article["caseBlocks"] = json.loads(raw_cb)
+        except (ValueError, TypeError):
+            article["caseBlocks"] = {}
+    else:
+        article["caseBlocks"] = {}
     if awards:
         article["awards"] = awards
     return article
@@ -480,6 +506,8 @@ def _replace_config(conn, cfg):
 
 
 def _pg_replace_articles(conn, articles):
+    import psycopg2.extras
+
     with conn.cursor() as cur:
         cur.execute("DELETE FROM article_awards")
         cur.execute("DELETE FROM article_images")
@@ -492,8 +520,8 @@ def _pg_replace_articles(conn, articles):
                 INSERT INTO articles (
                     id, title, description, category, featured, featured_order,
                     hero_image, link_url, video_id, video_vertical, sort_order,
-                    created_at, updated_at, row_index
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    created_at, updated_at, row_index, case_blocks
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 article_id,
                 article.get("title") or "",
@@ -509,6 +537,7 @@ def _pg_replace_articles(conn, articles):
                 article.get("createdAt"),
                 article.get("updatedAt"),
                 row_index,
+                psycopg2.extras.Json(article.get("caseBlocks") or {}),
             ))
             for position, url in enumerate(article.get("images") or []):
                 if url:
@@ -586,6 +615,12 @@ def _pg_article_from_row(conn, row):
         article["createdAt"] = row["created_at"]
     if row["updated_at"]:
         article["updatedAt"] = row["updated_at"]
+    # PostgreSQL JSONB returns dict automatically via psycopg2
+    try:
+        raw_cb = row["case_blocks"]
+    except (KeyError, IndexError):
+        raw_cb = None
+    article["caseBlocks"] = raw_cb if isinstance(raw_cb, dict) else {}
     if awards:
         article["awards"] = awards
     return article

@@ -257,6 +257,35 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
       <label>描述</label>
       <textarea id="f-desc" placeholder="簡短描述（1-2句）"></textarea>
     </div>
+    <details class="field" id="case-blocks-section" style="border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;background:rgba(255,255,255,.02)">
+      <summary style="cursor:pointer;font-size:13px;font-weight:600;color:var(--text);user-select:none">案例 6 區塊（SEO 用，留空則 fallback 顯示描述）</summary>
+      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field" style="margin:0">
+          <label>背景</label>
+          <textarea id="f-cb-background" rows="3" placeholder="案件背景／品牌方／場地概要"></textarea>
+        </div>
+        <div class="field" style="margin:0">
+          <label>限制</label>
+          <textarea id="f-cb-constraint" rows="3" placeholder="預算、時程、空間或法規限制"></textarea>
+        </div>
+        <div class="field" style="margin:0">
+          <label>策略</label>
+          <textarea id="f-cb-strategy" rows="3" placeholder="設計概念、執行方法"></textarea>
+        </div>
+        <div class="field" style="margin:0">
+          <label>亮點</label>
+          <textarea id="f-cb-highlight" rows="3" placeholder="設計或執行亮點（選填）"></textarea>
+        </div>
+        <div class="field" style="margin:0">
+          <label>產業</label>
+          <textarea id="f-cb-industry" rows="3" placeholder="客戶所屬產業類別（選填）"></textarea>
+        </div>
+        <div class="field" style="margin:0">
+          <label>成果</label>
+          <textarea id="f-cb-outcome" rows="3" placeholder="完成的數據／互動／媒體成效"></textarea>
+        </div>
+      </div>
+    </details>
     <div class="field-row">
       <div class="field">
         <label>分類</label>
@@ -437,6 +466,6 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
   </div>
 </div>
 
-<script src="/admin/app.js?v=20260507a"></script>
+<script src="/admin/app.js?v=20260515a"></script>
 </body>
 </html>
