@@ -1695,10 +1695,70 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 self.wfile.write(b"<h1>404 Not Found</h1>")
             return
 
+        CLUSTER_PILLAR_MAP = {
+            "business": ("/services/business-event/", "主題化品牌活動"),
+            "party": ("/services/party-spring-banquet/", "春酒尾牙派對"),
+            "magic": ("/services/magic-academy/", "魔法學院主題"),
+            "civil": ("/services/civil-makeover/", "戶政空間改造"),
+        }
+        pillar_info = CLUSTER_PILLAR_MAP.get(article.get("category", ""))
+
         site_url = "https://goodjob.weddingwishlove.com"
         page_url = f"{site_url}/works/{article_id}"
         title = article.get("title", "")
         description = article.get("description", "")
+        case_blocks = article.get("caseBlocks") or {}
+        CASE_BLOCK_LABELS = [
+            ("background", "案例背景"),
+            ("constraint", "限制條件"),
+            ("strategy", "設計策略"),
+            ("highlight", "執行亮點"),
+            ("industry", "客戶產業"),
+            ("outcome", "完成成效"),
+        ]
+
+        def _esc(s):
+            """HTML escape（簡易，已知文字非可信 HTML）"""
+            return (str(s or "")
+                    .replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;")
+                    .replace('"', "&quot;"))
+
+        has_blocks = any((case_blocks.get(k) or "").strip() for k, _ in CASE_BLOCK_LABELS)
+
+        if has_blocks:
+            blocks_html_parts = [
+                '<section class="works-cases" aria-label="案例詳情">',
+                '<dl class="case-blocks">'
+            ]
+            for key, label in CASE_BLOCK_LABELS:
+                val = (case_blocks.get(key) or "").strip()
+                if not val:
+                    continue
+                blocks_html_parts.append(
+                    f'<dt>{_esc(label)}</dt><dd>{_esc(val)}</dd>'
+                )
+            blocks_html_parts.append('</dl></section>')
+            case_blocks_html = "\n".join(blocks_html_parts)
+            works_desc_html = ""
+        else:
+            case_blocks_html = ""
+            works_desc_html = f'<p class="works-desc">{description}</p>'
+
+        if pillar_info:
+            pillar_url, pillar_label = pillar_info
+            breadcrumb_html = (
+                f'<a href="/">村山良作</a><span class="sep">›</span>'
+                f'<a href="{pillar_url}">{_esc(pillar_label)}</a>'
+                f'<span class="sep">›</span><span>{_esc(title)}</span>'
+            )
+        else:
+            breadcrumb_html = (
+                f'<a href="/">村山良作</a><span class="sep">›</span>'
+                f'<span>{_esc(title)}</span>'
+            )
+
         # Keep crawler/share summaries compact even when the CMS copy has paragraphs.
         meta_source = re.sub(r"\s+", " ", description).strip()
         meta_desc = meta_source[:157] + "..." if len(meta_source) > 160 else meta_source
@@ -1741,6 +1801,37 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         }
         import json as _json
         jsonld_str = _json.dumps(jsonld, ensure_ascii=False)
+        breadcrumb_items = [
+            {"@type": "ListItem", "position": 1, "name": "村山良作", "item": f"{site_url}/"}
+        ]
+        if pillar_info:
+            pillar_url, pillar_label = pillar_info
+            breadcrumb_items.append({
+                "@type": "ListItem",
+                "position": 2,
+                "name": pillar_label,
+                "item": f"{site_url}{pillar_url}",
+            })
+            breadcrumb_items.append({
+                "@type": "ListItem",
+                "position": 3,
+                "name": title,
+                "item": page_url,
+            })
+        else:
+            breadcrumb_items.append({
+                "@type": "ListItem",
+                "position": 2,
+                "name": title,
+                "item": page_url,
+            })
+
+        breadcrumb_jsonld = {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": breadcrumb_items,
+        }
+        breadcrumb_jsonld_str = _json.dumps(breadcrumb_jsonld, ensure_ascii=False)
 
         css_v = "20260406b"
         html = f"""<!DOCTYPE html>
@@ -1763,6 +1854,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   <link rel="canonical" href="{page_url}">
   <link rel="stylesheet" href="/assets/site.css?v={css_v}">
   <script type="application/ld+json">{jsonld_str}</script>
+  <script type="application/ld+json">{breadcrumb_jsonld_str}</script>
   <!-- Google Analytics 4 (村山良作 Property) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-FVG726LELF"></script>
   <script>
@@ -1780,7 +1872,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     }})(window, document, "clarity", "script", "wqkwwcp7kt");
   </script>
   <style>
-    .works-page {{ max-width: 960px; margin: 0 auto; padding: 100px 24px 60px; }}
+    .works-page {{ max-width: 960px; margin: 0 auto; padding: 24px 24px 60px; }}
     .works-hero {{ width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; display: block; }}
     .works-meta {{ margin: 24px 0 8px; display: flex; align-items: center; gap: 12px; }}
     .works-title {{ font-size: clamp(1.8rem, 3vw, 2.8rem); margin: 0 0 20px; line-height: 1.2; }}
@@ -1789,6 +1881,18 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     .works-gallery img {{ width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 6px; display: block; }}
     .works-back {{ display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,.6); text-decoration: none; font-size: .9rem; margin-bottom: 32px; }}
     .works-back:hover {{ color: #fff; }}
+    .pillar-breadcrumb {{
+      max-width: 960px; margin: 100px auto 0; padding: 0 24px;
+      font-size: .9rem; color: rgba(255,255,255,.6);
+    }}
+    .pillar-breadcrumb a {{ color: rgba(255,255,255,.78); text-decoration: none; }}
+    .pillar-breadcrumb a:hover {{ color: #fff; text-decoration: underline; }}
+    .pillar-breadcrumb .sep {{ margin: 0 8px; color: rgba(255,255,255,.4); }}
+    .works-cases {{ margin: 40px 0 0; }}
+    .case-blocks {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px 32px; margin: 0; }}
+    .case-blocks dt {{ font-size: .85rem; font-weight: 600; color: rgba(255,255,255,.55); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }}
+    .case-blocks dd {{ margin: 0; font-size: .95rem; line-height: 1.8; color: rgba(255,255,255,.86); white-space: pre-wrap; }}
+    @media (max-width: 600px) {{ .case-blocks {{ grid-template-columns: 1fr; gap: 20px; }} }}
   </style>
 </head>
 <body>
@@ -1806,6 +1910,10 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     </nav>
   </header>
 
+  <nav class="pillar-breadcrumb" aria-label="麵包屑">
+    {breadcrumb_html}
+  </nav>
+
   <main class="works-page">
     <a href="/#shelf" class="works-back">← 所有作品</a>
     <img class="works-hero" src="{hero}" alt="{title} {cat_label}活動佈置 村山良作">
@@ -1813,7 +1921,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
       <span class="detail-tag">{cat_label}</span>
     </div>
     <h1 class="works-title">{title}</h1>
-    <p class="works-desc">{description}</p>
+    {works_desc_html}
+    {case_blocks_html}
     <section>
       <h2 style="font-size:1.4rem;margin:0 0 16px;">精彩花絮</h2>
       <div class="works-gallery">
