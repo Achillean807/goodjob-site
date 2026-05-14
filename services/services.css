@@ -1,0 +1,294 @@
+/* services/services.css — Pillar 共用樣式（Phase 2） */
+/* 為 5 個 /services/{slug}/ pillar 頁面提供統一視覺基礎 */
+
+:root {
+  --pillar-bg: #0a0a0a;
+  --pillar-text: #f5f5f5;
+  --pillar-accent: #d4af37;
+  --pillar-muted: #888;
+  --pillar-card-bg: rgba(255, 255, 255, 0.04);
+  --pillar-card-hover: rgba(255, 255, 255, 0.08);
+  --pillar-section-pad: 60px 20px;
+  --pillar-hero-pad: 80px 20px 60px;
+  --pillar-radius: 8px;
+}
+
+/* === 麵包屑回鏈 === */
+.pillar-breadcrumb {
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.9rem;
+  color: var(--pillar-muted);
+}
+
+.pillar-breadcrumb a {
+  color: var(--pillar-accent);
+  text-decoration: none;
+}
+
+.pillar-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.pillar-breadcrumb .sep {
+  margin: 0 8px;
+  color: var(--pillar-muted);
+}
+
+/* === Hero 區 === */
+.pillar-hero {
+  padding: var(--pillar-hero-pad);
+  text-align: center;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+}
+
+.pillar-hero h1 {
+  font-size: 2.4rem;
+  margin: 0 0 16px;
+  color: var(--pillar-text);
+  letter-spacing: 0.02em;
+}
+
+.hero-tagline {
+  font-size: 1.1rem;
+  color: var(--pillar-muted);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* === 服務介紹 === */
+.pillar-intro {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.pillar-intro h2 {
+  font-size: 1.6rem;
+  color: var(--pillar-text);
+  margin: 0 0 24px;
+}
+
+.pillar-intro p {
+  line-height: 1.8;
+  color: var(--pillar-muted);
+  margin: 0 0 16px;
+}
+
+/* === 代表案例 + 相關作品 區塊 === */
+.pillar-featured,
+.pillar-related {
+  padding: var(--pillar-section-pad);
+}
+
+.pillar-featured h2,
+.pillar-related h2 {
+  font-size: 1.6rem;
+  color: var(--pillar-text);
+  margin: 0 0 32px;
+  text-align: center;
+}
+
+.featured-grid,
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* === 案例卡片 === */
+.case-card {
+  display: block;
+  background: var(--pillar-card-bg);
+  border-radius: var(--pillar-radius);
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.case-card:hover {
+  transform: translateY(-4px);
+  background: var(--pillar-card-hover);
+}
+
+.case-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.case-card h3 {
+  padding: 16px;
+  color: var(--pillar-text);
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.case-card .case-meta {
+  padding: 0 16px 16px;
+  color: var(--pillar-muted);
+  font-size: 0.85rem;
+}
+
+/* === FAQ 區（Phase 2 為 placeholder，Phase 3 補 FAQPage schema） === */
+.pillar-faq {
+  padding: 60px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.pillar-faq h2 {
+  font-size: 1.6rem;
+  color: var(--pillar-text);
+  margin: 0 0 24px;
+}
+
+.pillar-faq details {
+  background: var(--pillar-card-bg);
+  border-radius: var(--pillar-radius);
+  padding: 16px 20px;
+  margin-bottom: 12px;
+}
+
+.pillar-faq summary {
+  color: var(--pillar-text);
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.pillar-faq details[open] summary {
+  margin-bottom: 12px;
+}
+
+.pillar-faq details p {
+  color: var(--pillar-muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* === CTA 區 === */
+.pillar-cta {
+  padding: var(--pillar-section-pad);
+  text-align: center;
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.pillar-cta h2 {
+  font-size: 1.6rem;
+  color: var(--pillar-text);
+  margin: 0 0 24px;
+}
+
+.pillar-cta a {
+  display: inline-block;
+  margin: 8px 12px;
+  padding: 12px 24px;
+  border: 1px solid var(--pillar-accent);
+  color: var(--pillar-accent);
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.pillar-cta a:hover {
+  background: var(--pillar-accent);
+  color: #0a0a0a;
+}
+
+.cta-link {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--pillar-accent);
+  text-decoration: underline;
+}
+
+/* === wedding-tea-flower hub 專用（雙 OfferCatalog） === */
+.pillar-offers {
+  padding: var(--pillar-section-pad);
+}
+
+.pillar-offers h2 {
+  font-size: 1.6rem;
+  color: var(--pillar-text);
+  margin: 0 0 32px;
+  text-align: center;
+}
+
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.offer-card {
+  display: block;
+  background: var(--pillar-card-bg);
+  border-radius: var(--pillar-radius);
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.offer-card:hover {
+  transform: translateY(-4px);
+}
+
+.offer-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.offer-card h3 {
+  padding: 14px 16px 4px;
+  color: var(--pillar-text);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.offer-card .offer-desc {
+  padding: 0 16px 14px;
+  color: var(--pillar-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* === RWD === */
+@media (max-width: 640px) {
+  .pillar-hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-tagline {
+    font-size: 1rem;
+  }
+
+  .pillar-intro,
+  .pillar-featured,
+  .pillar-related,
+  .pillar-faq,
+  .pillar-cta,
+  .pillar-offers {
+    padding: 40px 16px;
+  }
+
+  .featured-grid,
+  .related-grid,
+  .offers-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .case-card img {
+    height: 220px;
+  }
+}
