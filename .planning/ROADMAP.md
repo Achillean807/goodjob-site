@@ -24,7 +24,7 @@
 ## Phases（總覽 Checklist）
 
 - [x] **Phase 1：P0 技術修補** — sitemap 驗證、admin noindex、支援頁 metadata、Rich Results 驗證、首頁 SSR 案例 ✅ 自動化完成 2026-05-14（1.4 等村長手動 Google 工具最終 sign-off）
-- [ ] **Phase 2：P1-A 內容集群骨架建立** — GSC 匯出與 cannibalization、5 個 pillar 頁上線
+- [x] **Phase 2：P1-A 內容集群骨架建立** — GSC 匯出與 cannibalization、5 個 pillar 頁上線 ✅ 完成 2026-05-14（6/6 plans + 2 插隊任務全綠）
 - [ ] **Phase 3：P1-B 作品模板擴充與 FAQ** — 作品 cluster mapping、6 區塊模板、5 cluster × 4-6 題 FAQ
 - [ ] **Phase 4：P2-A AI Citation Baseline** — 4 平台 × 20-40 題、robots/WAF AI bot 允許、llms.txt 更新
 - [ ] **Phase 5：P2-B AI 引用修補包** — lost-prompts 答案型長文、2 個比較頁
@@ -189,9 +189,9 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. P0 技術修補 | 5/5 + 1 插隊任務（GA4 + Clarity） | ✅ **Complete（自動化部分）** | 2026-05-14（1.4 等村長手動 Google Rich Results Test 最終 sign-off） |
-| 2. P1-A 內容集群骨架 | 0/? | Not started — 待 GATE-2A（GSC 匯出）+ GATE-2B（pillar route 設計） | — |
-| 3. P1-B 作品模板與 FAQ | 0/? | Not started | — |
-| 4. P2-A AI Citation Baseline | 0/? | Not started | — |
+| 2. P1-A 內容集群骨架 | 6/6 + 2 插隊任務（IP/在地/UX 收尾 + 入口閉環） | ✅ **Complete** | 2026-05-14（5 pillar production HTTP 200 + sitemap 74 URL + SC 4/4） |
+| 3. P1-B 作品模板與 FAQ | 0/? | Not started — 待 GATE-3A（作品數基準）+ GATE-3B（cluster migration 設計） | — |
+| 4. P2-A AI Citation Baseline | 0/? | Not started — 待 GATE-4A（prompt 組設計）+ GATE-4B（測試協議）+ GATE-4C（WAF audit） | — |
 | 5. P2-B AI 引用修補包 | 0/? | Not started | — |
 | 6. P3 權威訊號 | 0/? | Not started | — |
 | 7. 90 天驗收與週報 | 0/? | Not started | — |
@@ -218,3 +218,4 @@ Phase 3 與 Phase 4 可並行（皆只依賴 Phase 1 與各自前置 gate）。
 ## 變更紀錄
 
 - 2026-05-13：由 `/gsd-ingest-docs` 從 PRD 首次建立；7 phase 結構採用 SYNTHESIS 推薦切分，與 PRD 原 P0~P3 對齊，僅將 P1 拆成 2A/2B（骨架 vs 內容）、P2 拆成 4A/4B（baseline vs 修補）以反映依賴序。
+- 2026-05-14：Phase 1 ✅ + Phase 2 ✅ 收尾完成；進度 2/7。下一個 Phase 由 Phase 3 / Phase 4 兩個選項中選一個（或並行）。

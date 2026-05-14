@@ -21,20 +21,26 @@
 | 欄位 | 值 |
 |------|----|
 | 當前 Milestone | v1.0 — SEO / AEO 90 天能見度提升 |
-| 當前 Phase | Phase 1（P0 技術修補）— **✅ 全部完成（Playwright 自動跑完 12 URL + teabar 重大錯誤修復）** |
-| 當前 Plan | `.planning/phases/01-p0-tech-fix/01-SUMMARY.md`（執行總結；5/5 plans 全綠 + 12/12 URL 通過） |
-| 狀態 | 1.1/1.2/1.3/1.4/1.5 全 production-deployed + Rich Results 驗證 0 錯誤 |
-| 進度條 | `[▓▓▓▓░░░░░░░░░░░░░░░░] 1 / 7 phases（Phase 1 結束，準備 Phase 2）` |
+| 當前 Phase | Phase 2（P1-A 內容集群骨架）— **✅ 全部完成（5 pillar production 部署 + sitemap + 入口閉環 + IP/在地/UX 收尾）** |
+| 當前 Plan | `.planning/phases/02-p1a-content-cluster/02-SUMMARY.md`（執行總結；6/6 plans + 2 插隊任務全綠） |
+| 狀態 | 5/5 pillar HTTP 200 + sitemap 74 URL + SC 4/4 達標 + 首頁 5 入口閉環 |
+| 進度條 | `[▓▓▓▓▓▓░░░░░░░░░░░░░░] 2 / 7 phases（Phase 2 結束，準備 Phase 3 / Phase 4）` |
 
 ### 下一步動作
 
-1. ~~Phase 1.6 — GA4 + Microsoft Clarity 埋碼~~ ✅ **2026-05-14 02:00 已完成**（GA4 `G-FVG726LELF` + Clarity `wqkwwcp7kt` 上線，dataLayer / window.clarity 驗證 OK）
-2. **可選自動化：** GATE-2A — Playwright 操作 GSC 匯出（村長一次性 login）
-3. **主路線：** 執行 `/gsd-plan-phase 2`（P1-A 內容集群骨架建立）
+1. ✅ Phase 1（P0 技術修補）— **2026-05-14 02:00 完成**
+2. ✅ Phase 2（P1-A 內容集群骨架）— **2026-05-14 13:42 完成**（5 pillar production 部署）
+3. **下一步抉擇**（Phase 3 與 Phase 4 可並行，皆只依賴 Phase 1 + Phase 2）：
+   - 🅐 **Phase 3（P1-B 作品模板與 FAQ）**：5 cluster × 4-6 題 FAQ + 作品 SSR 6 區塊模板
+   - 🅑 **Phase 4（P2-A AI Citation Baseline）**：4 平台 × 20-40 prompts baseline 測試
+   - 🅒 兩個並行（Phase 3 由 codex 跑 FAQ 內容、Phase 4 由 Playwright 跑 prompt 測試）
+4. **任一啟動前** 跑各自前置 gate（Phase 3：GATE-3A/3B；Phase 4：GATE-4A/4B/4C）
 
-執行順序（已完成）：**1.2 admin noindex（6bdfeb2） → 1.5 首頁 SSR（2ae9d88） → 1.1 sitemap + CF purge（0d01dfa） → 1.3 4 頁 metadata（9d410c0） → 1.4 Rich Results 報告骨架（54d57e5）**
+Phase 2 的前置 gate：
+- **GATE-2A** ✅ **完成 2026-05-14**：cannibalization 報告產出（`.planning/intel/gsc-export/cannibalization-report-20260514.md`，commit `5b45a82`）
+- **GATE-2B** ✅ **LOCKED 2026-05-14**：URL = `/services/{slug}/`、靜態 HTML、cluster mapping 採 §6.1 架構
 
-Phase 1 的前置 gate：
+Phase 1 的前置 gate（保留紀錄）：
 - **GATE-1A** ✅ **已解果 2026-05-13**：SSH ach-clawhome → `SELECT COUNT(*) FROM articles` 結果為 **62 篇**
   - 分類細項：`business` 27 / `party` 16 / `civil` 14 / `magic` 5
   - 影響：sitemap 驗收基準 = ≥ 69（62 篇 works + 7 個靜態頁）
@@ -147,6 +153,15 @@ Phase 1 的前置 gate：
 - 2026-05-14 00:38：📝 **Phase 1 SUMMARY 產出** — 5 plans 自動化部分全綠；STATE 進度條 0/7 → 1/7
 - 2026-05-14 01:30：✅ **Phase 1.4 完整收尾** — Playwright MCP 對 12 URL（8 必驗 + 4 支援頁）跑 Google Rich Results Test 全綠；過程中發現 teabar.html Product schema 3 critical errors（Offer 缺 `price`），改寫為 Service+OfferCatalog（B2B 客製化服務語義更貼），部署 + CF purge + 重測 → 2 個有效項目 0 錯誤 0 警告；evidence/ 內 13 張截圖（含修補前後對照）
 - 2026-05-14 02:00：✅ **Phase 1.6 GA4 + Microsoft Clarity 埋碼完成** — Playwright 自動化建立兩家帳號／專案：GA4 `村山良作 - GA4` Measurement ID `G-FVG726LELF`（藝術與娛樂分類，台灣時區，目標 lead generation + traffic）+ Clarity 專案 `村山良作 Goodjob` Project ID `wqkwwcp7kt`（娛樂分類）；雙追蹤碼埋入 7 個對外 HTML（index, teabar, workflow, muse-2026, sort-hat, wedding-packages × 2）+ `server.py` `_serve_works_page` SSR 模板（f-string `{{` escape 通過 syntax check），共 8 檔 +128 行；部署 + cf-purge 8 URL + Playwright 跑 production 驗 `window.dataLayer`（含 `config G-FVG726LELF`）/ `window.gtag` / `window.clarity` 皆已 ready；Cloudflare Rocket Loader 雖改了 script type 但仍正確 evaluate，不需加 `data-cfasync="false"`
+- 2026-05-14 08:40：✅ **GATE-2A 達成** — Playwright 自動匯出 GSC 6 個月 query + page CSV → cannibalization-report-20260514.md 產出（commit `5b45a82`）
+- 2026-05-14 08:57：⚖️ **DEC-pillar-structure-five-clusters 鎖定** — 5 pillar `/services/{slug}/` 架構 LOCKED；02-CONTEXT.md + 02-PLAN.md 規劃完成（commit `f4d78e0`）
+- 2026-05-14 09:30：✅ **Plan 2.0 完成** — services.css 共用樣式 + representatives.md 15 件代表案例對照（commit `532514d`）
+- 2026-05-14 10:00：✅ **Plan 2.1-2.5 codex 並行交付** — 5 個 pillar HTML 全部寫完並補 3 個既有頁 breadcrumb（commit `3aa8664`）
+- 2026-05-14 11:00：🟣 **Plan 2.8 IP/在地/UX 收尾** — magic-academy IP 用語去除 + civil-makeover 台北信義在地 SEO + 手機 A/B/C 實驗
+- 2026-05-14 12:21：✅ **手機 A 案 2 欄精簡卡定稿** — services.css 收編，B/C 實驗碼清理完畢
+- 2026-05-14 12:55：✅ **Phase 2 主體完成並 commit** — 變數 A 手機排版 + 實驗清理（commit `d0fb90a`）
+- 2026-05-14 13:42：✅ **Phase 2 入口閉環收尾** — 5 pillar production 部署 + sitemap 補 5 條 + 首頁 nav/topbar 5 入口補完 + 4 pillar 重複作品去除 + sort-hat 縮圖換成自家頁面截圖 + llms.txt 補 pillar section（commit `e121d77`）
+- 2026-05-14 14:13：📝 **Phase 2 SUMMARY 產出** — 6/6 plans + 2 插隊任務全綠；STATE 進度條 1/7 → 2/7
 
 ### 下次 Session 必讀
 
