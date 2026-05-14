@@ -72,7 +72,9 @@
   2. 5 個 pillar URL 全部 HTTP 200（4 新建 + 1 既有 wedding-packages 強化）
   3. 每個 pillar 頁含：服務介紹、代表案例內鏈 ≥ 3、FAQ placeholder（內容會在 Phase 3 填）、相關作品列表
   4. `/sitemap.xml` 收錄 5 個 pillar URL
-- **Plans**：TBD
+- **Plans**：見 `.planning/phases/02-p1a-content-cluster/02-PLAN.md`（6 個 plan：2.0 共用 CSS + 代表案例、2.1-2.4 四個藍海 pillar、2.5 wedding-tea-flower hub + 既有頁回鏈、2.6 sitemap + deploy + Rich Results 驗證）
+- **GATE-2A**：✅ 完成（cannibalization-report-20260514.md）
+- **GATE-2B**：✅ LOCKED（URL = `/services/{slug}/`、静態 HTML、cluster mapping 採 §6.1 架構）
 - **UI hint**：yes（5 個 pillar 頁全新前端頁面 + 內鏈版塊）
 
 ---
