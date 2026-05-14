@@ -1,6 +1,6 @@
 # Phase 4 — AI Citation Baseline Prompt 組（首輪 20 題草擬版）
 
-**Status:** 草擬完成 2026-05-15，待 Plan 4.0 逐 cluster review LOCKED
+**Status:** ✅ **LOCKED**（村長 2026-05-15 整批 confirm，Plan 4.0 完成）
 **結構：** 5 cluster × 4 類型 = 20 題（GATE-4A 方向 LOCKED）
 **用途：** ChatGPT / Claude / Gemini / Perplexity 4 平台 × 每題 3 重複 = 240 次測試
 **設計原則：**
@@ -76,14 +76,11 @@
 
 ---
 
-## Plan 4.0 逐題 review 待辦
+## Plan 4.0 LOCKED 紀錄（已完成）
 
-- [ ] 村長對 BE-1 ~ BE-4（business-event）逐題 confirm / 改
-- [ ] 村長對 PB-1 ~ PB-4（party-spring-banquet）逐題 confirm / 改
-- [ ] 村長對 MA-1 ~ MA-4（magic-academy）逐題 confirm / 改
-- [ ] 村長對 CM-1 ~ CM-4（civil-makeover）逐題 confirm / 改
-- [ ] 村長對 WT-1 ~ WT-4（wedding-tea-flower）逐題 confirm / 改
-- [ ] 全 LOCKED → 啟 Plan 4.2 測試
+- [x] 村長 2026-05-15 AskUserQuestion 整批 confirm，20 題 prompts.md 草擬版直接 LOCKED 進 Plan 4.2 執行
+- [x] 訂閱清單確認：ChatGPT Plus ✅ / Claude Pro ✅ / Gemini Advanced ✅ / Perplexity Pro ❌（走 free tier）
+- [x] DEC-baseline-prompt-design-direction LOCKED 寫進 decisions.md
 
 ---
 

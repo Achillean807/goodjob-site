@@ -140,3 +140,16 @@
 - **理由：** 4 類型覆蓋從泛搜尋到長尾意圖光譜；20 題首輪採 PRD 下限（節省 4 平台執行工時 12-20h）；後續 phase 可擴充至 40 題上限。
 - **取捨：** 首輪僅 20 題可能對 lost prompts 涵蓋不全；可在 Phase 5 baseline 第二輪擴充。
 - **來源：** 04-CONTEXT.md GATE-4A + 村長 2026-05-15 AskUserQuestion confirm
+
+---
+
+## DEC-baseline-platforms-three-paid-perplexity-free
+
+- **標題：** Phase 4 baseline 測試採 3 平台付費訂閱 + Perplexity free tier
+- **狀態：** **LOCKED**（村長 2026-05-15 confirm）
+- **範圍：** Plan 4.2 baseline 240 次測試執行
+- **決策陳述：** 4 平台訂閱狀況：ChatGPT Plus ✅ / Claude Pro ✅ / Gemini Advanced ✅ / Perplexity Pro ❌。Perplexity 改用 free tier 執行（單日 5 次 Pro Search 限制 → 每日跑 5 題，4 天跑完 20 題）。
+- **理由：** 不為 baseline 一次性任務升 Perplexity Pro；free tier 已能取得自然搜尋結果，僅 Sonar 模型版本受限（free 用 Sonar / Pro 可選 Sonar Reasoning Pro 等），對 baseline 「品牌是否被提及」測試影響可接受。
+- **取捨：** Perplexity baseline 受限於 free tier rate limit（5 題/日），Plan 4.2 Perplexity 段需拆 4 天執行；結果可信度需在 04-baseline-report.md 註明「Perplexity 採 Sonar free tier」避免後續第二輪重測不一致。
+- **緩解：** CSV `notes` 欄位每題記錄當天 Perplexity 使用的模型版本（free Sonar 預設模型名）；若後續 Phase 5 需要與 Pro 一致，再升訂閱。
+- **來源：** 村長 2026-05-15 AskUserQuestion 訂閱清單 confirm
