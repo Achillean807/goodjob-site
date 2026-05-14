@@ -167,10 +167,13 @@
     (function () {
       'use strict';
       var slug = 'business';
+      var featuredIds = ['gd-home-sweet-home', 'chengmei-insect-exhibition', 'cxo-female-founders-club'];
       fetch('/api/articles')
         .then(function (r) { return r.json(); })
         .then(function (data) {
-          var arts = (data.articles || []).filter(function (a) { return a.category === slug; });
+          var arts = (data.articles || []).filter(function (a) {
+            return a.category === slug && featuredIds.indexOf(a.id) < 0;
+          });
           var grid = document.querySelector('.related-grid[data-category="' + slug + '"]');
           if (!grid) return;
           arts.forEach(function (a) {

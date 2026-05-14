@@ -175,7 +175,7 @@
       <h2>互動工具</h2>
       <div class="featured-grid">
         <a class="case-card" href="/sort-hat/">
-          <img src="https://goodjob-img.weddingwishlove.com/works/c35fa390/c35fa390-1.webp" alt="分類帽入席預言查詢系統" loading="lazy" />
+          <img src="https://goodjob-img.weddingwishlove.com/sort-hat/sort-hat-thumb.webp" alt="分類帽入席預言查詢系統頁面截圖" loading="lazy" />
           <h3>分類帽入席預言查詢系統</h3>
           <p class="case-meta">用魔法分類帽的互動方式，讓賓客掃 QR 就找到自己的桌次。</p>
         </a>
@@ -203,6 +203,7 @@
     (function () {
       'use strict';
       var slug = 'magic';
+      var featuredIds = ['c35fa390', 'lativ-magic-platform', '3f65f0ab'];
       var grid = document.querySelector('.related-grid[data-category="' + slug + '"]');
 
       if (!grid) {
@@ -215,7 +216,7 @@
         })
         .then(function (data) {
           var articles = (data.articles || []).filter(function (article) {
-            return article.category === slug;
+            return article.category === slug && featuredIds.indexOf(article.id) < 0;
           });
 
           articles.forEach(function (article) {

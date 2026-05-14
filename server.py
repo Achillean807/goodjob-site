@@ -1814,6 +1814,11 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             "/wedding-packages/outdoor.html",
             "/sort-hat/",
             "/muse-2026.html",
+            "/services/business-event/",
+            "/services/party-spring-banquet/",
+            "/services/magic-academy/",
+            "/services/civil-makeover/",
+            "/services/wedding-tea-flower/",
         ]:
             lines.append(f"  <url><loc>{site_url}{loc}</loc></url>")
         # Dynamic works pages

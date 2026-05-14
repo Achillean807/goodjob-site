@@ -203,6 +203,7 @@
   <script>
     (function () {
       const slug = 'civil';
+      const featuredIds = ['bc700965', 'datong-civil', 'renai-civil'];
       const grid = document.querySelector('.related-grid[data-category="civil"]');
       if (!grid) return;
 
@@ -232,7 +233,7 @@
         .then((payload) => {
           const articles = Array.isArray(payload.articles) ? payload.articles : [];
           const civilWorks = articles
-            .filter((article) => article.category === slug)
+            .filter((article) => article.category === slug && featuredIds.indexOf(article.id) < 0)
             .sort((a, b) => {
               const aOrder = Number.isFinite(a.featuredOrder) ? a.featuredOrder : 9999;
               const bOrder = Number.isFinite(b.featuredOrder) ? b.featuredOrder : 9999;
