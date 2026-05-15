@@ -13,6 +13,21 @@
   --pillar-radius: 8px;
 }
 
+html {
+  background: var(--pillar-bg);
+}
+
+body {
+  margin: 0;
+  background: var(--pillar-bg);
+  color: var(--pillar-text);
+  font-family: 'Sora', 'Noto Sans TC', system-ui, sans-serif;
+}
+
+main {
+  background: var(--pillar-bg);
+}
+
 /* === 麵包屑回鏈 === */
 .pillar-breadcrumb {
   padding: 12px 20px;
@@ -262,6 +277,79 @@
   line-height: 1.5;
 }
 
+.teabar-gallery {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: var(--pillar-section-pad);
+}
+
+.section-heading {
+  text-align: center;
+  margin: 0 0 28px;
+}
+
+.section-heading p {
+  margin: 0 0 8px;
+  color: var(--pillar-accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.section-heading h2 {
+  margin: 0;
+  color: var(--pillar-text);
+  font-size: 1.6rem;
+}
+
+.teabar-gallery-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1fr;
+  gap: 16px;
+}
+
+.teabar-gallery-item {
+  position: relative;
+  min-height: 260px;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--pillar-radius);
+  background: var(--pillar-card-bg);
+}
+
+.teabar-gallery-item.feature {
+  grid-row: span 2;
+  min-height: 536px;
+}
+
+.teabar-gallery-item img {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  display: block;
+  object-fit: cover;
+}
+
+.teabar-gallery-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.74) 100%);
+  pointer-events: none;
+}
+
+.teabar-gallery-item figcaption {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  left: 16px;
+  z-index: 1;
+  color: var(--pillar-text);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
 /* === RWD === Mobile 採 A 案：2 欄精簡卡（密度先決） */
 @media (max-width: 640px) {
   .pillar-hero h1 {
@@ -277,7 +365,8 @@
   .pillar-related,
   .pillar-faq,
   .pillar-cta,
-  .pillar-offers {
+  .pillar-offers,
+  .teabar-gallery {
     padding: 28px 12px;
   }
 
@@ -322,5 +411,37 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     color: rgba(245, 245, 245, 0.55);
+  }
+
+  .section-heading {
+    margin-bottom: 18px;
+  }
+
+  .section-heading h2 {
+    font-size: 1.25rem;
+  }
+
+  .teabar-gallery-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .teabar-gallery-item,
+  .teabar-gallery-item.feature {
+    min-height: 190px;
+    grid-row: auto;
+    border-radius: 8px;
+  }
+
+  .teabar-gallery-item figcaption {
+    right: 10px;
+    bottom: 9px;
+    left: 10px;
+    font-size: 0.72rem;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }

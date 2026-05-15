@@ -1962,7 +1962,6 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             "/services/party-spring-banquet/",
             "/services/magic-academy/",
             "/services/civil-makeover/",
-            "/services/wedding-tea-flower/",
         ]:
             lines.append(f"  <url><loc>{site_url}{loc}</loc></url>")
         # Dynamic works pages
