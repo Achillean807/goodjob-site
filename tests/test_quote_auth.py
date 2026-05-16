@@ -172,6 +172,16 @@ class QuoteAuthTest(unittest.TestCase):
         token = base64.b64encode(f"{username}:{password}".encode("utf-8")).decode("ascii")
         return f"Basic {token}"
 
+    def set_quote(self, quote_id, payload):
+        status, headers, body = self.request(
+            f"/api/quotes/{quote_id}",
+            method="PUT",
+            data=payload,
+            auth=True,
+        )
+        self.assertIn(status, (200, 201), body)
+        return json.loads(body)
+
     def request(self, path, method="GET", data=None, auth=False, opener=None, headers=None, raw=False):
         body = None
         req_headers = dict(headers or {})
@@ -219,6 +229,87 @@ class QuoteAuthTest(unittest.TestCase):
                 return response.status, response.headers, response.read().decode("utf-8", errors="replace")
         except urllib.error.HTTPError as exc:
             return exc.code, exc.headers, exc.read().decode("utf-8", errors="replace")
+
+    def test_active_quote_requires_password_then_serves_html_after_login(self):
+        self.set_quote("260606", {"title": "Proposal A", "status": "active", "password": "clientpass"})
+
+        status, headers, body = self.request("/quote/260606/")
+        self.assertEqual(status, 200)
+        self.assertIn("請輸入提案密碼", body)
+        self.assertNotIn("proposal 260606", body)
+
+        jar = http.cookiejar.CookieJar()
+        opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
+        status, headers, body = self.form_request("/quote/260606/auth", {"password": "wrong"}, opener=opener)
+        self.assertEqual(status, 200)
+        self.assertIn("密碼錯誤", body)
+        self.assertEqual(len(list(jar)), 0)
+
+        status, headers, body = self.form_request("/quote/260606/auth", {"password": "clientpass"}, opener=opener)
+        self.assertEqual(status, 200)
+        self.assertIn("proposal 260606", body)
+        cookies = list(jar)
+        self.assertEqual(len(cookies), 1)
+        self.assertEqual(cookies[0].path, "/quote/260606/")
+        self.assertTrue(cookies[0].has_nonstandard_attr("HttpOnly"))
+
+        status, headers, body = self.request("/quote/260606/images/003.jpg", opener=opener)
+        self.assertEqual(status, 200)
+        self.assertIn("fake-jpg", body)
+
+    def test_quote_cookie_does_not_unlock_another_quote(self):
+        self.set_quote("260606", {"title": "Proposal A", "status": "active", "password": "clientpass"})
+        self.set_quote("260613", {"title": "Proposal B", "status": "active", "password": "otherpass"})
+
+        jar = http.cookiejar.CookieJar()
+        opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
+        status, headers, body = self.form_request("/quote/260606/auth", {"password": "clientpass"}, opener=opener)
+        self.assertEqual(status, 200)
+        self.assertIn("proposal 260606", body)
+
+        status, headers, body = self.request("/quote/260613/", opener=opener)
+        self.assertEqual(status, 200)
+        self.assertIn("請輸入提案密碼", body)
+        self.assertNotIn("proposal 260613", body)
+
+    def test_hidden_quote_shows_paused_page_even_with_password(self):
+        self.set_quote("260606", {"title": "Proposal A", "status": "hidden", "password": "clientpass"})
+        status, headers, body = self.request("/quote/260606/")
+        self.assertEqual(status, 200)
+        self.assertIn("此提案暫停開放", body)
+        self.assertNotIn("請輸入提案密碼", body)
+
+    def test_quotes_api_requires_quotes_manage_permission(self):
+        status, headers, body = self.request("/api/quotes")
+        self.assertEqual(status, 401)
+
+        status, headers, body = self.request(
+            "/api/quotes",
+            auth=self.basic_auth("viewer", "viewerpass"),
+        )
+        self.assertEqual(status, 403)
+
+        status, headers, body = self.request("/api/quotes", auth=True)
+        self.assertEqual(status, 200)
+        payload = json.loads(body)
+        self.assertEqual([q["id"] for q in payload["quotes"]], ["260606", "260613"])
+
+    def test_delete_quote_moves_folder_to_deleted_and_marks_manifest(self):
+        self.set_quote("260613", {"title": "Proposal B", "status": "active", "password": "otherpass"})
+        src = os.path.join(self.quote_dir, "260613")
+        self.assertTrue(os.path.isdir(src))
+
+        status, headers, body = self.request("/api/quotes/260613", method="DELETE", auth=True)
+        self.assertEqual(status, 200, body)
+        payload = json.loads(body)
+        self.assertEqual(payload["quote"]["status"], "deleted")
+        self.assertFalse(os.path.exists(src))
+        self.assertTrue(os.path.isdir(os.path.join(self.quote_dir, "_deleted")))
+        self.assertTrue(payload["quote"]["deletedPath"].startswith("quote/_deleted/260613-"))
+
+        status, headers, body = self.request("/quote/260613/")
+        self.assertEqual(status, 200)
+        self.assertIn("此提案暫停開放", body)
 
     def test_unconfigured_quote_shows_paused_page(self):
         status, headers, body = self.request("/quote/260606/")
