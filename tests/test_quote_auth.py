@@ -31,56 +31,86 @@ def password_hash(salt, password):
 class QuoteAuthTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.proc = None
         cls.tmpdir = tempfile.mkdtemp(prefix="goodjob-quote-test-")
-        cls.data_dir = os.path.join(cls.tmpdir, "data")
-        cls.quote_dir = os.path.join(cls.tmpdir, "quote")
-        cls.manifest_path = os.path.join(cls.data_dir, "quote_manifest.json")
-        os.makedirs(cls.data_dir, exist_ok=True)
-        os.makedirs(cls.quote_dir, exist_ok=True)
-        cls._write_quote("260606")
-        cls._write_quote("260613")
-        cls._write_accounts()
+        try:
+            cls.data_dir = os.path.join(cls.tmpdir, "data")
+            cls.quote_dir = os.path.join(cls.tmpdir, "quote")
+            cls.manifest_path = os.path.join(cls.data_dir, "quote_manifest.json")
+            os.makedirs(cls.data_dir, exist_ok=True)
+            os.makedirs(cls.quote_dir, exist_ok=True)
+            cls._write_quote("260606")
+            cls._write_quote("260613")
+            cls._write_accounts()
 
-        cls.port = free_port()
-        env = os.environ.copy()
-        env["GOODJOB_ALLOW_SQLITE"] = "1"
-        env["GOODJOB_ALLOW_JSON_SEED"] = "1"
-        env["GOODJOB_DATA_DIR"] = cls.data_dir
-        env["GOODJOB_QUOTE_DIR"] = cls.quote_dir
-        env["GOODJOB_QUOTE_MANIFEST_PATH"] = cls.manifest_path
-        cls.proc = subprocess.Popen(
-            [
-                sys.executable,
-                os.path.join(ROOT, "server.py"),
-                "--bind",
-                "127.0.0.1",
-                "--port",
-                str(cls.port),
-            ],
-            cwd=ROOT,
-            env=env,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        deadline = time.time() + 5
-        while time.time() < deadline:
-            try:
-                urllib.request.urlopen(f"http://127.0.0.1:{cls.port}/", timeout=0.5).close()
-                return
-            except OSError:
-                if cls.proc.poll() is not None:
-                    break
-                time.sleep(0.1)
-        raise RuntimeError("test server did not start")
+            cls.port = free_port()
+            env = os.environ.copy()
+            env["GOODJOB_ALLOW_SQLITE"] = "1"
+            env["GOODJOB_ALLOW_JSON_SEED"] = "1"
+            env["GOODJOB_DATA_DIR"] = cls.data_dir
+            env["GOODJOB_QUOTE_DIR"] = cls.quote_dir
+            env["GOODJOB_QUOTE_MANIFEST_PATH"] = cls.manifest_path
+            cls.proc = subprocess.Popen(
+                [
+                    sys.executable,
+                    os.path.join(ROOT, "server.py"),
+                    "--bind",
+                    "127.0.0.1",
+                    "--port",
+                    str(cls.port),
+                ],
+                cwd=ROOT,
+                env=env,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
+            deadline = time.time() + 5
+            while time.time() < deadline:
+                try:
+                    urllib.request.urlopen(f"http://127.0.0.1:{cls.port}/", timeout=0.5).close()
+                    return
+                except OSError:
+                    if cls.proc.poll() is not None:
+                        break
+                    time.sleep(0.1)
+            raise RuntimeError(cls._server_startup_error())
+        except Exception:
+            cls._stop_server()
+            shutil.rmtree(cls.tmpdir, ignore_errors=True)
+            raise
 
     @classmethod
     def tearDownClass(cls):
-        cls.proc.terminate()
+        cls._stop_server()
+        shutil.rmtree(cls.tmpdir, ignore_errors=True)
+
+    @classmethod
+    def _stop_server(cls):
+        if cls.proc is None:
+            return "", ""
+        if cls.proc.poll() is None:
+            cls.proc.terminate()
         try:
-            cls.proc.wait(timeout=5)
+            stdout, stderr = cls.proc.communicate(timeout=5)
         except subprocess.TimeoutExpired:
             cls.proc.kill()
-        shutil.rmtree(cls.tmpdir, ignore_errors=True)
+            stdout, stderr = cls.proc.communicate(timeout=5)
+        cls.proc = None
+        return stdout or "", stderr or ""
+
+    @classmethod
+    def _server_startup_error(cls):
+        returncode = cls.proc.poll() if cls.proc is not None else None
+        stdout, stderr = cls._stop_server()
+        return (
+            f"test server did not start on 127.0.0.1:{cls.port}; "
+            f"exit code: {returncode}\n"
+            f"stdout:\n{stdout[-4000:] or '<empty>'}\n"
+            f"stderr:\n{stderr[-4000:] or '<empty>'}"
+        )
 
     def setUp(self):
         for quote_id in ("260606", "260613"):
