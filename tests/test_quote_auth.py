@@ -172,7 +172,7 @@ class QuoteAuthTest(unittest.TestCase):
         token = base64.b64encode(f"{username}:{password}".encode("utf-8")).decode("ascii")
         return f"Basic {token}"
 
-    def request(self, path, method="GET", data=None, auth=False, opener=None, headers=None):
+    def request(self, path, method="GET", data=None, auth=False, opener=None, headers=None, raw=False):
         body = None
         req_headers = dict(headers or {})
         if data is not None:
@@ -191,9 +191,19 @@ class QuoteAuthTest(unittest.TestCase):
         active_opener = opener or urllib.request
         try:
             with active_opener.urlopen(req, timeout=5) as response:
-                return response.status, response.headers, response.read().decode("utf-8", errors="replace")
+                response_body = response.read()
+                if raw:
+                    return response.status, response.headers, response_body
+                return response.status, response.headers, response_body.decode("utf-8", errors="replace")
         except urllib.error.HTTPError as exc:
-            return exc.code, exc.headers, exc.read().decode("utf-8", errors="replace")
+            response_body = exc.read()
+            if raw:
+                return exc.code, exc.headers, response_body
+            return exc.code, exc.headers, response_body.decode("utf-8", errors="replace")
+
+    def assert_quote_private_headers(self, headers):
+        self.assertIn("noindex", headers.get("X-Robots-Tag", ""))
+        self.assertIn("no-store", headers.get("Cache-Control", ""))
 
     def form_request(self, path, fields, opener=None):
         body = urllib.parse.urlencode(fields).encode("utf-8")
@@ -215,16 +225,38 @@ class QuoteAuthTest(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertIn("此提案暫停開放", body)
         self.assertNotIn("proposal 260606", body)
-        self.assertIn("noindex", headers.get("X-Robots-Tag", ""))
-        self.assertIn("no-store", headers.get("Cache-Control", ""))
+        self.assert_quote_private_headers(headers)
 
     def test_unconfigured_quote_asset_is_not_public(self):
         status, headers, body = self.request("/quote/260606/images/003.jpg")
         self.assertEqual(status, 200)
         self.assertIn("此提案暫停開放", body)
         self.assertNotIn("fake-jpg", body)
-        self.assertIn("noindex", headers.get("X-Robots-Tag", ""))
-        self.assertIn("no-store", headers.get("Cache-Control", ""))
+        self.assert_quote_private_headers(headers)
+
+    def test_unconfigured_quote_asset_head_has_no_body(self):
+        status, headers, body = self.request(
+            "/quote/260606/images/003.jpg",
+            method="HEAD",
+            raw=True,
+        )
+        self.assertEqual(status, 200)
+        self.assert_quote_private_headers(headers)
+        self.assertEqual(body, b"")
+
+    def test_quote_traversal_attempts_do_not_leak_content(self):
+        paths = [
+            "/quote/260606/../260606/index.html",
+            "/quote/260606/%2e%2e/260606/index.html",
+            "/quote%2F260606/",
+        ]
+        for path in paths:
+            with self.subTest(path=path):
+                status, headers, body = self.request(path)
+                self.assertIn(status, (200, 404))
+                self.assertNotIn("proposal 260606", body)
+                self.assertNotIn("fake-jpg", body)
+                self.assert_quote_private_headers(headers)
 
     def test_public_home_does_not_require_quote_password(self):
         status, headers, body = self.request("/")
