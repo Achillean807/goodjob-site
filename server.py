@@ -16,6 +16,7 @@ import base64
 import hashlib
 import json
 import os
+import posixpath
 import re
 import secrets
 import sqlite3
@@ -42,13 +43,20 @@ from urllib.parse import unquote
 # Paths (resolved relative to the script's own directory)
 # ---------------------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
+DATA_DIR = os.environ.get("GOODJOB_DATA_DIR", os.path.join(BASE_DIR, "data"))
 ARTICLES_PATH = os.path.join(DATA_DIR, "articles.json")
 CONFIG_PATH = os.path.join(DATA_DIR, "config.json")
 ACCOUNTS_PATH = os.path.join(DATA_DIR, "accounts.json")
-DB_PATH = os.path.join(DATA_DIR, "goodjob.sqlite3")
+DB_PATH = os.environ.get("GOODJOB_DB_PATH", os.path.join(DATA_DIR, "goodjob.sqlite3"))
 DATABASE_URL = os.environ.get("GOODJOB_DATABASE_URL", "").strip()
 IMAGES_DIR = os.path.join(BASE_DIR, "assets", "images")
+QUOTE_DIR = os.environ.get("GOODJOB_QUOTE_DIR", os.path.join(BASE_DIR, "quote"))
+QUOTE_MANIFEST_PATH = os.environ.get(
+    "GOODJOB_QUOTE_MANIFEST_PATH",
+    os.path.join(DATA_DIR, "quote_manifest.json"),
+)
+QUOTE_DELETED_DIRNAME = "_deleted"
+QUOTE_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 
 VALID_ROLES = {"admin", "editor", "viewer", "custom"}
 VALID_PERMISSIONS = {
@@ -888,6 +896,43 @@ def _generate_salt():
     return secrets.token_hex(16)
 
 
+def _now_iso():
+    return time.strftime("%Y-%m-%dT%H:%M:%S")
+
+
+def _is_safe_quote_id(quote_id):
+    return bool(quote_id and QUOTE_ID_RE.match(quote_id))
+
+
+def _quote_path(*parts):
+    root = os.path.abspath(QUOTE_DIR)
+    target = os.path.abspath(os.path.join(root, *parts))
+    if target != root and not target.startswith(root + os.sep):
+        raise ValueError("quote path escapes quote root")
+    return target
+
+
+def _load_quote_manifest():
+    data = _read_json(QUOTE_MANIFEST_PATH)
+    if not isinstance(data, dict) or not isinstance(data.get("quotes"), dict):
+        return {"quotes": {}}
+    return data
+
+
+def _save_quote_manifest(manifest):
+    os.makedirs(os.path.dirname(QUOTE_MANIFEST_PATH), exist_ok=True)
+    _write_json_atomic(QUOTE_MANIFEST_PATH, manifest)
+
+
+def _quote_record(manifest, quote_id):
+    record = manifest.get("quotes", {}).get(quote_id)
+    return record if isinstance(record, dict) else None
+
+
+def _quote_has_password(record):
+    return bool(record and record.get("passwordSalt") and record.get("passwordHash"))
+
+
 def _public_account(account):
     """Return account dict with sensitive fields stripped."""
     return {k: account.get(k) for k in ACCOUNT_PUBLIC_FIELDS if k in account}
@@ -1051,6 +1096,109 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
+
+    def _quote_parts(self):
+        clean = unquote(self.path.split("?", 1)[0].split("#", 1)[0])
+        if clean == "/quote":
+            return "", ""
+        if not clean.startswith("/quote/"):
+            return None, None
+        rest = clean[len("/quote/"):]
+        quote_id, _sep, rel = rest.partition("/")
+        return quote_id, rel
+
+    def _send_html(self, html, status=200, head_only=False):
+        body = html.encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        if not head_only:
+            self.wfile.write(body)
+
+    def _send_quote_paused(self, head_only=False):
+        self._send_html(
+            "<!doctype html><html lang=\"zh-Hant\"><head><meta charset=\"utf-8\">"
+            "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
+            "<title>此提案暫停開放</title></head><body>"
+            "<main style=\"min-height:80vh;display:grid;place-items:center;"
+            "font-family:system-ui,'Noto Sans TC',sans-serif;background:#141414;color:#fff\">"
+            "<section style=\"max-width:420px;padding:32px;text-align:center\">"
+            "<h1 style=\"font-size:1.4rem\">此提案暫停開放</h1>"
+            "<p style=\"color:rgba(255,255,255,.68);line-height:1.8\">"
+            "請聯絡村山良作窗口確認提案開放狀態。</p>"
+            "</section></main></body></html>",
+            head_only=head_only,
+        )
+
+    def _send_quote_login(self, quote_id, error="", head_only=False):
+        error_html = (
+            "<p style=\"color:#fca5a5;margin:0 0 12px\">密碼錯誤，請再試一次。</p>"
+            if error else ""
+        )
+        html = (
+            "<!doctype html><html lang=\"zh-Hant\"><head><meta charset=\"utf-8\">"
+            "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
+            f"<title>提案密碼｜{quote_id}</title></head><body>"
+            "<main style=\"min-height:100vh;display:grid;place-items:center;"
+            "font-family:system-ui,'Noto Sans TC',sans-serif;background:#141414;color:#fff\">"
+            f"<form method=\"post\" action=\"/quote/{quote_id}/auth\" style=\"width:min(360px,calc(100vw - 40px));"
+            "background:#1f1f1f;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:28px\">"
+            "<h1 style=\"font-size:1.35rem;margin:0 0 16px\">請輸入提案密碼</h1>"
+            f"{error_html}"
+            "<input type=\"password\" name=\"password\" autocomplete=\"current-password\" autofocus "
+            "style=\"width:100%;box-sizing:border-box;padding:11px 12px;border-radius:6px;"
+            "border:1px solid rgba(255,255,255,.18);background:#2a2a2a;color:#fff\">"
+            "<button type=\"submit\" style=\"width:100%;margin-top:14px;padding:11px 12px;"
+            "border:0;border-radius:6px;background:#e50914;color:#fff;font-weight:700\">進入提案</button>"
+            "</form></main></body></html>"
+        )
+        self._send_html(html, head_only=head_only)
+
+    def _serve_quote_static(self, quote_id, rel_path, head_only=False):
+        if not rel_path or rel_path.endswith("/"):
+            rel_path = rel_path + "index.html"
+        normalized = posixpath.normpath("/" + rel_path).lstrip("/")
+        try:
+            file_path = _quote_path(quote_id, *normalized.split("/"))
+        except ValueError:
+            self.send_error(404, "Not found")
+            return
+        if not os.path.isfile(file_path):
+            self.send_error(404, "Not found")
+            return
+        ctype = self.guess_type(file_path)
+        try:
+            with open(file_path, "rb") as fh:
+                body = fh.read()
+        except OSError:
+            self.send_error(404, "Not found")
+            return
+        self.send_response(200)
+        self.send_header("Content-Type", ctype)
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        if not head_only:
+            self.wfile.write(body)
+
+    def _serve_quote_request(self, head_only=False):
+        quote_id, rel_path = self._quote_parts()
+        if quote_id is None:
+            return False
+        if not _is_safe_quote_id(quote_id):
+            self.send_error(404, "Not found")
+            return True
+        quote_root = _quote_path(quote_id)
+        manifest = _load_quote_manifest()
+        record = _quote_record(manifest, quote_id)
+        if not os.path.isdir(quote_root) and not (record and record.get("status") == "deleted"):
+            self.send_error(404, "Not found")
+            return True
+        if not record or record.get("status") != "active" or not _quote_has_password(record):
+            self._send_quote_paused(head_only=head_only)
+            return True
+        self._send_quote_login(quote_id, head_only=head_only)
+        return True
 
     # ------------------------------------------------------------------
     # Auth
@@ -1612,6 +1760,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             if not self._route_api("GET"):
                 self._send_error_json(404, "Not found")
             return
+        if self._is_quote_path():
+            if self._serve_quote_request(head_only=False):
+                return
         # Serve /admin and /admin/ as admin/index.html
         if self._is_admin_page():
             self.path = "/admin/index.html"
@@ -1984,6 +2135,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             if not self._route_api("GET"):
                 self._send_error_json(404, "Not found")
             return
+        if self._is_quote_path():
+            if self._serve_quote_request(head_only=True):
+                return
         if self._is_admin_page():
             self.path = "/admin/index.html"
         clean_path = self.path.split("?")[0].split("#")[0]
