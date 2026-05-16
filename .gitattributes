@@ -1,6 +1,7 @@
 data/articles.json export-ignore
 data/accounts.json export-ignore
 data/config.json export-ignore
+data/quote_manifest.json export-ignore
 data/goodjob.sqlite3* export-ignore
 data/*.bak export-ignore
 data/*.pre-* export-ignore
