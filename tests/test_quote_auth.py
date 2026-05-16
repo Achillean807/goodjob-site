@@ -224,6 +224,27 @@ class QuoteAuthTest(unittest.TestCase):
 
         self.skipTest(f"directory symlink unavailable: {symlink_error}")
 
+    def write_static_data_file_for_test(self, filename, text):
+        static_data_dir = os.path.join(ROOT, "data")
+        static_path = os.path.join(static_data_dir, filename)
+        existed = os.path.exists(static_path)
+        previous = None
+        if existed:
+            with open(static_path, "rb") as fh:
+                previous = fh.read()
+
+        def cleanup():
+            if existed:
+                with open(static_path, "wb") as fh:
+                    fh.write(previous)
+            elif os.path.exists(static_path):
+                os.remove(static_path)
+
+        self.addCleanup(cleanup)
+        os.makedirs(static_data_dir, exist_ok=True)
+        with open(static_path, "w", encoding="utf-8") as fh:
+            fh.write(text)
+
     def request(self, path, method="GET", data=None, auth=False, opener=None, headers=None, raw=False):
         body = None
         req_headers = dict(headers or {})
@@ -366,11 +387,9 @@ class QuoteAuthTest(unittest.TestCase):
 
     def test_static_data_does_not_expose_quote_manifest_secrets(self):
         self.set_quote("260606", {"title": "Proposal A", "status": "active", "password": "clientpass"})
-        static_data_dir = os.path.join(ROOT, "data")
-        static_manifest_path = os.path.join(static_data_dir, "quote_manifest.json")
-        os.makedirs(static_data_dir, exist_ok=True)
-        with open(static_manifest_path, "w", encoding="utf-8") as fh:
-            json.dump(
+        self.write_static_data_file_for_test(
+            "quote_manifest.json",
+            json.dumps(
                 {
                     "quotes": {
                         "260606": {
@@ -380,15 +399,29 @@ class QuoteAuthTest(unittest.TestCase):
                         }
                     }
                 },
-                fh,
-            )
-        self.addCleanup(lambda: os.path.exists(static_manifest_path) and os.remove(static_manifest_path))
+            ),
+        )
 
         status, headers, body = self.request("/data/quote_manifest.json")
         self.assertIn(status, (403, 404))
         self.assertNotIn("passwordHash", body)
         self.assertNotIn("passwordSalt", body)
         self.assertNotIn("clientpass", body)
+
+    def test_static_data_tmp_files_do_not_expose_secrets(self):
+        private_tmp_files = (
+            "quote_manifest.json.tmp",
+            "accounts.json.tmp",
+            "config.json.tmp",
+        )
+        for filename in private_tmp_files:
+            self.write_static_data_file_for_test(filename, f"secret-marker-{filename}")
+
+        for filename in private_tmp_files:
+            with self.subTest(filename=filename):
+                status, headers, body = self.request(f"/data/{filename}")
+                self.assertIn(status, (403, 404))
+                self.assertNotIn(f"secret-marker-{filename}", body)
 
     def test_authenticated_quote_static_does_not_follow_directory_link_outside_quote(self):
         self.set_quote("260606", {"title": "Proposal A", "status": "active", "password": "clientpass"})
@@ -405,6 +438,19 @@ class QuoteAuthTest(unittest.TestCase):
         status, headers, body = self.request("/quote/260606/linked/secret.txt", opener=opener)
         self.assertIn(status, (200, 403, 404))
         self.assertNotIn("outside-secret-content", body)
+
+    def test_authenticated_quote_static_does_not_follow_directory_link_to_sibling_quote(self):
+        self.set_quote("260606", {"title": "Proposal A", "status": "active", "password": "clientpass"})
+        self.set_quote("260613", {"title": "Proposal B", "status": "active", "password": "otherpass"})
+
+        link_path = os.path.join(self.quote_dir, "260606", "sibling")
+        sibling_root = os.path.join(self.quote_dir, "260613")
+        self.create_directory_link_or_skip(sibling_root, link_path)
+        opener = self.authenticated_opener("260606", "clientpass")
+
+        status, headers, body = self.request("/quote/260606/sibling/index.html", opener=opener)
+        self.assertIn(status, (200, 403, 404))
+        self.assertNotIn("proposal 260613", body)
 
     def test_malformed_existing_manifest_is_not_overwritten_by_quote_update(self):
         invalid_manifest = "{not valid json"

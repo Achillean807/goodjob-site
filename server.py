@@ -958,16 +958,18 @@ def _quote_path(*parts):
     return target
 
 
-def _quote_real_path(*parts):
-    root = os.path.realpath(QUOTE_DIR)
+def _quote_real_path(quote_id, *parts):
+    if not _is_safe_quote_id(quote_id):
+        raise ValueError("invalid quote id")
+    root = os.path.realpath(_quote_path(quote_id))
     target = os.path.realpath(os.path.join(root, *parts))
     root_cmp = os.path.normcase(root)
     target_cmp = os.path.normcase(target)
     try:
         if os.path.commonpath([root_cmp, target_cmp]) != root_cmp:
-            raise ValueError("quote path escapes quote root")
+            raise ValueError("quote path escapes specific quote root")
     except ValueError:
-        raise ValueError("quote path escapes quote root")
+        raise ValueError("quote path escapes specific quote root")
     return target
 
 
@@ -1105,9 +1107,10 @@ def _is_private_data_path(path):
     if not normalized.startswith("/data/"):
         return False
     filename = posixpath.basename(normalized)
+    base_filename = filename[:-4] if filename.endswith(".tmp") else filename
     return (
-        filename in PRIVATE_DATA_FILENAMES
-        or any(filename.startswith(prefix) for prefix in PRIVATE_DATA_PREFIXES)
+        base_filename in PRIVATE_DATA_FILENAMES
+        or any(base_filename.startswith(prefix) for prefix in PRIVATE_DATA_PREFIXES)
     )
 
 
