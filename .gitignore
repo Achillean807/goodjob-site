@@ -33,6 +33,7 @@ backups/
 
 # 工作中的暫存資料夾
 analysis_tmp/
+.worktrees/
 
 # Playwright MCP 暫存（screenshots、snapshot YAML）
 .playwright-mcp/
