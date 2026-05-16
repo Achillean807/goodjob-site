@@ -306,6 +306,20 @@ class QuoteAuthTest(unittest.TestCase):
         self.assertFalse(os.path.exists(src))
         self.assertTrue(os.path.isdir(os.path.join(self.quote_dir, "_deleted")))
         self.assertTrue(payload["quote"]["deletedPath"].startswith("quote/_deleted/260613-"))
+        deleted_rel_path = payload["quote"]["deletedPath"]
+        deleted_fs_path = os.path.join(
+            self.quote_dir,
+            *deleted_rel_path.replace("\\", "/").split("/")[1:],
+        )
+        self.assertTrue(os.path.isdir(deleted_fs_path))
+        self.assertTrue(
+            os.path.exists(os.path.join(deleted_fs_path, "index.html"))
+            or os.path.exists(os.path.join(deleted_fs_path, "images", "003.jpg"))
+        )
+        with open(self.manifest_path, encoding="utf-8") as fh:
+            manifest = json.load(fh)
+        self.assertEqual(manifest["quotes"]["260613"]["status"], "deleted")
+        self.assertEqual(manifest["quotes"]["260613"]["deletedPath"], deleted_rel_path)
 
         status, headers, body = self.request("/quote/260613/")
         self.assertEqual(status, 200)
