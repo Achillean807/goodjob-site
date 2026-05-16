@@ -55,6 +55,9 @@ class QuoteAuthTest(unittest.TestCase):
             env["GOODJOB_DATA_DIR"] = cls.data_dir
             env["GOODJOB_QUOTE_DIR"] = cls.quote_dir
             env["GOODJOB_QUOTE_MANIFEST_PATH"] = cls.manifest_path
+            env["GOODJOB_QUOTE_AUTH_FAILURE_LIMIT"] = "2"
+            env["GOODJOB_QUOTE_AUTH_FAILURE_WINDOW_SECONDS"] = "60"
+            env["GOODJOB_QUOTE_AUTH_LOCK_SECONDS"] = "60"
             cls.proc = subprocess.Popen(
                 [
                     sys.executable,
@@ -245,6 +248,14 @@ class QuoteAuthTest(unittest.TestCase):
         with open(static_path, "w", encoding="utf-8") as fh:
             fh.write(text)
 
+    def write_static_quote_file_for_test(self, quote_id, text):
+        static_quote_dir = os.path.join(ROOT, "quote", quote_id)
+        self.assertFalse(os.path.exists(static_quote_dir), static_quote_dir)
+        self.addCleanup(lambda: shutil.rmtree(static_quote_dir, ignore_errors=True))
+        os.makedirs(static_quote_dir, exist_ok=True)
+        with open(os.path.join(static_quote_dir, "index.html"), "w", encoding="utf-8") as fh:
+            fh.write(text)
+
     def request(self, path, method="GET", data=None, auth=False, opener=None, headers=None, raw=False):
         body = None
         req_headers = dict(headers or {})
@@ -279,12 +290,14 @@ class QuoteAuthTest(unittest.TestCase):
         self.assertIn("noindex", headers.get("X-Robots-Tag", ""))
         self.assertIn("no-store", headers.get("Cache-Control", ""))
 
-    def form_request(self, path, fields, opener=None):
+    def form_request(self, path, fields, opener=None, headers=None):
         body = urllib.parse.urlencode(fields).encode("utf-8")
+        req_headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        req_headers.update(headers or {})
         req = urllib.request.Request(
             f"http://127.0.0.1:{self.port}{path}",
             data=body,
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
+            headers=req_headers,
             method="POST",
         )
         active_opener = opener or urllib.request
@@ -334,6 +347,39 @@ class QuoteAuthTest(unittest.TestCase):
         status, headers, body = self.request("/quote/260606/images/003.jpg", opener=opener, raw=True)
         self.assertEqual(status, 200)
         self.assertIn(b"fake-jpg", body)
+
+    def test_forwarded_https_quote_auth_cookie_is_secure(self):
+        self.set_quote("260606", {"title": "Proposal A", "status": "active", "password": "clientpass"})
+        jar = http.cookiejar.CookieJar()
+        no_redirect_opener = urllib.request.build_opener(
+            urllib.request.HTTPCookieProcessor(jar),
+            NoRedirectHandler,
+        )
+
+        status, headers, body = self.form_request(
+            "/quote/260606/auth",
+            {"password": "clientpass"},
+            opener=no_redirect_opener,
+            headers={"X-Forwarded-Proto": "https"},
+        )
+
+        self.assertEqual(status, 303, body)
+        self.assertIn("Secure", headers.get("Set-Cookie", ""))
+
+    def test_quote_auth_rate_limits_repeated_wrong_passwords(self):
+        quote_id = "260699"
+        self._write_quote(quote_id)
+        self.addCleanup(lambda: shutil.rmtree(os.path.join(self.quote_dir, quote_id), ignore_errors=True))
+        self.set_quote(quote_id, {"title": "Proposal Rate", "status": "active", "password": "clientpass"})
+
+        status, headers, body = self.form_request(f"/quote/{quote_id}/auth", {"password": "wrong-one"})
+        self.assertEqual(status, 200)
+
+        status, headers, body = self.form_request(f"/quote/{quote_id}/auth", {"password": "wrong-two"})
+        self.assertEqual(status, 429)
+
+        status, headers, body = self.form_request(f"/quote/{quote_id}/auth", {"password": "clientpass"})
+        self.assertEqual(status, 429)
 
     def test_quote_cookie_does_not_unlock_another_quote(self):
         self.set_quote("260606", {"title": "Proposal A", "status": "active", "password": "clientpass"})
@@ -408,6 +454,12 @@ class QuoteAuthTest(unittest.TestCase):
         self.assertNotIn("passwordSalt", body)
         self.assertNotIn("clientpass", body)
 
+        status, headers, body = self.request("/DATA/quote_manifest.json")
+        self.assertIn(status, (403, 404))
+        self.assertNotIn("passwordHash", body)
+        self.assertNotIn("passwordSalt", body)
+        self.assertNotIn("clientpass", body)
+
     def test_static_data_tmp_files_do_not_expose_secrets(self):
         private_tmp_files = (
             "quote_manifest.json.tmp",
@@ -420,6 +472,9 @@ class QuoteAuthTest(unittest.TestCase):
         for filename in private_tmp_files:
             with self.subTest(filename=filename):
                 status, headers, body = self.request(f"/data/{filename}")
+                self.assertIn(status, (403, 404))
+                self.assertNotIn(f"secret-marker-{filename}", body)
+                status, headers, body = self.request(f"/Data/{filename}")
                 self.assertIn(status, (403, 404))
                 self.assertNotIn(f"secret-marker-{filename}", body)
 
@@ -521,6 +576,32 @@ class QuoteAuthTest(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertIn("此提案暫停開放", body)
 
+    def test_deleted_archive_cannot_be_enabled_or_served_as_quote(self):
+        status, headers, body = self.request("/api/quotes/260613", method="DELETE", auth=True)
+        self.assertEqual(status, 200, body)
+
+        status, headers, body = self.request(
+            "/api/quotes/_deleted",
+            method="PUT",
+            data={"title": "Deleted Archive", "status": "active", "password": "clientpass"},
+            auth=True,
+        )
+        self.assertEqual(status, 400, body)
+
+        status, headers, body = self.request("/quote/_deleted/260613/index.html")
+        self.assertIn(status, (200, 404))
+        self.assertNotIn("proposal 260613", body)
+
+    def test_quote_api_rejects_short_client_password(self):
+        status, headers, body = self.request(
+            "/api/quotes/260606",
+            method="PUT",
+            data={"title": "Proposal A", "status": "active", "password": "1234567"},
+            auth=True,
+        )
+        self.assertEqual(status, 400, body)
+        self.assertIn("at least 8", body)
+
     def test_unconfigured_quote_shows_paused_page(self):
         status, headers, body = self.request("/quote/260606/")
         self.assertEqual(status, 200)
@@ -546,10 +627,16 @@ class QuoteAuthTest(unittest.TestCase):
         self.assertEqual(body, b"")
 
     def test_quote_traversal_attempts_do_not_leak_content(self):
+        self.write_static_quote_file_for_test(
+            "codexCaseBypass",
+            "<!doctype html><h1>uppercase quote bypass marker</h1>",
+        )
         paths = [
             "/quote/260606/../260606/index.html",
             "/quote/260606/%2e%2e/260606/index.html",
             "/quote%2F260606/",
+            "/QUOTE/codexCaseBypass/index.html",
+            "/Quote/codexCaseBypass/index.html",
         ]
         for path in paths:
             with self.subTest(path=path):
@@ -557,6 +644,7 @@ class QuoteAuthTest(unittest.TestCase):
                 self.assertIn(status, (200, 404))
                 self.assertNotIn("proposal 260606", body)
                 self.assertNotIn("fake-jpg", body)
+                self.assertNotIn("uppercase quote bypass marker", body)
                 self.assert_quote_private_headers(headers)
 
     def test_public_home_does_not_require_quote_password(self):

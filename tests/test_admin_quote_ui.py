@@ -48,6 +48,7 @@ class AdminQuoteUiTest(unittest.TestCase):
         self.assertIn('id="quotes-modal"', html)
         self.assertIn('id="quotes-list"', html)
         self.assertIn('value="quotes.manage"', html)
+        self.assertIn('placeholder="至少 8 碼，留空代表不變更"', html)
 
     def test_admin_js_has_quote_management_api_calls(self):
         js = self.read("admin/app.js")
@@ -95,6 +96,8 @@ class AdminQuoteUiTest(unittest.TestCase):
         self.assertIn("payload.status === 'active'", body)
         self.assertIn("selectedQuote && !selectedQuote.hasPassword", body)
         self.assertIn("!password", body)
+        self.assertIn("QUOTE_PASSWORD_MIN_LENGTH", body)
+        self.assertIn("password.length < QUOTE_PASSWORD_MIN_LENGTH", body)
         self.assertIn("api('PUT', '/api/quotes/' + encodeURIComponent(id), payload)", body)
 
     def test_delete_selected_quote_requires_permission_and_deletes_api(self):

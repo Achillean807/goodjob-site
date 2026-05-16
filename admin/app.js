@@ -15,6 +15,7 @@ var gallerySortable = null;
 var lbIndex = 0;
 var selectedAccountUsername = '';
 var selectedQuoteId = '';
+var QUOTE_PASSWORD_MIN_LENGTH = 8;
 
 var CAT_LABELS = {
   business: '主題活動',
@@ -1541,12 +1542,12 @@ function saveQuote() {
   var password = document.getElementById('quote-password').value;
   var selectedQuote = findQuote(id);
   if (payload.status === 'active' && selectedQuote && !selectedQuote.hasPassword && !password) {
-    toast('啟用提案前，請先設定至少 6 碼的密碼', true);
+    toast('啟用提案前，請先設定至少 ' + QUOTE_PASSWORD_MIN_LENGTH + ' 碼密碼', true);
     return;
   }
   if (password) {
-    if (password.length < 6) {
-      toast('提案密碼至少需要 6 碼', true);
+    if (password.length < QUOTE_PASSWORD_MIN_LENGTH) {
+      toast('提案密碼至少需要 ' + QUOTE_PASSWORD_MIN_LENGTH + ' 碼', true);
       return;
     }
     payload.password = password;
@@ -1616,5 +1617,6 @@ document.addEventListener('keydown', function(event) {
 
 document.getElementById('login-user').addEventListener('input', resetLoginError);
 document.getElementById('login-pass').addEventListener('input', resetLoginError);
+document.getElementById('quote-password').placeholder = '至少 ' + QUOTE_PASSWORD_MIN_LENGTH + ' 碼，留空代表不變更';
 
 restoreSession();

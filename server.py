@@ -41,6 +41,14 @@ except ImportError:
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import parse_qs, unquote
 
+
+def _env_int(name, default):
+    try:
+        return int(os.environ.get(name, str(default)))
+    except (TypeError, ValueError):
+        return default
+
+
 # ---------------------------------------------------------------------------
 # Paths (resolved relative to the script's own directory)
 # ---------------------------------------------------------------------------
@@ -59,7 +67,27 @@ QUOTE_MANIFEST_PATH = os.environ.get(
 )
 QUOTE_DELETED_DIRNAME = "_deleted"
 QUOTE_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
+QUOTE_PASSWORD_MIN_LENGTH = 8
 QUOTE_COOKIE_MAX_AGE = 7 * 24 * 60 * 60
+QUOTE_COOKIE_SECURE = os.environ.get("GOODJOB_QUOTE_COOKIE_SECURE", "").lower() in (
+    "1",
+    "true",
+    "yes",
+    "on",
+)
+TRUST_PROXY_HEADERS = os.environ.get("GOODJOB_TRUST_PROXY_HEADERS", "").lower() in (
+    "1",
+    "true",
+    "yes",
+    "on",
+)
+QUOTE_AUTH_FAILURE_LIMIT = max(1, _env_int("GOODJOB_QUOTE_AUTH_FAILURE_LIMIT", 5))
+QUOTE_AUTH_FAILURE_WINDOW_SECONDS = max(
+    1,
+    _env_int("GOODJOB_QUOTE_AUTH_FAILURE_WINDOW_SECONDS", 300),
+)
+QUOTE_AUTH_LOCK_SECONDS = max(1, _env_int("GOODJOB_QUOTE_AUTH_LOCK_SECONDS", 300))
+QUOTE_AUTH_FAILURES = {}
 PRIVATE_DATA_FILENAMES = {
     "accounts.json",
     "config.json",
@@ -950,6 +978,14 @@ def _is_safe_quote_id(quote_id):
     return bool(quote_id and QUOTE_ID_RE.fullmatch(quote_id))
 
 
+def _is_reserved_quote_id(quote_id):
+    return bool(quote_id and quote_id.lower() == QUOTE_DELETED_DIRNAME.lower())
+
+
+def _is_manageable_quote_id(quote_id):
+    return _is_safe_quote_id(quote_id) and not _is_reserved_quote_id(quote_id)
+
+
 def _quote_path(*parts):
     root = os.path.abspath(QUOTE_DIR)
     target = os.path.abspath(os.path.join(root, *parts))
@@ -1015,7 +1051,7 @@ def _scan_quote_dirs():
         return []
     quote_ids = []
     for name in names:
-        if name == QUOTE_DELETED_DIRNAME or not _is_safe_quote_id(name):
+        if _is_reserved_quote_id(name) or not _is_safe_quote_id(name):
             continue
         try:
             if os.path.isdir(_quote_path(name)):
@@ -1077,6 +1113,17 @@ def _valid_quote_cookie(quote_id, record, raw_cookie):
     return hmac.compare_digest(sig, expected)
 
 
+def _quote_auth_state_key(client_ip, quote_id):
+    return f"{client_ip}:{quote_id}"
+
+
+def _pruned_quote_auth_failures(state, now):
+    return [
+        ts for ts in state.get("failures", [])
+        if now - ts <= QUOTE_AUTH_FAILURE_WINDOW_SECONDS
+    ]
+
+
 def _public_account(account):
     """Return account dict with sensitive fields stripped."""
     return {k: account.get(k) for k in ACCOUNT_PUBLIC_FIELDS if k in account}
@@ -1108,9 +1155,10 @@ def _json_bytes(obj, status_hint=200):
 def _is_private_data_path(path):
     clean = unquote(path.split("?", 1)[0].split("#", 1)[0]).replace("\\", "/")
     normalized = posixpath.normpath(clean)
-    if not normalized.startswith("/data/"):
+    normalized_lower = normalized.lower()
+    if not normalized_lower.startswith("/data/"):
         return False
-    filename = posixpath.basename(normalized)
+    filename = posixpath.basename(normalized_lower)
     base_filename = filename[:-4] if filename.endswith(".tmp") else filename
     return (
         base_filename in PRIVATE_DATA_FILENAMES
@@ -1192,7 +1240,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         Do NOT extend this to subpaths; doing so would rewrite /admin/app.js → /admin/index.html
         and break the admin SPA. For noindex header logic, use _is_admin_path() instead.
         """
-        stripped = self.path.split("?")[0].split("#")[0]
+        stripped = self.path.split("?")[0].split("#")[0].lower()
         return stripped in ("/admin", "/admin/")
 
     def _is_admin_path(self):
@@ -1201,16 +1249,16 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         Covers /admin, /admin/, /admin/index.html, /admin/app.js, /admin/anything.
         Decoded via unquote to defeat URL-escape evasion (e.g., %2fadmin%2f).
         """
-        stripped = unquote(self.path.split("?")[0].split("#")[0])
+        stripped = unquote(self.path.split("?")[0].split("#")[0]).lower()
         return stripped == "/admin" or stripped.startswith("/admin/")
 
     def _is_quote_path(self):
         """Proposal pages are private client-facing previews, not search results."""
-        stripped = unquote(self.path.split("?")[0].split("#")[0])
+        stripped = unquote(self.path.split("?")[0].split("#")[0]).lower()
         return stripped == "/quote" or stripped.startswith("/quote/")
 
     def _is_robots_path(self):
-        stripped = unquote(self.path.split("?")[0].split("#")[0])
+        stripped = unquote(self.path.split("?")[0].split("#")[0]).lower()
         return stripped == "/robots.txt"
 
     # ------------------------------------------------------------------
@@ -1256,13 +1304,61 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
 
     def _quote_parts(self):
         clean = unquote(self.path.split("?", 1)[0].split("#", 1)[0])
-        if clean == "/quote":
+        clean_lower = clean.lower()
+        if clean_lower == "/quote":
             return "", ""
-        if not clean.startswith("/quote/"):
+        if not clean_lower.startswith("/quote/"):
             return None, None
         rest = clean[len("/quote/"):]
         quote_id, _sep, rel = rest.partition("/")
         return quote_id, rel
+
+    def _quote_auth_client_ip(self):
+        if TRUST_PROXY_HEADERS:
+            forwarded = (self.headers.get("X-Forwarded-For") or "").split(",", 1)[0].strip()
+            if forwarded:
+                return forwarded[:64]
+        return self.client_address[0] if self.client_address else ""
+
+    def _is_quote_auth_limited(self, quote_id):
+        now = time.time()
+        key = _quote_auth_state_key(self._quote_auth_client_ip(), quote_id)
+        state = QUOTE_AUTH_FAILURES.get(key)
+        if not state:
+            return False
+        locked_until = state.get("lockedUntil") or 0
+        if locked_until > now:
+            return True
+        failures = _pruned_quote_auth_failures(state, now)
+        if failures:
+            state["failures"] = failures
+            state["lockedUntil"] = 0
+        else:
+            QUOTE_AUTH_FAILURES.pop(key, None)
+        return False
+
+    def _record_quote_auth_failure(self, quote_id):
+        now = time.time()
+        key = _quote_auth_state_key(self._quote_auth_client_ip(), quote_id)
+        state = QUOTE_AUTH_FAILURES.get(key) or {}
+        failures = _pruned_quote_auth_failures(state, now)
+        failures.append(now)
+        locked = len(failures) >= QUOTE_AUTH_FAILURE_LIMIT
+        QUOTE_AUTH_FAILURES[key] = {
+            "failures": failures[-QUOTE_AUTH_FAILURE_LIMIT:],
+            "lockedUntil": now + QUOTE_AUTH_LOCK_SECONDS if locked else 0,
+        }
+        return locked
+
+    def _clear_quote_auth_failures(self, quote_id):
+        key = _quote_auth_state_key(self._quote_auth_client_ip(), quote_id)
+        QUOTE_AUTH_FAILURES.pop(key, None)
+
+    def _should_set_secure_quote_cookie(self):
+        if QUOTE_COOKIE_SECURE:
+            return True
+        proto = (self.headers.get("X-Forwarded-Proto") or "").split(",", 1)[0].strip().lower()
+        return proto == "https"
 
     def _send_html(self, html, status=200, head_only=False):
         body = html.encode("utf-8")
@@ -1288,9 +1384,10 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             head_only=head_only,
         )
 
-    def _send_quote_login(self, quote_id, error="", head_only=False):
+    def _send_quote_login(self, quote_id, error="", head_only=False, status=200):
+        error_text = "嘗試次數過多，請稍後再試。" if error == "rate" else "密碼錯誤，請再試一次。"
         error_html = (
-            "<p style=\"color:#fca5a5;margin:0 0 12px\">密碼錯誤，請再試一次。</p>"
+            f"<p style=\"color:#fca5a5;margin:0 0 12px\">{error_text}</p>"
             if error else ""
         )
         html = (
@@ -1310,7 +1407,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             "border:0;border-radius:6px;background:#e50914;color:#fff;font-weight:700\">進入提案</button>"
             "</form></main></body></html>"
         )
-        self._send_html(html, head_only=head_only)
+        self._send_html(html, status=status, head_only=head_only)
 
     def _serve_quote_static(self, quote_id, rel_path, head_only=False):
         if not rel_path or rel_path.endswith("/"):
@@ -1342,7 +1439,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         quote_id, rel_path = self._quote_parts()
         if quote_id is None:
             return False
-        if not _is_safe_quote_id(quote_id):
+        if not _is_manageable_quote_id(quote_id):
             self.send_error(404, "Not found")
             return True
         quote_root = _quote_path(quote_id)
@@ -1362,13 +1459,19 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
 
     def _handle_quote_auth_post(self):
         quote_id, rel_path = self._quote_parts()
-        if quote_id is None or rel_path != "auth" or not _is_safe_quote_id(quote_id):
+        if quote_id is None or rel_path != "auth":
             return False
+        if not _is_manageable_quote_id(quote_id):
+            self.send_error(404, "Not found")
+            return True
 
         manifest = _load_quote_manifest()
         record = _quote_record(manifest, quote_id)
         if not record or record.get("status") != "active" or not _quote_has_password(record):
             self._send_quote_paused()
+            return True
+        if self._is_quote_auth_limited(quote_id):
+            self._send_quote_login(quote_id, error="rate", status=429)
             return True
 
         raw = self._read_body()
@@ -1378,9 +1481,13 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             params = {}
         password = (params.get("password") or [""])[0]
         if _hash_password(record.get("passwordSalt", ""), password) != record.get("passwordHash", ""):
-            self._send_quote_login(quote_id, error="invalid")
+            if self._record_quote_auth_failure(quote_id):
+                self._send_quote_login(quote_id, error="rate", status=429)
+            else:
+                self._send_quote_login(quote_id, error="invalid")
             return True
 
+        self._clear_quote_auth_failures(quote_id)
         cookie_value = _make_quote_cookie_value(quote_id, record)
         cookie = cookies.SimpleCookie()
         cookie[_quote_cookie_name(quote_id)] = cookie_value
@@ -1389,6 +1496,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         morsel["max-age"] = str(QUOTE_COOKIE_MAX_AGE)
         morsel["httponly"] = True
         morsel["samesite"] = "Lax"
+        if self._should_set_secure_quote_cookie():
+            morsel["secure"] = True
 
         self.send_response(303)
         self.send_header("Set-Cookie", cookie.output(header="").strip())
@@ -1716,7 +1825,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         folder_ids = set(_scan_quote_dirs())
         manifest_ids = {
             quote_id for quote_id in manifest.get("quotes", {})
-            if _is_safe_quote_id(quote_id)
+            if _is_manageable_quote_id(quote_id)
         }
         quotes = []
         for quote_id in sorted(folder_ids | manifest_ids):
@@ -1729,7 +1838,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             return
         if not self._require_permission("quotes.manage"):
             return
-        if not _is_safe_quote_id(quote_id):
+        if not _is_manageable_quote_id(quote_id):
             self._send_error_json(400, "Invalid quote id")
             return
 
@@ -1751,9 +1860,13 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self._send_error_json(400, "Invalid quote status")
             return
         if "password" in data and (
-            not isinstance(data.get("password"), str) or len(data.get("password") or "") < 6
+            not isinstance(data.get("password"), str)
+            or len(data.get("password") or "") < QUOTE_PASSWORD_MIN_LENGTH
         ):
-            self._send_error_json(400, "Password must be at least 6 characters")
+            self._send_error_json(
+                400,
+                f"Password must be at least {QUOTE_PASSWORD_MIN_LENGTH} characters",
+            )
             return
 
         try:
@@ -1794,7 +1907,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             return
         if not self._require_permission("quotes.manage"):
             return
-        if not _is_safe_quote_id(quote_id):
+        if not _is_manageable_quote_id(quote_id):
             self._send_error_json(400, "Invalid quote id")
             return
 
