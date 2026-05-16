@@ -1463,7 +1463,7 @@ function renderQuotesList() {
         '<td><span class="status-chip ' + (quote.status === 'active' && quote.hasPassword ? 'is-enabled' : 'is-disabled') + '">' +
           esc(quoteStatusLabel(quote.status, quote.hasPassword)) + '</span></td>' +
         '<td>' + (quote.hasPassword ? '已設定' : '<span class="muted">未設定</span>') + '</td>' +
-        '<td><a href="' + esc(quote.url) + '" target="_blank">' + esc(quote.url) + '</a></td>' +
+        '<td><a href="' + esc(quote.url) + '" target="_blank" rel="noopener noreferrer">' + esc(quote.url) + '</a></td>' +
       '</tr>'
     );
   }
@@ -1539,6 +1539,11 @@ function saveQuote() {
     status: document.getElementById('quote-status').value
   };
   var password = document.getElementById('quote-password').value;
+  var selectedQuote = findQuote(id);
+  if (payload.status === 'active' && selectedQuote && !selectedQuote.hasPassword && !password) {
+    toast('啟用提案前，請先設定至少 6 碼的密碼', true);
+    return;
+  }
   if (password) {
     if (password.length < 6) {
       toast('提案密碼至少需要 6 碼', true);
