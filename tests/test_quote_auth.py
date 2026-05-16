@@ -58,6 +58,7 @@ class QuoteAuthTest(unittest.TestCase):
             env["GOODJOB_QUOTE_AUTH_FAILURE_LIMIT"] = "2"
             env["GOODJOB_QUOTE_AUTH_FAILURE_WINDOW_SECONDS"] = "60"
             env["GOODJOB_QUOTE_AUTH_LOCK_SECONDS"] = "60"
+            env["GOODJOB_TRUST_PROXY_HEADERS"] = "1"
             cls.proc = subprocess.Popen(
                 [
                     sys.executable,

@@ -1357,6 +1357,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     def _should_set_secure_quote_cookie(self):
         if QUOTE_COOKIE_SECURE:
             return True
+        if not TRUST_PROXY_HEADERS:
+            return False
         proto = (self.headers.get("X-Forwarded-Proto") or "").split(",", 1)[0].strip().lower()
         return proto == "https"
 
