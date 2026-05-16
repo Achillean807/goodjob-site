@@ -26,6 +26,13 @@ class AdminQuoteUiTest(unittest.TestCase):
         self.assertIn("function deleteSelectedQuote()", js)
         self.assertIn("'/api/quotes'", js)
 
+    def test_admin_js_wires_quote_management_permission(self):
+        js = self.read("admin/app.js")
+        self.assertIn("'accounts.manage', 'quotes.manage'", js)
+        self.assertIn("'quotes.manage': '提案管理'", js)
+        self.assertIn("var quotesBtn = document.getElementById('quotes-btn');", js)
+        self.assertIn("quotesBtn.style.display = hasPermission('quotes.manage') ? '' : 'none';", js)
+
 
 if __name__ == "__main__":
     unittest.main()

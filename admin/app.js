@@ -2,6 +2,7 @@
 
 var articles = [];
 var accountsCache = [];
+var quotesCache = [];
 var authHeader = '';
 var currentAccount = null;
 var editImages = [];
@@ -13,6 +14,7 @@ var confirmAction = null;
 var gallerySortable = null;
 var lbIndex = 0;
 var selectedAccountUsername = '';
+var selectedQuoteId = '';
 
 var CAT_LABELS = {
   business: '主題活動',
@@ -36,7 +38,7 @@ var ROLE_LABELS = {
 };
 
 var ROLE_PRESETS = {
-  admin: ['articles.read', 'articles.write', 'articles.delete', 'uploads.write', 'accounts.manage'],
+  admin: ['articles.read', 'articles.write', 'articles.delete', 'uploads.write', 'accounts.manage', 'quotes.manage'],
   editor: ['articles.read', 'articles.write', 'uploads.write'],
   viewer: ['articles.read'],
   custom: []
@@ -47,7 +49,8 @@ var PERMISSION_LABELS = {
   'articles.write': '新增 / 編輯作品',
   'articles.delete': '刪除作品',
   'uploads.write': '上傳圖片',
-  'accounts.manage': '帳戶管理'
+  'accounts.manage': '帳戶管理',
+  'quotes.manage': '提案管理'
 };
 
 function esc(value) {
@@ -133,12 +136,15 @@ function handleUnauthorized(silent) {
   authHeader = '';
   currentAccount = null;
   accountsCache = [];
+  quotesCache = [];
   selectedAccountUsername = '';
+  selectedQuoteId = '';
   document.getElementById('login-pass').value = '';
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('login-screen').style.display = '';
   closeModal();
   closeAccountsModal();
+  closeQuotesModal();
   closeConfirm();
   closeLightbox();
   applyPermissions();
@@ -183,11 +189,14 @@ function doLogout() {
   authHeader = '';
   currentAccount = null;
   accountsCache = [];
+  quotesCache = [];
   selectedAccountUsername = '';
+  selectedQuoteId = '';
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('login-screen').style.display = '';
   closeModal();
   closeAccountsModal();
+  closeQuotesModal();
   closeConfirm();
   closeLightbox();
   applyPermissions();
@@ -237,6 +246,7 @@ function permissionSummary(permissions) {
 function applyPermissions() {
   var sessionUser = document.getElementById('session-user');
   var accountsBtn = document.getElementById('accounts-btn');
+  var quotesBtn = document.getElementById('quotes-btn');
   var addBtn = document.getElementById('add-article-btn');
   var modalSaveBtn = document.getElementById('modal-save-btn');
   var galleryUploadBtn = document.getElementById('gallery-upload-btn');
@@ -254,6 +264,7 @@ function applyPermissions() {
   }
 
   accountsBtn.style.display = hasPermission('accounts.manage') ? '' : 'none';
+  quotesBtn.style.display = hasPermission('quotes.manage') ? '' : 'none';
   addBtn.style.display = hasPermission('articles.write') ? '' : 'none';
   modalSaveBtn.style.display = hasPermission('articles.write') ? '' : 'none';
   galleryUploadBtn.style.display = hasPermission('uploads.write') ? '' : 'none';
@@ -1392,6 +1403,176 @@ function deleteSelectedAccount() {
       toast('帳戶已刪除');
     }).catch(function(error) {
       toast('刪除帳戶失敗：' + error.message, true);
+    });
+  });
+}
+
+function findQuote(id) {
+  for (var i = 0; i < quotesCache.length; i++) {
+    if (quotesCache[i].id === id) {
+      return quotesCache[i];
+    }
+  }
+  return null;
+}
+
+function quoteStatusLabel(status, hasPassword) {
+  if (!hasPassword) {
+    return '未設定密碼';
+  }
+  if (status === 'active') {
+    return '啟用';
+  }
+  if (status === 'deleted') {
+    return '已刪除';
+  }
+  return '隱藏';
+}
+
+function updateQuotesSummary() {
+  var active = 0;
+  var hidden = 0;
+  var noPassword = 0;
+  for (var i = 0; i < quotesCache.length; i++) {
+    if (!quotesCache[i].hasPassword) {
+      noPassword += 1;
+    } else if (quotesCache[i].status === 'active') {
+      active += 1;
+    } else {
+      hidden += 1;
+    }
+  }
+  document.getElementById('quotes-summary').textContent =
+    '共 ' + quotesCache.length + ' 份提案，啟用 ' + active + '，隱藏 ' + hidden + '，未設定密碼 ' + noPassword;
+}
+
+function renderQuotesList() {
+  var tbody = document.getElementById('quotes-list');
+  if (!quotesCache.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">quote 資料夾內目前沒有提案</td></tr>';
+    return;
+  }
+
+  var rows = [];
+  for (var i = 0; i < quotesCache.length; i++) {
+    var quote = quotesCache[i];
+    var classes = quote.id === selectedQuoteId ? 'is-selected' : '';
+    rows.push(
+      '<tr class="' + classes + '" onclick="openQuoteForm(\'' + esc(quote.id) + '\')">' +
+        '<td><strong>' + esc(quote.title || quote.id) + '</strong><div class="muted">' + esc(quote.id) + '</div></td>' +
+        '<td><span class="status-chip ' + (quote.status === 'active' && quote.hasPassword ? 'is-enabled' : 'is-disabled') + '">' +
+          esc(quoteStatusLabel(quote.status, quote.hasPassword)) + '</span></td>' +
+        '<td>' + (quote.hasPassword ? '已設定' : '<span class="muted">未設定</span>') + '</td>' +
+        '<td><a href="' + esc(quote.url) + '" target="_blank">' + esc(quote.url) + '</a></td>' +
+      '</tr>'
+    );
+  }
+  tbody.innerHTML = rows.join('');
+}
+
+function openQuoteForm(id) {
+  var quote = id ? findQuote(id) : null;
+  selectedQuoteId = quote ? quote.id : '';
+  renderQuotesList();
+  document.getElementById('quote-password').value = '';
+
+  if (!quote) {
+    document.getElementById('quote-form-title').textContent = '選擇提案';
+    document.getElementById('quote-id').value = '';
+    document.getElementById('quote-id-display').value = '';
+    document.getElementById('quote-title').value = '';
+    document.getElementById('quote-status').value = 'hidden';
+    document.getElementById('quote-delete-btn').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('quote-form-title').textContent = '編輯提案';
+  document.getElementById('quote-id').value = quote.id;
+  document.getElementById('quote-id-display').value = quote.id;
+  document.getElementById('quote-title').value = quote.title || quote.id;
+  document.getElementById('quote-status').value = quote.status === 'active' ? 'active' : 'hidden';
+  document.getElementById('quote-delete-btn').style.display = '';
+}
+
+function loadQuotes() {
+  var preselectId = arguments.length ? arguments[0] : '';
+  if (!hasPermission('quotes.manage')) {
+    return Promise.resolve();
+  }
+  return api('GET', '/api/quotes').then(function(data) {
+    quotesCache = (data && data.quotes) || [];
+    updateQuotesSummary();
+    renderQuotesList();
+    var nextId = preselectId || selectedQuoteId;
+    if (!nextId || !findQuote(nextId)) {
+      nextId = quotesCache.length ? quotesCache[0].id : '';
+    }
+    openQuoteForm(nextId);
+  }).catch(function(error) {
+    toast('載入提案失敗：' + error.message, true);
+  });
+}
+
+function openQuotesModal() {
+  if (!requirePermission('quotes.manage', '只有管理員可以管理提案')) {
+    return;
+  }
+  document.getElementById('quotes-modal').classList.add('is-open');
+  loadQuotes();
+}
+
+function closeQuotesModal() {
+  document.getElementById('quotes-modal').classList.remove('is-open');
+}
+
+function saveQuote() {
+  if (!requirePermission('quotes.manage', '只有管理員可以管理提案')) {
+    return;
+  }
+  var id = document.getElementById('quote-id').value;
+  if (!id) {
+    toast('請先選擇提案', true);
+    return;
+  }
+  var payload = {
+    title: document.getElementById('quote-title').value.replace(/^\s+|\s+$/g, '') || id,
+    status: document.getElementById('quote-status').value
+  };
+  var password = document.getElementById('quote-password').value;
+  if (password) {
+    if (password.length < 6) {
+      toast('提案密碼至少需要 6 碼', true);
+      return;
+    }
+    payload.password = password;
+  }
+  api('PUT', '/api/quotes/' + encodeURIComponent(id), payload).then(function(response) {
+    toast('提案已儲存');
+    document.getElementById('quote-password').value = '';
+    var quote = response && response.quote ? response.quote : null;
+    return loadQuotes(quote ? quote.id : id);
+  }).catch(function(error) {
+    toast('儲存提案失敗：' + error.message, true);
+  });
+}
+
+function deleteSelectedQuote() {
+  if (!requirePermission('quotes.manage', '只有管理員可以管理提案')) {
+    return;
+  }
+  var id = document.getElementById('quote-id').value;
+  if (!id) {
+    toast('請先選擇提案', true);
+    return;
+  }
+  openConfirm('確定要刪除提案「' + id + '」？資料夾會移到 quote/_deleted。', function() {
+    api('DELETE', '/api/quotes/' + encodeURIComponent(id)).then(function() {
+      closeConfirm();
+      selectedQuoteId = '';
+      toast('提案已移到 _deleted');
+      return loadQuotes();
+    }).catch(function(error) {
+      toast('刪除提案失敗：' + error.message, true);
     });
   });
 }
