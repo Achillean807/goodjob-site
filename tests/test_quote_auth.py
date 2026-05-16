@@ -205,7 +205,8 @@ class QuoteAuthTest(unittest.TestCase):
         )
         active_opener = opener or urllib.request
         try:
-            with active_opener.urlopen(req, timeout=5) as response:
+            open_url = getattr(active_opener, "urlopen", None) or active_opener.open
+            with open_url(req, timeout=5) as response:
                 response_body = response.read()
                 if raw:
                     return response.status, response.headers, response_body
@@ -230,7 +231,8 @@ class QuoteAuthTest(unittest.TestCase):
         )
         active_opener = opener or urllib.request
         try:
-            with active_opener.urlopen(req, timeout=5) as response:
+            open_url = getattr(active_opener, "urlopen", None) or active_opener.open
+            with open_url(req, timeout=5) as response:
                 return response.status, response.headers, response.read().decode("utf-8", errors="replace")
         except urllib.error.HTTPError as exc:
             return exc.code, exc.headers, exc.read().decode("utf-8", errors="replace")

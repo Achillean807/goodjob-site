@@ -14,11 +14,13 @@ Usage:
 import argparse
 import base64
 import hashlib
+import hmac
 import json
 import os
 import posixpath
 import re
 import secrets
+import shutil
 import sqlite3
 import subprocess
 import sys
@@ -26,7 +28,7 @@ import tempfile
 import time
 import io
 import uuid
-from http import HTTPStatus
+from http import HTTPStatus, cookies
 try:
     from PIL import Image as _PILImage
     _PILLOW_AVAILABLE = True
@@ -37,7 +39,7 @@ try:
 except ImportError:
     pass
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-from urllib.parse import unquote
+from urllib.parse import parse_qs, unquote
 
 # ---------------------------------------------------------------------------
 # Paths (resolved relative to the script's own directory)
@@ -57,6 +59,7 @@ QUOTE_MANIFEST_PATH = os.environ.get(
 )
 QUOTE_DELETED_DIRNAME = "_deleted"
 QUOTE_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
+QUOTE_COOKIE_MAX_AGE = 7 * 24 * 60 * 60
 
 VALID_ROLES = {"admin", "editor", "viewer", "custom"}
 VALID_PERMISSIONS = {
@@ -65,6 +68,7 @@ VALID_PERMISSIONS = {
     "articles.delete",
     "uploads.write",
     "accounts.manage",
+    "quotes.manage",
 }
 ACCOUNT_PUBLIC_FIELDS = ("username", "name", "role", "enabled", "permissions",
                          "createdAt", "updatedAt")
@@ -130,6 +134,33 @@ def _pg_connect():
             "GOODJOB_DATABASE_URL is set, but psycopg2 is not installed"
         ) from exc
     return psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
+
+
+def _backfill_sqlite_admin_quote_manage(conn):
+    conn.execute("""
+        INSERT OR IGNORE INTO account_permissions (username, permission)
+        SELECT a.username, 'quotes.manage'
+        FROM accounts a
+        WHERE a.role = 'admin'
+           OR EXISTS (
+               SELECT 1 FROM account_permissions p
+               WHERE p.username = a.username AND p.permission = 'accounts.manage'
+           )
+    """)
+
+
+def _backfill_pg_admin_quote_manage(cur):
+    cur.execute("""
+        INSERT INTO account_permissions (username, permission)
+        SELECT a.username, 'quotes.manage'
+        FROM accounts a
+        WHERE a.role = 'admin'
+           OR EXISTS (
+               SELECT 1 FROM account_permissions p
+               WHERE p.username = a.username AND p.permission = 'accounts.manage'
+           )
+        ON CONFLICT DO NOTHING
+    """)
 
 
 def _init_db():
@@ -209,6 +240,7 @@ def _init_db():
             conn.execute(
                 "ALTER TABLE articles ADD COLUMN case_blocks TEXT NOT NULL DEFAULT '{}'"
             )
+        _backfill_sqlite_admin_quote_manage(conn)
 
         # 修補 C：SQLite 從 JSON seed 預設禁用 — 避免「SQLite 為空 + 舊版
         # data/articles.json 殘留」的組合在主機端誤觸覆蓋線上資料的災難。
@@ -227,6 +259,7 @@ def _init_db():
             accounts = _read_accounts_json()
             if accounts:
                 _replace_accounts(conn, accounts)
+                _backfill_sqlite_admin_quote_manage(conn)
                 print(f"[db] imported {len(accounts)} account(s) from legacy JSON")
 
         if conn.execute("SELECT COUNT(*) FROM config").fetchone()[0] == 0:
@@ -312,6 +345,7 @@ def _init_pg_db():
                 value TEXT NOT NULL DEFAULT ''
             )
             """)
+            _backfill_pg_admin_quote_manage(cur)
 
 
 def _read_config_json():
@@ -933,6 +967,75 @@ def _quote_has_password(record):
     return bool(record and record.get("passwordSalt") and record.get("passwordHash"))
 
 
+def _scan_quote_dirs():
+    try:
+        names = os.listdir(QUOTE_DIR)
+    except OSError:
+        return []
+    quote_ids = []
+    for name in names:
+        if name == QUOTE_DELETED_DIRNAME or not _is_safe_quote_id(name):
+            continue
+        try:
+            if os.path.isdir(_quote_path(name)):
+                quote_ids.append(name)
+        except ValueError:
+            continue
+    return sorted(quote_ids)
+
+
+def _public_quote_record(quote_id, record, exists=True):
+    status = (record or {}).get("status") or "hidden"
+    has_password = _quote_has_password(record)
+    if status == "active" and not has_password:
+        status = "hidden"
+    return {
+        "id": quote_id,
+        "title": (record or {}).get("title") or quote_id,
+        "status": status,
+        "hasPassword": has_password,
+        "exists": bool(exists),
+        "url": f"/quote/{quote_id}/",
+        "createdAt": (record or {}).get("createdAt"),
+        "updatedAt": (record or {}).get("updatedAt"),
+        "deletedAt": (record or {}).get("deletedAt"),
+        "deletedPath": (record or {}).get("deletedPath"),
+    }
+
+
+def _quote_cookie_name(quote_id):
+    return "quote_auth_" + quote_id
+
+
+def _quote_cookie_signature(quote_id, record, issued_at):
+    key = (record.get("passwordHash") or "").encode("utf-8")
+    message = f"{quote_id}:{issued_at}".encode("utf-8")
+    return hmac.new(key, message, hashlib.sha256).hexdigest()
+
+
+def _make_quote_cookie_value(quote_id, record):
+    issued_at = str(int(time.time()))
+    sig = _quote_cookie_signature(quote_id, record, issued_at)
+    return issued_at + ":" + sig
+
+
+def _valid_quote_cookie(quote_id, record, raw_cookie):
+    if not _quote_has_password(record) or not raw_cookie:
+        return False
+    try:
+        jar = cookies.SimpleCookie(raw_cookie)
+        morsel = jar.get(_quote_cookie_name(quote_id))
+        if morsel is None:
+            return False
+        issued_at, sig = morsel.value.split(":", 1)
+        if int(time.time()) - int(issued_at) > QUOTE_COOKIE_MAX_AGE:
+            return False
+    except (ValueError, TypeError):
+        return False
+    expected = _quote_cookie_signature(quote_id, record, issued_at)
+    return hmac.compare_digest(sig, expected)
+
+
 def _public_account(account):
     """Return account dict with sensitive fields stripped."""
     return {k: account.get(k) for k in ACCOUNT_PUBLIC_FIELDS if k in account}
@@ -1197,7 +1300,46 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if not record or record.get("status") != "active" or not _quote_has_password(record):
             self._send_quote_paused(head_only=head_only)
             return True
+        if _valid_quote_cookie(quote_id, record, self.headers.get("Cookie", "")):
+            self._serve_quote_static(quote_id, rel_path, head_only=head_only)
+            return True
         self._send_quote_login(quote_id, head_only=head_only)
+        return True
+
+    def _handle_quote_auth_post(self):
+        quote_id, rel_path = self._quote_parts()
+        if quote_id is None or rel_path != "auth" or not _is_safe_quote_id(quote_id):
+            return False
+
+        manifest = _load_quote_manifest()
+        record = _quote_record(manifest, quote_id)
+        if not record or record.get("status") != "active" or not _quote_has_password(record):
+            self._send_quote_paused()
+            return True
+
+        raw = self._read_body()
+        try:
+            params = parse_qs(raw.decode("utf-8"))
+        except UnicodeDecodeError:
+            params = {}
+        password = (params.get("password") or [""])[0]
+        if _hash_password(record.get("passwordSalt", ""), password) != record.get("passwordHash", ""):
+            self._send_quote_login(quote_id, error="invalid")
+            return True
+
+        cookie_value = _make_quote_cookie_value(quote_id, record)
+        cookie = cookies.SimpleCookie()
+        cookie[_quote_cookie_name(quote_id)] = cookie_value
+        morsel = cookie[_quote_cookie_name(quote_id)]
+        morsel["path"] = f"/quote/{quote_id}/"
+        morsel["max-age"] = str(QUOTE_COOKIE_MAX_AGE)
+        morsel["httponly"] = True
+        morsel["samesite"] = "Lax"
+
+        self.send_response(303)
+        self.send_header("Set-Cookie", cookie.output(header="").strip())
+        self.send_header("Location", f"/quote/{quote_id}/")
+        self.end_headers()
         return True
 
     # ------------------------------------------------------------------
@@ -1507,6 +1649,146 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         self._send_json(resp, status=201)
 
     # ------------------------------------------------------------------
+    # API: quotes
+    # ------------------------------------------------------------------
+
+    def _api_list_quotes(self):
+        if not self._check_auth():
+            return
+        if not self._require_permission("quotes.manage"):
+            return
+
+        manifest = _load_quote_manifest()
+        folder_ids = set(_scan_quote_dirs())
+        manifest_ids = {
+            quote_id for quote_id in manifest.get("quotes", {})
+            if _is_safe_quote_id(quote_id)
+        }
+        quotes = []
+        for quote_id in sorted(folder_ids | manifest_ids):
+            record = _quote_record(manifest, quote_id) or {}
+            quotes.append(_public_quote_record(quote_id, record, exists=quote_id in folder_ids))
+        self._send_json({"quotes": quotes})
+
+    def _api_update_quote(self, quote_id):
+        if not self._check_auth():
+            return
+        if not self._require_permission("quotes.manage"):
+            return
+        if not _is_safe_quote_id(quote_id):
+            self._send_error_json(400, "Invalid quote id")
+            return
+
+        try:
+            quote_root = _quote_path(quote_id)
+        except ValueError:
+            self._send_error_json(400, "Invalid quote id")
+            return
+        if not os.path.isdir(quote_root):
+            self._send_error_json(404, "Quote folder not found")
+            return
+
+        data = self._read_json_body()
+        if not isinstance(data, dict):
+            self._send_error_json(400, "Invalid JSON body")
+            return
+
+        if "status" in data and data["status"] not in ("active", "hidden"):
+            self._send_error_json(400, "Invalid quote status")
+            return
+        if "password" in data and (
+            not isinstance(data.get("password"), str) or len(data.get("password") or "") < 6
+        ):
+            self._send_error_json(400, "Password must be at least 6 characters")
+            return
+
+        manifest = _load_quote_manifest()
+        quotes = manifest.setdefault("quotes", {})
+        existing = _quote_record(manifest, quote_id) or {}
+        now = _now_iso()
+        record = dict(existing)
+        title_value = data.get("title") if "title" in data else (record.get("title") or quote_id)
+        record["title"] = str(title_value).strip() or quote_id
+        record["status"] = data.get("status") if "status" in data else (record.get("status") or "hidden")
+        record.setdefault("createdAt", now)
+        record["updatedAt"] = now
+
+        if "password" in data:
+            salt = _generate_salt()
+            record["passwordSalt"] = salt
+            record["passwordHash"] = _hash_password(salt, data["password"])
+        record.pop("password", None)
+
+        if record.get("status") == "active" and not _quote_has_password(record):
+            self._send_error_json(400, "Active quote requires a password")
+            return
+
+        quotes[quote_id] = record
+        try:
+            _save_quote_manifest(manifest)
+        except Exception:
+            self._send_error_json(500, "Failed to save quote manifest")
+            return
+        self._send_json({"quote": _public_quote_record(quote_id, record, exists=True)})
+
+    def _api_delete_quote(self, quote_id):
+        if not self._check_auth():
+            return
+        if not self._require_permission("quotes.manage"):
+            return
+        if not _is_safe_quote_id(quote_id):
+            self._send_error_json(400, "Invalid quote id")
+            return
+
+        try:
+            quote_root = _quote_path(quote_id)
+            deleted_root = _quote_path(QUOTE_DELETED_DIRNAME)
+        except ValueError:
+            self._send_error_json(400, "Invalid quote id")
+            return
+        if not os.path.isdir(quote_root):
+            self._send_error_json(404, "Quote folder not found")
+            return
+
+        deleted_name = f"{quote_id}-{time.strftime('%Y%m%d-%H%M%S')}"
+        try:
+            deleted_path = _quote_path(QUOTE_DELETED_DIRNAME, deleted_name)
+        except ValueError:
+            self._send_error_json(400, "Invalid quote id")
+            return
+
+        try:
+            os.makedirs(deleted_root, exist_ok=True)
+            shutil.move(quote_root, deleted_path)
+        except (OSError, shutil.Error):
+            self._send_error_json(500, "Failed to move quote folder")
+            return
+
+        manifest = _load_quote_manifest()
+        quotes = manifest.setdefault("quotes", {})
+        record = dict(_quote_record(manifest, quote_id) or {})
+        now = _now_iso()
+        record.setdefault("title", quote_id)
+        record.setdefault("createdAt", now)
+        record["status"] = "deleted"
+        record["deletedAt"] = now
+        record["deletedPath"] = f"quote/{QUOTE_DELETED_DIRNAME}/{deleted_name}"
+        record["updatedAt"] = now
+        quotes[quote_id] = record
+
+        try:
+            _save_quote_manifest(manifest)
+        except Exception:
+            try:
+                shutil.move(deleted_path, quote_root)
+            except (OSError, shutil.Error) as exc:
+                sys.stderr.write(f"[quote] rollback failed for {quote_id}: {exc}\n")
+            self._send_error_json(500, "Failed to save quote manifest")
+            return
+
+        self._send_json({"quote": _public_quote_record(quote_id, record, exists=False)})
+
+    # ------------------------------------------------------------------
     # API: session
     # ------------------------------------------------------------------
 
@@ -1718,6 +2000,25 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if method == "GET" and path == "/api/session":
             self._api_get_session()
             return True
+
+        # GET /api/quotes
+        if method == "GET" and path == "/api/quotes":
+            self._api_list_quotes()
+            return True
+
+        # PUT /api/quotes/{id}
+        if method == "PUT" and path.startswith("/api/quotes/"):
+            quote_id = path[len("/api/quotes/"):]
+            if quote_id:
+                self._api_update_quote(quote_id)
+                return True
+
+        # DELETE /api/quotes/{id}
+        if method == "DELETE" and path.startswith("/api/quotes/"):
+            quote_id = path[len("/api/quotes/"):]
+            if quote_id:
+                self._api_delete_quote(quote_id)
+                return True
 
         # GET /api/accounts
         if method == "GET" and path == "/api/accounts":
@@ -2166,6 +2467,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             if not self._route_api("POST"):
                 self._send_error_json(404, "Not found")
             return
+        if self._is_quote_path():
+            if self._handle_quote_auth_post():
+                return
         self._send_error_json(405, "Method not allowed")
 
     def do_PUT(self):
