@@ -60,6 +60,14 @@ QUOTE_MANIFEST_PATH = os.environ.get(
 QUOTE_DELETED_DIRNAME = "_deleted"
 QUOTE_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 QUOTE_COOKIE_MAX_AGE = 7 * 24 * 60 * 60
+PRIVATE_DATA_FILENAMES = {
+    "accounts.json",
+    "config.json",
+    "quote_manifest.json",
+}
+PRIVATE_DATA_PREFIXES = (
+    "goodjob.sqlite3",
+)
 
 VALID_ROLES = {"admin", "editor", "viewer", "custom"}
 VALID_PERMISSIONS = {
@@ -91,6 +99,10 @@ THUMB_QUALITY = int(os.environ.get("GOODJOB_THUMB_QUALITY", "75"))
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+class QuoteManifestError(Exception):
+    pass
+
 
 def _read_json(path):
     """Read and parse a JSON file.  Returns None on any error."""
@@ -946,9 +958,32 @@ def _quote_path(*parts):
     return target
 
 
-def _load_quote_manifest():
-    data = _read_json(QUOTE_MANIFEST_PATH)
+def _quote_real_path(*parts):
+    root = os.path.realpath(QUOTE_DIR)
+    target = os.path.realpath(os.path.join(root, *parts))
+    root_cmp = os.path.normcase(root)
+    target_cmp = os.path.normcase(target)
+    try:
+        if os.path.commonpath([root_cmp, target_cmp]) != root_cmp:
+            raise ValueError("quote path escapes quote root")
+    except ValueError:
+        raise ValueError("quote path escapes quote root")
+    return target
+
+
+def _load_quote_manifest(strict=False):
+    try:
+        with open(QUOTE_MANIFEST_PATH, "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+    except FileNotFoundError:
+        return {"quotes": {}}
+    except (OSError, json.JSONDecodeError) as exc:
+        if strict:
+            raise QuoteManifestError("Invalid quote manifest") from exc
+        return {"quotes": {}}
     if not isinstance(data, dict) or not isinstance(data.get("quotes"), dict):
+        if strict:
+            raise QuoteManifestError("Invalid quote manifest")
         return {"quotes": {}}
     return data
 
@@ -1062,6 +1097,18 @@ def _count_active_admins(accounts, exclude_username=None):
 def _json_bytes(obj, status_hint=200):
     """Serialise *obj* to UTF-8 JSON bytes."""
     return json.dumps(obj, ensure_ascii=False, indent=2).encode("utf-8")
+
+
+def _is_private_data_path(path):
+    clean = unquote(path.split("?", 1)[0].split("#", 1)[0]).replace("\\", "/")
+    normalized = posixpath.normpath(clean)
+    if not normalized.startswith("/data/"):
+        return False
+    filename = posixpath.basename(normalized)
+    return (
+        filename in PRIVATE_DATA_FILENAMES
+        or any(filename.startswith(prefix) for prefix in PRIVATE_DATA_PREFIXES)
+    )
 
 
 def _parse_multipart(body, content_type):
@@ -1263,7 +1310,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             rel_path = rel_path + "index.html"
         normalized = posixpath.normpath("/" + rel_path).lstrip("/")
         try:
-            file_path = _quote_path(quote_id, *normalized.split("/"))
+            file_path = _quote_real_path(quote_id, *normalized.split("/"))
         except ValueError:
             self.send_error(404, "Not found")
             return
@@ -1702,7 +1749,11 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self._send_error_json(400, "Password must be at least 6 characters")
             return
 
-        manifest = _load_quote_manifest()
+        try:
+            manifest = _load_quote_manifest(strict=True)
+        except QuoteManifestError:
+            self._send_error_json(500, "Invalid quote manifest")
+            return
         quotes = manifest.setdefault("quotes", {})
         existing = _quote_record(manifest, quote_id) or {}
         now = _now_iso()
@@ -1750,11 +1801,20 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self._send_error_json(404, "Quote folder not found")
             return
 
+        try:
+            manifest = _load_quote_manifest(strict=True)
+        except QuoteManifestError:
+            self._send_error_json(500, "Invalid quote manifest")
+            return
+
         deleted_name = f"{quote_id}-{time.strftime('%Y%m%d-%H%M%S')}"
         try:
             deleted_path = _quote_path(QUOTE_DELETED_DIRNAME, deleted_name)
         except ValueError:
             self._send_error_json(400, "Invalid quote id")
+            return
+        if os.path.exists(deleted_path):
+            self._send_error_json(500, "Delete target already exists")
             return
 
         try:
@@ -1764,7 +1824,6 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self._send_error_json(500, "Failed to move quote folder")
             return
 
-        manifest = _load_quote_manifest()
         quotes = manifest.setdefault("quotes", {})
         record = dict(_quote_record(manifest, quote_id) or {})
         now = _now_iso()
@@ -2060,6 +2119,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if self._is_api():
             if not self._route_api("GET"):
                 self._send_error_json(404, "Not found")
+            return
+        if _is_private_data_path(self.path):
+            self.send_error(404, "Not found")
             return
         if self._is_quote_path():
             if self._serve_quote_request(head_only=False):
@@ -2435,6 +2497,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if self._is_api():
             if not self._route_api("GET"):
                 self._send_error_json(404, "Not found")
+            return
+        if _is_private_data_path(self.path):
+            self.send_error(404, "Not found")
             return
         if self._is_quote_path():
             if self._serve_quote_request(head_only=True):
