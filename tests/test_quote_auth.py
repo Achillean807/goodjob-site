@@ -66,7 +66,7 @@ class QuoteAuthTest(unittest.TestCase):
                 ],
                 cwd=ROOT,
                 env=env,
-                stdout=subprocess.PIPE,
+                stdout=subprocess.DEVNULL,
                 stderr=subprocess.PIPE,
                 text=True,
                 encoding="utf-8",
@@ -451,6 +451,30 @@ class QuoteAuthTest(unittest.TestCase):
         status, headers, body = self.request("/quote/260606/sibling/index.html", opener=opener)
         self.assertIn(status, (200, 403, 404))
         self.assertNotIn("proposal 260613", body)
+
+    def test_authenticated_quote_static_does_not_follow_linked_quote_root_outside_quote_dir(self):
+        quote_root = os.path.join(self.quote_dir, "260606")
+        outside_root = os.path.join(self.tmpdir, "outside-quote-root")
+        os.makedirs(outside_root, exist_ok=True)
+        with open(os.path.join(outside_root, "index.html"), "w", encoding="utf-8") as fh:
+            fh.write("<!doctype html><h1>outside quote root</h1>")
+
+        shutil.rmtree(quote_root, ignore_errors=True)
+        self.create_directory_link_or_skip(outside_root, quote_root)
+
+        def cleanup_link():
+            if os.path.islink(quote_root):
+                os.unlink(quote_root)
+            elif os.path.isdir(quote_root):
+                os.rmdir(quote_root)
+
+        self.addCleanup(cleanup_link)
+        self.set_quote("260606", {"title": "Proposal A", "status": "active", "password": "clientpass"})
+        opener = self.authenticated_opener("260606", "clientpass")
+
+        status, headers, body = self.request("/quote/260606/", opener=opener)
+        self.assertIn(status, (200, 403, 404))
+        self.assertNotIn("outside quote root", body)
 
     def test_malformed_existing_manifest_is_not_overwritten_by_quote_update(self):
         invalid_manifest = "{not valid json"

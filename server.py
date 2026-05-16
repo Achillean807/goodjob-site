@@ -947,7 +947,7 @@ def _now_iso():
 
 
 def _is_safe_quote_id(quote_id):
-    return bool(quote_id and QUOTE_ID_RE.match(quote_id))
+    return bool(quote_id and QUOTE_ID_RE.fullmatch(quote_id))
 
 
 def _quote_path(*parts):
@@ -961,11 +961,15 @@ def _quote_path(*parts):
 def _quote_real_path(quote_id, *parts):
     if not _is_safe_quote_id(quote_id):
         raise ValueError("invalid quote id")
+    quote_dir = os.path.realpath(QUOTE_DIR)
     root = os.path.realpath(_quote_path(quote_id))
     target = os.path.realpath(os.path.join(root, *parts))
+    quote_dir_cmp = os.path.normcase(quote_dir)
     root_cmp = os.path.normcase(root)
     target_cmp = os.path.normcase(target)
     try:
+        if root_cmp == quote_dir_cmp or os.path.commonpath([quote_dir_cmp, root_cmp]) != quote_dir_cmp:
+            raise ValueError("quote root escapes quote directory")
         if os.path.commonpath([root_cmp, target_cmp]) != root_cmp:
             raise ValueError("quote path escapes specific quote root")
     except ValueError:
