@@ -118,6 +118,10 @@ img {
   gap: 16px;
 }
 
+.mobile-quick-links {
+  display: none;
+}
+
 .tool-button {
   border: 0;
   background: transparent;
@@ -1244,6 +1248,38 @@ body.js-ready .ssr-featured {
     display: none;
   }
 
+  .topbar-tools {
+    display: none;
+  }
+
+  .mobile-quick-links {
+    width: var(--wrap);
+    margin: 0 auto;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 0 10px;
+    scrollbar-width: none;
+  }
+
+  .mobile-quick-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-quick-links a {
+    flex: 0 0 auto;
+    padding: 7px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(20, 20, 20, 0.66);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
   .hero-content {
     padding-bottom: 120px;
   }
@@ -1301,7 +1337,25 @@ body.js-ready .ssr-featured {
   }
 
   .content-rail {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .content-rail .landscape-card span {
+    inset: auto 8px 8px;
+    font-size: 0.78rem;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .content-rail .award-badge {
+    top: 6px;
+    left: 6px;
+    padding: 4px 8px;
+    font-size: 0.62rem;
   }
 
   .top10-rank {
