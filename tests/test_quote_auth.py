@@ -28,6 +28,11 @@ def password_hash(salt, password):
     return hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
 
 
+class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
 class QuoteAuthTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -245,7 +250,20 @@ class QuoteAuthTest(unittest.TestCase):
         self.assertIn("密碼錯誤", body)
         self.assertEqual(len(list(jar)), 0)
 
-        status, headers, body = self.form_request("/quote/260606/auth", {"password": "clientpass"}, opener=opener)
+        no_redirect_opener = urllib.request.build_opener(
+            urllib.request.HTTPCookieProcessor(jar),
+            NoRedirectHandler,
+        )
+        status, headers, body = self.form_request(
+            "/quote/260606/auth",
+            {"password": "clientpass"},
+            opener=no_redirect_opener,
+        )
+        self.assertEqual(status, 303)
+        self.assertEqual(headers.get("Location"), "/quote/260606/")
+        self.assertIn("Set-Cookie", headers)
+
+        status, headers, body = self.request("/quote/260606/", opener=opener)
         self.assertEqual(status, 200)
         self.assertIn("proposal 260606", body)
         cookies = list(jar)
@@ -253,9 +271,9 @@ class QuoteAuthTest(unittest.TestCase):
         self.assertEqual(cookies[0].path, "/quote/260606/")
         self.assertTrue(cookies[0].has_nonstandard_attr("HttpOnly"))
 
-        status, headers, body = self.request("/quote/260606/images/003.jpg", opener=opener)
+        status, headers, body = self.request("/quote/260606/images/003.jpg", opener=opener, raw=True)
         self.assertEqual(status, 200)
-        self.assertIn("fake-jpg", body)
+        self.assertIn(b"fake-jpg", body)
 
     def test_quote_cookie_does_not_unlock_another_quote(self):
         self.set_quote("260606", {"title": "Proposal A", "status": "active", "password": "clientpass"})
@@ -263,7 +281,20 @@ class QuoteAuthTest(unittest.TestCase):
 
         jar = http.cookiejar.CookieJar()
         opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
-        status, headers, body = self.form_request("/quote/260606/auth", {"password": "clientpass"}, opener=opener)
+        no_redirect_opener = urllib.request.build_opener(
+            urllib.request.HTTPCookieProcessor(jar),
+            NoRedirectHandler,
+        )
+        status, headers, body = self.form_request(
+            "/quote/260606/auth",
+            {"password": "clientpass"},
+            opener=no_redirect_opener,
+        )
+        self.assertEqual(status, 303)
+        self.assertEqual(headers.get("Location"), "/quote/260606/")
+        self.assertIn("Set-Cookie", headers)
+
+        status, headers, body = self.request("/quote/260606/", opener=opener)
         self.assertEqual(status, 200)
         self.assertIn("proposal 260606", body)
 
@@ -292,7 +323,7 @@ class QuoteAuthTest(unittest.TestCase):
         status, headers, body = self.request("/api/quotes", auth=True)
         self.assertEqual(status, 200)
         payload = json.loads(body)
-        self.assertEqual([q["id"] for q in payload["quotes"]], ["260606", "260613"])
+        self.assertEqual({q["id"] for q in payload["quotes"]}, {"260606", "260613"})
 
     def test_delete_quote_moves_folder_to_deleted_and_marks_manifest(self):
         self.set_quote("260613", {"title": "Proposal B", "status": "active", "password": "otherpass"})
@@ -312,10 +343,8 @@ class QuoteAuthTest(unittest.TestCase):
             *deleted_rel_path.replace("\\", "/").split("/")[1:],
         )
         self.assertTrue(os.path.isdir(deleted_fs_path))
-        self.assertTrue(
-            os.path.exists(os.path.join(deleted_fs_path, "index.html"))
-            or os.path.exists(os.path.join(deleted_fs_path, "images", "003.jpg"))
-        )
+        self.assertTrue(os.path.exists(os.path.join(deleted_fs_path, "index.html")))
+        self.assertTrue(os.path.exists(os.path.join(deleted_fs_path, "images", "003.jpg")))
         with open(self.manifest_path, encoding="utf-8") as fh:
             manifest = json.load(fh)
         self.assertEqual(manifest["quotes"]["260613"]["status"], "deleted")
