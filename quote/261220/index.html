@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>村花弄囍婚禮工作室 ｜ 婚禮佈置報價單</title>
+<style>
+  :root {
+    --bg: #FBF7F0;
+    --paper: #FFFFFF;
+    --ink: #2C2925;
+    --ink-soft: #5C544B;
+    --muted: #9A8E7E;
+    --hairline: #E5D9C4;
+    --hairline-soft: #F1E8D7;
+    --gold: #B69876;
+    --gold-deep: #8E7553;
+    --sage: #8FA084;
+    --rose: #C2A091;
+    --shadow: 0 1px 2px rgba(60, 45, 25, 0.04), 0 8px 32px rgba(60, 45, 25, 0.06);
+    --shadow-img: 0 2px 4px rgba(60, 45, 25, 0.06), 0 12px 36px rgba(60, 45, 25, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Helvetica Neue", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  img { display: block; max-width: 100%; height: auto; }
+
+  .serif {
+    font-family: "Noto Serif TC", "Songti TC", "STSong", "PMingLiU", "Cormorant Garamond", "Times New Roman", serif;
+    letter-spacing: 0.04em;
+  }
+
+  /* —— Top Nav —— */
+  nav.toc {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(251, 247, 240, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--hairline-soft);
+  }
+  nav.toc .toc-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+  nav.toc .toc-inner::-webkit-scrollbar { display: none; }
+  nav.toc .brand {
+    font-family: "Noto Serif TC", "Songti TC", serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gold-deep);
+    letter-spacing: 0.18em;
+    flex-shrink: 0;
+  }
+  nav.toc a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+  }
+  nav.toc a:hover { color: var(--gold-deep); }
+  nav.toc .sep {
+    color: var(--hairline);
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  /* —— Page —— */
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* —— Hero —— */
+  .hero {
+    padding: 96px 0 64px;
+    text-align: center;
+  }
+  .hero .logo {
+    max-width: 240px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto 24px;
+    display: block;
+    opacity: 0.95;
+  }
+  .hero .studio-name {
+    font-family: "Noto Serif TC", serif;
+    font-size: 13px;
+    letter-spacing: 0.5em;
+    color: var(--gold-deep);
+    margin-bottom: 56px;
+    padding-left: 0.5em;
+  }
+  .hero h1 {
+    font-family: "Noto Serif TC", "Songti TC", serif;
+    font-weight: 400;
+    font-size: 44px;
+    margin: 0 0 8px;
+    letter-spacing: 0.3em;
+    color: var(--ink);
+    padding-left: 0.3em;
+  }
+  .hero .subtitle {
+    font-family: "Cormorant Garamond", "Noto Serif TC", serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 56px;
+  }
+  .hero-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 0 auto 56px;
+  }
+  .event-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    max-width: 720px;
+    margin: 0 auto;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+    padding: 32px 0;
+  }
+  .event-meta .item {
+    text-align: center;
+    border-right: 1px solid var(--hairline-soft);
+  }
+  .event-meta .item:last-child { border-right: none; }
+  .event-meta .label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.4em;
+    margin-bottom: 8px;
+    padding-left: 0.4em;
+  }
+  .event-meta .value {
+    font-family: "Noto Serif TC", serif;
+    font-size: 17px;
+    color: var(--ink);
+    letter-spacing: 0.1em;
+  }
+
+  /* —— Venue banner —— */
+  .venue-banner {
+    margin: 64px auto 24px;
+    text-align: center;
+  }
+  .venue-banner .vlabel {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--gold);
+    letter-spacing: 0.4em;
+    margin-bottom: 18px;
+  }
+  .venue-banner .vimg {
+    overflow: hidden;
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadow-img);
+    aspect-ratio: 16 / 9;
+    background: #f5ecda;
+  }
+  .venue-banner .vimg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+  .venue-banner .vcaption {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+  }
+
+  /* —— Section —— */
+  section.block {
+    padding: 88px 0 24px;
+    scroll-margin-top: 60px;
+  }
+  .section-head {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .section-head .num {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--gold);
+    letter-spacing: 0.3em;
+    margin-bottom: 12px;
+  }
+  .section-head h2 {
+    font-family: "Noto Serif TC", "Songti TC", serif;
+    font-weight: 400;
+    font-size: 30px;
+    letter-spacing: 0.25em;
+    margin: 0 0 16px;
+    padding-left: 0.25em;
+  }
+  .section-head .desc {
+    color: var(--ink-soft);
+    font-size: 14px;
+    max-width: 580px;
+    margin: 0 auto;
+    letter-spacing: 0.08em;
+  }
+  .section-head .ornament {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    margin: 20px auto;
+    position: relative;
+  }
+  .section-head .ornament::before,
+  .section-head .ornament::after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .section-head .ornament::before { left: -10px; }
+  .section-head .ornament::after { right: -10px; }
+
+  /* —— Item Card with photo —— */
+  .items {
+    display: grid;
+    gap: 28px;
+  }
+  .items.cols-2 { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 720px) {
+    .items.cols-2 { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-image {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: #f5ecda;
+    border-bottom: 1px solid var(--hairline-soft);
+  }
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+  .card:hover .card-image img { transform: scale(1.03); }
+  .card-image.tall { aspect-ratio: 3 / 4; }
+  .card-image.wide { aspect-ratio: 16 / 9; }
+  .card-body {
+    padding: 28px 32px 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .card.no-image {
+    background:
+      linear-gradient(135deg, rgba(182,152,118,0.04), rgba(143,160,132,0.03)),
+      var(--paper);
+    justify-content: center;
+  }
+  .card.no-image .card-body {
+    padding: 56px 36px 48px;
+    position: relative;
+  }
+  .card.no-image .card-body::before {
+    content: "";
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+    margin: 0 0 24px;
+    opacity: 0.6;
+  }
+  .card.no-image .card-head {
+    border-bottom: 1px solid var(--hairline-soft);
+  }
+
+  /* —— Carousel —— */
+  .card-image.carousel { position: relative; }
+  .card-image.carousel .slides { position: relative; width: 100%; height: 100%; }
+  .card-image.carousel .slide {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+    opacity: 0; transition: opacity 0.55s ease;
+    pointer-events: none;
+  }
+  .card-image.carousel .slide.active { opacity: 1; pointer-events: auto; }
+  .card-image.carousel .cnav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px;
+    background: rgba(255, 252, 245, 0.85);
+    border: 1px solid rgba(182, 152, 118, 0.4);
+    color: var(--gold-deep);
+    font-family: "Cormorant Garamond", serif;
+    font-size: 22px; font-weight: 500;
+    cursor: pointer; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.3s ease, background 0.2s ease;
+    backdrop-filter: blur(4px);
+    z-index: 2;
+    line-height: 1;
+    padding: 0; padding-bottom: 2px;
+  }
+  .card-image.carousel:hover .cnav { opacity: 1; }
+  .card-image.carousel .cnav:hover { background: var(--paper); }
+  .card-image.carousel .cprev { left: 14px; }
+  .card-image.carousel .cnext { right: 14px; }
+  .card-image.carousel .dots {
+    position: absolute; bottom: 14px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 8px; z-index: 2;
+    background: rgba(255, 252, 245, 0.7);
+    padding: 6px 12px; border-radius: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .card-image.carousel .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(140, 116, 80, 0.3);
+    cursor: pointer; transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .card-image.carousel .dot.active {
+    background: var(--gold-deep);
+    transform: scale(1.2);
+  }
+  .card-image.carousel .counter {
+    position: absolute; top: 14px; right: 14px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 12px; letter-spacing: 0.2em;
+    color: var(--gold-deep);
+    background: rgba(255, 252, 245, 0.85);
+    padding: 4px 10px;
+    border: 1px solid rgba(182, 152, 118, 0.3);
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+    z-index: 2;
+  }
+  @media (max-width: 720px) {
+    .card-image.carousel .cnav { opacity: 1; width: 32px; height: 32px; font-size: 18px; }
+  }
+  .card-head {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--hairline-soft);
+  }
+  .card-code {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 22px;
+    color: var(--gold-deep);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .card-title {
+    font-family: "Noto Serif TC", serif;
+    font-size: 18px;
+    color: var(--ink);
+    letter-spacing: 0.1em;
+    line-height: 1.5;
+  }
+  .card-spec {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 6px;
+  }
+
+  /* Price rows */
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--hairline-soft);
+  }
+  .price-row:last-child { border-bottom: none; }
+  .price-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ink-soft);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+  }
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    font-weight: 500;
+    padding-left: calc(10px + 0.15em);
+  }
+  .tag.fresh {
+    background: rgba(143, 160, 132, 0.12);
+    color: #5E7256;
+    border: 1px solid rgba(143, 160, 132, 0.3);
+  }
+  .tag.faux {
+    background: rgba(194, 160, 145, 0.14);
+    color: #8A6A5A;
+    border: 1px solid rgba(194, 160, 145, 0.32);
+  }
+  .tag.solo {
+    background: rgba(182, 152, 118, 0.12);
+    color: var(--gold-deep);
+    border: 1px solid rgba(182, 152, 118, 0.3);
+  }
+  .price-value {
+    font-family: "Cormorant Garamond", "Noto Serif TC", serif;
+    font-size: 20px;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .price-value .currency {
+    font-size: 13px;
+    color: var(--muted);
+    margin-right: 2px;
+  }
+  .price-value .calc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 6px;
+  }
+
+  /* —— Stage section image (Section C) —— */
+  .stage-hero {
+    margin: 0 auto 32px;
+    overflow: hidden;
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadow-img);
+    aspect-ratio: 16 / 9;
+    background: #f5ecda;
+  }
+  .stage-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* —— Stage matrix table —— */
+  .matrix-wrap {
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+  }
+  table.matrix {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 560px;
+  }
+  table.matrix th, table.matrix td {
+    padding: 18px 24px;
+    text-align: center;
+    border-bottom: 1px solid var(--hairline-soft);
+    border-right: 1px solid var(--hairline-soft);
+    font-size: 14px;
+  }
+  table.matrix th:last-child, table.matrix td:last-child { border-right: none; }
+  table.matrix tr:last-child td { border-bottom: none; }
+  table.matrix thead th {
+    background: var(--hairline-soft);
+    font-family: "Noto Serif TC", serif;
+    font-size: 13px;
+    color: var(--ink);
+    letter-spacing: 0.15em;
+    font-weight: 500;
+  }
+  table.matrix .row-label {
+    text-align: left;
+    color: var(--ink-soft);
+    background: rgba(245, 235, 215, 0.4);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+  }
+  table.matrix .price {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 19px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  table.matrix .price small {
+    display: block;
+    font-family: "Noto Sans TC", sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  /* —— Notes blocks —— */
+  .notes-block {
+    margin-top: 32px;
+    padding: 32px 36px;
+    background: rgba(255, 252, 245, 0.6);
+    border: 1px solid var(--hairline);
+  }
+  .notes-block h3 {
+    font-family: "Noto Serif TC", serif;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    margin: 0 0 18px;
+    color: var(--gold-deep);
+    padding-left: 0.3em;
+  }
+  .notes-block ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .notes-block li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+    line-height: 1.8;
+  }
+  .notes-block li::before {
+    content: "◦";
+    position: absolute;
+    left: 4px;
+    top: 0;
+    color: var(--gold);
+    font-size: 14px;
+  }
+  .notes-block li strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .card-note {
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 0.08em;
+    background: var(--hairline-soft);
+    padding: 12px 16px;
+    border-left: 2px solid var(--gold);
+    margin-top: 28px;
+    line-height: 1.7;
+  }
+  .card-note strong { color: var(--gold-deep); letter-spacing: 0.1em; }
+
+  /* —— Pet section —— */
+  .pet-hero {
+    width: 220px;
+    margin: 0 auto 36px;
+    aspect-ratio: 1 / 1;
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadow-img);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .pet-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .pet-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadow);
+  }
+  @media (max-width: 720px) {
+    .pet-grid { grid-template-columns: 1fr; }
+    .pet-grid .pet-cell { border-right: none !important; border-bottom: 1px solid var(--hairline-soft); }
+    .pet-grid .pet-cell:last-child { border-bottom: none; }
+  }
+  .pet-cell {
+    padding: 36px 24px;
+    text-align: center;
+    border-right: 1px solid var(--hairline-soft);
+  }
+  .pet-cell:last-child { border-right: none; }
+  .pet-cell .pet-size {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 24px;
+    color: var(--gold-deep);
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+  .pet-cell .pet-desc {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    margin-bottom: 18px;
+  }
+  .pet-cell .pet-price {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 22px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .pet-cell .pet-price .currency { font-size: 13px; color: var(--muted); }
+
+  /* —— Reception section —— */
+  .reception-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+  @media (max-width: 720px) {
+    .reception-grid { grid-template-columns: 1fr; }
+  }
+  .reception-card {
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .reception-card .card-image {
+    aspect-ratio: 4 / 5;
+  }
+  .reception-card .rbody {
+    padding: 28px 32px 32px;
+  }
+  .reception-card h4 {
+    font-family: "Noto Serif TC", serif;
+    font-size: 17px;
+    letter-spacing: 0.2em;
+    margin: 0 0 14px;
+    padding-left: 0.2em;
+    color: var(--gold-deep);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .reception-card h4 .badge {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+  .reception-card h4 .badge.fresh { background: rgba(143,160,132,0.12); color:#5E7256; border:1px solid rgba(143,160,132,0.3); }
+  .reception-card h4 .badge.faux { background: rgba(194,160,145,0.14); color:#8A6A5A; border:1px solid rgba(194,160,145,0.32); }
+  .reception-card p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+    line-height: 1.85;
+    letter-spacing: 0.06em;
+  }
+  .reception-card p strong { color: var(--ink); font-weight: 500; }
+  .reception-card .free-badge {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 4px 12px;
+    background: rgba(143, 160, 132, 0.15);
+    color: #5E7256;
+    border: 1px solid rgba(143, 160, 132, 0.3);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    border-radius: 12px;
+  }
+  .reception-album {
+    margin-top: 28px;
+    overflow: hidden;
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadow-img);
+    aspect-ratio: 16 / 9;
+  }
+  .reception-album img { width: 100%; height: 100%; object-fit: cover; }
+  .reception-album-cap {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+  }
+
+  /* —— Feature card (Section G) —— */
+  .feature-card {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  @media (max-width: 720px) {
+    .feature-card { grid-template-columns: 1fr; }
+  }
+  .feature-card .feature-img {
+    background: linear-gradient(135deg, #FBF7F0 0%, #F5ECDA 100%);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 36px;
+    aspect-ratio: 4 / 5;
+    border-right: 1px solid var(--hairline-soft);
+  }
+  @media (max-width: 720px) {
+    .feature-card .feature-img { border-right: none; border-bottom: 1px solid var(--hairline-soft); }
+  }
+  .feature-card .feature-img img {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain;
+    box-shadow: 0 4px 24px rgba(60, 45, 25, 0.08);
+  }
+  .feature-card .feature-body {
+    padding: 48px 48px 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  @media (max-width: 720px) {
+    .feature-card .feature-body { padding: 32px 28px; }
+  }
+  .feature-card .feature-fee {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin: 8px 0 28px;
+    padding: 18px 0;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .feature-card .feature-fee .flabel {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gold-deep);
+    letter-spacing: 0.3em;
+  }
+  .feature-card .feature-fee .fprice {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 34px;
+    color: var(--ink);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .feature-card .feature-fee .fprice .currency {
+    font-size: 16px;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  .feature-card .feature-fee .fnote {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--ink-soft);
+    letter-spacing: 0.08em;
+    line-height: 1.7;
+    max-width: 60%;
+  }
+  @media (max-width: 720px) {
+    .feature-card .feature-fee { flex-wrap: wrap; gap: 8px; }
+    .feature-card .feature-fee .fnote { max-width: 100%; margin-left: 0; }
+  }
+  .feature-card .feature-desc {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.95;
+    letter-spacing: 0.05em;
+  }
+  .feature-card .feature-desc strong { color: var(--ink); font-weight: 500; }
+  .feature-card .feature-tag {
+    display: inline-block;
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gold);
+    letter-spacing: 0.3em;
+    margin-bottom: 12px;
+  }
+  .feature-card .feature-title {
+    font-family: "Noto Serif TC", serif;
+    font-size: 22px;
+    color: var(--ink);
+    letter-spacing: 0.18em;
+    padding-left: 0.18em;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  /* —— Upgrade callout —— */
+  .upgrade-callout {
+    margin-top: 32px;
+    padding: 36px 40px;
+    background: linear-gradient(135deg, rgba(182, 152, 118, 0.08), rgba(143, 160, 132, 0.06));
+    border: 1px solid var(--gold);
+    border-radius: 2px;
+    text-align: center;
+  }
+  .upgrade-callout .label {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--gold-deep);
+    letter-spacing: 0.25em;
+    margin-bottom: 14px;
+  }
+  .upgrade-callout h3 {
+    font-family: "Noto Serif TC", serif;
+    font-size: 20px;
+    margin: 0 0 14px;
+    letter-spacing: 0.2em;
+    color: var(--ink);
+    padding-left: 0.2em;
+  }
+  .upgrade-callout .price {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 32px;
+    color: var(--gold-deep);
+    font-weight: 500;
+    margin: 8px 0;
+  }
+  .upgrade-callout .price .currency { font-size: 16px; color: var(--muted); margin-right: 4px; }
+  .upgrade-callout .cond {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    letter-spacing: 0.08em;
+    margin-top: 8px;
+  }
+
+  /* —— Footer —— */
+  footer.bottom {
+    margin-top: 96px;
+    padding: 64px 32px;
+    text-align: center;
+    border-top: 1px solid var(--hairline);
+    background: rgba(255, 252, 245, 0.5);
+  }
+  footer.bottom .footer-logo {
+    max-width: 130px;
+    width: 100%;
+    margin: 0 auto 20px;
+    display: block;
+    opacity: 0.85;
+  }
+  footer.bottom .footer-name {
+    font-family: "Noto Serif TC", serif;
+    font-size: 16px;
+    letter-spacing: 0.4em;
+    color: var(--gold-deep);
+    padding-left: 0.4em;
+    margin-bottom: 8px;
+  }
+  footer.bottom .footer-tag {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    margin-bottom: 24px;
+  }
+  footer.bottom .footer-divider {
+    width: 50px;
+    height: 1px;
+    background: var(--gold);
+    margin: 0 auto 24px;
+  }
+  footer.bottom .footer-meta {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+  }
+
+  /* —— Print —— */
+  @media print {
+    @page { size: A4; margin: 1.2cm; }
+    html, body { background: #fff; font-size: 10.5pt; }
+    nav.toc { display: none; }
+    .hero { padding: 24px 0 24px; page-break-after: avoid; }
+    section.block { padding: 24px 0 12px; }
+    .card, .matrix-wrap, .pet-grid, .reception-card, .upgrade-callout, .notes-block, .stage-hero, .venue-banner .vimg, .pet-hero {
+      box-shadow: none;
+      page-break-inside: avoid;
+    }
+    .items.cols-2 { gap: 14px; }
+    .card-image { aspect-ratio: 5 / 3; }
+    .reception-card .card-image { aspect-ratio: 4 / 3; }
+    .card:hover .card-image img { transform: none; }
+    .section-head h2 { font-size: 22px; }
+    .hero h1 { font-size: 28px; }
+    footer.bottom { margin-top: 24px; padding: 20px; page-break-before: avoid; }
+  }
+
+  /* Tablet */
+  @media (max-width: 880px) {
+    .event-meta { grid-template-columns: 1fr; gap: 0; }
+    .event-meta .item { border-right: none; border-bottom: 1px solid var(--hairline-soft); padding: 16px 0; }
+    .event-meta .item:last-child { border-bottom: none; }
+    .hero h1 { font-size: 32px; }
+    .section-head h2 { font-size: 24px; }
+    .card-body { padding: 22px 22px 20px; }
+    .price-row { flex-wrap: wrap; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="toc">
+  <div class="toc-inner">
+    <span class="brand">村花弄囍</span>
+    <a href="#sec-a">A · 戶外證婚</a>
+    <span class="sep">／</span>
+    <a href="#sec-b">B · 迎賓背板</a>
+    <span class="sep">／</span>
+    <a href="#sec-c">C · 舞台背板</a>
+    <span class="sep">／</span>
+    <a href="#sec-d">D · 主舞台地毯</a>
+    <span class="sep">／</span>
+    <a href="#sec-e">E · 寵物立牌</a>
+    <span class="sep">／</span>
+    <a href="#sec-f">F · 收禮 / 相簿桌</a>
+    <span class="sep">／</span>
+    <a href="#sec-g">G · 走道花再生</a>
+    <span class="sep">／</span>
+    <a href="#sec-notes">特別說明</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <header class="hero">
+    <img class="logo" src="LOGO_web.png" alt="村花弄囍婚禮工作室">
+    <div class="studio-name serif">村 花 弄 囍 婚 禮 工 作 室</div>
+
+    <h1>婚禮佈置報價</h1>
+    <div class="subtitle">Wedding Decoration Proposal</div>
+
+    <div class="hero-divider"></div>
+
+    <div class="event-meta">
+      <div class="item">
+        <div class="label">D A T E</div>
+        <div class="value">2026．12．20</div>
+      </div>
+      <div class="item">
+        <div class="label">V E N U E</div>
+        <div class="value">萬麗酒店．大宴會廳</div>
+      </div>
+      <div class="item">
+        <div class="label">F O R M</div>
+        <div class="value">證婚 ＋ 午宴</div>
+      </div>
+    </div>
+
+  </header>
+
+  <!-- SECTION A : 戶外證婚 -->
+  <section id="sec-a" class="block">
+    <div class="section-head">
+      <div class="num serif">— Section A —</div>
+      <h2>戶外證婚區</h2>
+      <div class="ornament"></div>
+      <div class="desc">
+        含拱門、走道地花、走道地毯，可加購手工巨型花朵與地面花叢。<br>
+        所有花藝皆提供「全鮮花」與「全仿真花」兩種選項。
+      </div>
+    </div>
+
+    <div class="items cols-2">
+
+      <!-- A-1 -->
+      <article class="card">
+        <div class="card-image carousel" data-carousel>
+          <div class="slides">
+            <img src="_imgs/A1_arch.jpg" class="slide active" alt="A-1 牛角拱門 ─ 證婚情境">
+            <img src="_imgs/A1_arch2.jpg" class="slide" alt="A-1 牛角拱門 ─ 拱門特寫">
+          </div>
+          <button class="cnav cprev" aria-label="上一張">‹</button>
+          <button class="cnav cnext" aria-label="下一張">›</button>
+          <div class="counter"><span class="cur">1</span> / <span class="tot">2</span></div>
+          <div class="dots">
+            <span class="dot active" data-idx="0"></span>
+            <span class="dot" data-idx="1"></span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-head">
+            <div class="card-code">A — 1</div>
+            <div class="card-title">牛角拱門</div>
+            <div class="card-spec">單面（非雙面）｜ 240cm × 220cm</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag fresh">全鮮花</span></div>
+            <div class="price-value"><span class="currency">NT$</span>55,000</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag faux">全仿真花</span></div>
+            <div class="price-value"><span class="currency">NT$</span>18,800</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- A-2 -->
+      <article class="card">
+        <div class="card-image carousel" data-carousel>
+          <div class="slides">
+            <img src="_imgs/A2_arch.jpg" class="slide active" alt="A-2 走道地花 ─ 白綠木拱與走道花藝">
+            <img src="_imgs/A2_aisle.jpg" class="slide" alt="A-2 走道地花 ─ 戶外走道地花全景">
+          </div>
+          <button class="cnav cprev" aria-label="上一張">‹</button>
+          <button class="cnav cnext" aria-label="下一張">›</button>
+          <div class="counter"><span class="cur">1</span> / <span class="tot">2</span></div>
+          <div class="dots">
+            <span class="dot active" data-idx="0"></span>
+            <span class="dot" data-idx="1"></span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-head">
+            <div class="card-code">A — 2</div>
+            <div class="card-title">走道地花</div>
+            <div class="card-spec">10 球</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag fresh">全鮮花</span></div>
+            <div class="price-value"><span class="currency">NT$</span>32,000</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag faux">全仿真花</span></div>
+            <div class="price-value"><span class="currency">NT$</span>13,000</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- A-3 -->
+      <article class="card no-image">
+        <div class="card-body">
+          <div class="card-head">
+            <div class="card-code">A — 3</div>
+            <div class="card-title">白色走道不織布地毯</div>
+            <div class="card-spec">1500cm × 150cm</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag solo">單一品項</span></div>
+            <div class="price-value"><span class="currency">NT$</span>13,000</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- A-4 -->
+      <article class="card">
+        <div class="card-image"><img src="_imgs/A4_giantflower.jpg" alt="A-4 手工巨型花朵"></div>
+        <div class="card-body">
+          <div class="card-head">
+            <div class="card-code">A — 4</div>
+            <div class="card-title">手工巨型花朵 × 6 ＋ 地面花叢</div>
+            <div class="card-spec">加購項目</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag fresh">全鮮花</span></div>
+            <div class="price-value"><span class="currency">NT$</span>33,800</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag faux">全仿真花</span></div>
+            <div class="price-value"><span class="currency">NT$</span>15,800</div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="card-note">
+      <strong>※</strong> 照片中花藝為仿真花示意，實際色系於確認後固定。
+    </div>
+  </section>
+
+
+  <!-- SECTION B : 送客迎賓背板 -->
+  <section id="sec-b" class="block">
+    <div class="section-head">
+      <div class="num serif">— Section B —</div>
+      <h2>送客 ／ 迎賓背板</h2>
+      <div class="ornament"></div>
+      <div class="desc">
+        多層次組合式背板，總寬 600cm × 最高 260cm，於迎賓與送客時段使用。<br>
+        提供 3 大片或 6 片兩種組合密度。
+      </div>
+    </div>
+
+    <div class="items cols-2">
+
+      <!-- B-1 -->
+      <article class="card">
+        <div class="card-image wide"><img src="_imgs/B1_backdrop.jpg" alt="B-1 多層次送客迎賓背板 3片組合"></div>
+        <div class="card-body">
+          <div class="card-head">
+            <div class="card-code">B — 1</div>
+            <div class="card-title">多層次送客迎賓背板</div>
+            <div class="card-spec">3 大片組合 ｜ 總寬 600 × 最高 260cm</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag fresh">全鮮花</span></div>
+            <div class="price-value"><span class="currency">NT$</span>65,000</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag faux">全仿真花</span></div>
+            <div class="price-value"><span class="currency">NT$</span>45,000</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- B-2 -->
+      <article class="card">
+        <div class="card-image wide"><img src="_imgs/B2_backdrop.jpg" alt="B-2 多層次送客迎賓背板 6片組合"></div>
+        <div class="card-body">
+          <div class="card-head">
+            <div class="card-code">B — 2</div>
+            <div class="card-title">多層次送客迎賓背板</div>
+            <div class="card-spec">6 片組合 ｜ 總寬 600 × 最高 260cm</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag fresh">全鮮花</span></div>
+            <div class="price-value"><span class="currency">NT$</span>75,000</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag faux">全仿真花</span></div>
+            <div class="price-value"><span class="currency">NT$</span>50,000</div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+
+  <!-- SECTION C : 舞台多層次背板 -->
+  <section id="sec-c" class="block">
+    <div class="section-head">
+      <div class="num serif">— Section C —</div>
+      <h2>舞台多層次背板</h2>
+      <div class="ornament"></div>
+      <div class="desc">
+        宴會廳主舞台背板，總寬 730cm × 最高 270cm。<br>
+        花藝色系可依新人喜好討論調整。
+      </div>
+    </div>
+
+    <div class="stage-hero"><img src="_imgs/C_stage.jpg" alt="C 舞台多層次背板 ─ 含舞台地面花"></div>
+
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th></th>
+            <th>不含舞台地面花</th>
+            <th>含舞台地面花</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-label"><span class="tag fresh">全鮮花</span></td>
+            <td class="price"><span style="color:#9A8E7E;font-size:14px;">NT$</span> 120,000<small>不含舞台地面花</small></td>
+            <td class="price"><span style="color:#9A8E7E;font-size:14px;">NT$</span> 150,000<small>含舞台地面花</small></td>
+          </tr>
+          <tr>
+            <td class="row-label"><span class="tag faux">全仿真花</span></td>
+            <td class="price"><span style="color:#9A8E7E;font-size:14px;">NT$</span> 70,000<small>不含舞台地面花</small></td>
+            <td class="price"><span style="color:#9A8E7E;font-size:14px;">NT$</span> 80,000<small>含舞台地面花</small></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="notes-block">
+      <h3>舞台佈置說明</h3>
+      <ul>
+        <li>因舞台地面需預留<strong>新人、主婚人、樂團樂器、音響</strong>等空間，舞台地面花可選擇是否保留。</li>
+        <li>走道花若由證婚區搬移至宴會廳二次佈置，<strong>二次佈置服務費 NT$ 3,000</strong>。</li>
+      </ul>
+    </div>
+  </section>
+
+
+  <!-- SECTION D : 主舞台 + 地毯 -->
+  <section id="sec-d" class="block">
+    <div class="section-head">
+      <div class="num serif">— Section D —</div>
+      <h2>主舞台 ＋ 宴會廳地毯</h2>
+      <div class="ornament"></div>
+      <div class="desc">
+        舞台與走道整體包白工程，營造乾淨典雅的韓系氛圍。
+      </div>
+    </div>
+
+    <div class="items cols-2">
+
+      <article class="card">
+        <div class="card-image"><img src="_imgs/D1_stagewrap.jpg" alt="D-1 舞台包白"></div>
+        <div class="card-body">
+          <div class="card-head">
+            <div class="card-code">D — 1</div>
+            <div class="card-title">舞台包白</div>
+            <div class="card-spec">舞台尺寸 732 × 366 × 60</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag solo">單一品項</span></div>
+            <div class="price-value"><span class="currency">NT$</span>18,000</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-image"><img src="_imgs/D2_hotelstairs.jpg" alt="D-2 飯店樓梯包白"></div>
+        <div class="card-body">
+          <div class="card-head">
+            <div class="card-code">D — 2</div>
+            <div class="card-title">飯店樓梯包白</div>
+            <div class="card-spec">2 座</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag solo">單價 NT$ 500</span></div>
+            <div class="price-value"><span class="currency">NT$</span>1,000<span class="calc">＝ 500 × 2</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-image"><img src="_imgs/D4_ownstairs.jpg" alt="D-3 自帶樓梯包白"></div>
+        <div class="card-body">
+          <div class="card-head">
+            <div class="card-code">D — 3</div>
+            <div class="card-title">自帶樓梯包白</div>
+            <div class="card-spec">2 座 ｜ 寬 90cm × 高 45cm</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag solo">單價 NT$ 1,300</span></div>
+            <div class="price-value"><span class="currency">NT$</span>2,600<span class="calc">＝ 1,300 × 2</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card no-image">
+        <div class="card-body">
+          <div class="card-head">
+            <div class="card-code">D — 4</div>
+            <div class="card-title">宴會廳白色地毯</div>
+            <div class="card-spec">H120 × 3000cm</div>
+          </div>
+          <div class="price-row">
+            <div class="price-label"><span class="tag solo">單一品項</span></div>
+            <div class="price-value"><span class="currency">NT$</span>15,000</div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+
+  <!-- SECTION E : 寵物立牌 -->
+  <section id="sec-e" class="block">
+    <div class="section-head">
+      <div class="num serif">— Section E —</div>
+      <h2>寵物立牌</h2>
+      <div class="ornament"></div>
+      <div class="desc">
+        毛孩家人也能一同入鏡的紀念立牌。<br>
+        實際數量與尺寸待新人確認後報價。
+      </div>
+    </div>
+
+    <div class="pet-hero"><img src="_imgs/E_pet.jpg" alt="寵物立牌示意"></div>
+
+    <div class="pet-grid">
+      <div class="pet-cell">
+        <div class="pet-size">30cm</div>
+        <div class="pet-desc">桌上小型立牌</div>
+        <div class="pet-price"><span class="currency">NT$</span> 600</div>
+      </div>
+      <div class="pet-cell">
+        <div class="pet-size">60cm</div>
+        <div class="pet-desc">中型立牌</div>
+        <div class="pet-price"><span class="currency">NT$</span> 800</div>
+      </div>
+      <div class="pet-cell">
+        <div class="pet-size">180 × 60cm</div>
+        <div class="pet-desc">落地大型立牌</div>
+        <div class="pet-price"><span class="currency">NT$</span> 1,600</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- SECTION F : 收禮桌 / 相簿桌 -->
+  <section id="sec-f" class="block">
+    <div class="section-head">
+      <div class="num serif">— Section F —</div>
+      <h2>收禮桌 ／ 相簿桌</h2>
+      <div class="ornament"></div>
+      <div class="desc">
+        韓系簡約玻璃、金屬類質感道具，<br>
+        仿真花以白綠色為基調，桌布色系可依需求更換。
+      </div>
+    </div>
+
+    <div class="reception-grid">
+
+      <div class="reception-card">
+        <div class="card-image carousel" data-carousel>
+          <div class="slides">
+            <img src="_imgs/F_album.jpg" class="slide active" alt="仿真花款 ─ 相簿桌">
+            <img src="_imgs/F_faux2.jpg" class="slide" alt="仿真花款 ─ 收禮桌全景">
+            <img src="_imgs/F_faux.jpg" class="slide" alt="仿真花款 ─ 收禮桌特寫">
+          </div>
+          <button class="cnav cprev" aria-label="上一張">‹</button>
+          <button class="cnav cnext" aria-label="下一張">›</button>
+          <div class="counter"><span class="cur">1</span> / <span class="tot">3</span></div>
+          <div class="dots">
+            <span class="dot active" data-idx="0"></span>
+            <span class="dot" data-idx="1"></span>
+            <span class="dot" data-idx="2"></span>
+          </div>
+        </div>
+        <div class="rbody">
+          <h4>仿真花款</h4>
+          <p>韓系簡約玻璃、金屬類質感道具，仿真花<strong>白綠色</strong>，桌布色系可更換。</p>
+          <p>搭配<strong>拍照區、舞台區免費租用</strong>。</p>
+          <span class="free-badge">F R E E ・ 含於整體佈置</span>
+        </div>
+      </div>
+
+      <div class="reception-card">
+        <div class="card-image carousel" data-carousel>
+          <div class="slides">
+            <img src="_imgs/F_fresh2.jpg" class="slide active" alt="鮮花款 ─ 桌花特寫">
+            <img src="_imgs/F_fresh3.jpg" class="slide" alt="鮮花款 ─ 桌花情境">
+          </div>
+          <button class="cnav cprev" aria-label="上一張">‹</button>
+          <button class="cnav cnext" aria-label="下一張">›</button>
+          <div class="counter"><span class="cur">1</span> / <span class="tot">2</span></div>
+          <div class="dots">
+            <span class="dot active" data-idx="0"></span>
+            <span class="dot" data-idx="1"></span>
+          </div>
+        </div>
+        <div class="rbody">
+          <h4>鮮花款</h4>
+          <p>韓系簡約玻璃、金屬類質感道具，每區搭配<strong>2 大束 ＋ 2 小束鮮花</strong>。</p>
+          <p>花藝樣式參考照片，可另行討論。<br>若希望賓客結束後可帶走，推薦搭配<strong>花束型</strong>設計。</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="upgrade-callout">
+      <div class="label">U P G R A D E</div>
+      <h3>仿真花款升級鮮花</h3>
+      <div class="price"><span class="currency">NT$</span>12,000</div>
+      <div class="cond">※ 需搭配至少一區鮮花（證婚 ／ 舞台 ／ 拍照區）加購方可升級</div>
+    </div>
+  </section>
+
+
+  <!-- SECTION G : 鮮花地面走道花再生 -->
+  <section id="sec-g" class="block">
+    <div class="section-head">
+      <div class="num serif">— Section G —</div>
+      <h2>鮮花地面走道花再生</h2>
+      <div class="ornament"></div>
+      <div class="desc">
+        將儀式後的鮮花走道花球，再製為小巧花束，於賓客離場時致贈帶走。<br>
+        延續花藝生命，也讓喜悅延伸至每一位來賓的歸途。
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-img"><img src="_imgs/G_bouquet.jpg" alt="鮮花走道花再生 ─ 致贈賓客小花束"></div>
+      <div class="feature-body">
+        <div class="feature-tag serif">— B L O O M ‧ R E B I R T H —</div>
+        <div class="feature-title">鮮花地面走道花再生 ‧ 致贈賓客小花束</div>
+
+        <div class="feature-fee">
+          <span class="flabel">F E E</span>
+          <span class="fprice"><span class="currency">NT$</span>6,500</span>
+          <span class="fnote">須提前撤收整理接待桌，<br>供花藝師作業使用擺放包裝花束。</span>
+        </div>
+
+        <p class="feature-desc">
+          於新人更換<strong>第三套禮服前</strong>，先將廳內走道花球搬移至廳外，由<strong>花藝師整理為簡易小花束</strong>，讓賓客離場時可帶走。<br>
+          每球走道花約可製作成 <strong>4 ─ 5 束</strong>小花束。
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- SPECIAL NOTES -->
+  <section id="sec-notes" class="block">
+    <div class="section-head">
+      <div class="num serif">— Notes —</div>
+      <h2>特別說明</h2>
+      <div class="ornament"></div>
+    </div>
+
+    <div class="notes-block">
+      <h3>關於花藝</h3>
+      <ul>
+        <li>所有報價皆<strong>提供「全鮮花」與「全仿真花」兩種選項</strong>，可依預算與場景靈活搭配。</li>
+        <li>仿真花為固定色系；鮮花色系可依新人喜好討論調整。</li>
+        <li>收禮桌 &amp; 相簿桌搭配拍照區<strong>免費提供租用仿真花款</strong>。若仿真花款希望升級鮮花，需搭配至少一區鮮花（證婚 ／ 舞台 ／ 拍照區）加購方可升級，<strong>費用 NT$ 12,000</strong>。</li>
+      </ul>
+
+      <h3 style="margin-top: 28px;">現場執行</h3>
+      <ul>
+        <li>走道花由證婚區搬移至宴會廳二次使用，<strong>二次佈置服務費 NT$ 3,000</strong>。</li>
+        <li>舞台地面需預留新人、主婚人、樂團樂器與音響等空間，<strong>舞台地面花可選擇是否保留</strong>。</li>
+        <li>寵物立牌實際數量、尺寸於確認後另行報價。</li>
+        <li>戶外證婚地毯走道區域，若因<strong>天氣因素（下雨、沙塵過重）</strong>或更換證婚場地至雨備區域等狀態無法黏貼地毯，則取消地毯區域佈置；因材料經過裁剪無法回收，<strong>費用仍依照報價收取</strong>，新人可將未使用的地毯走道材料帶回。</li>
+      </ul>
+
+      <h3 style="margin-top: 28px;">報價條款</h3>
+      <ul>
+        <li>本報價為佈置項目單項列表，<strong>實際總價依新人選配組合計算</strong>。</li>
+        <li>報價內容如有調整，以雙方最終確認之合約版本為準。</li>
+      </ul>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="bottom">
+    <img class="footer-logo" src="LOGO_web.png" alt="村花弄囍">
+    <div class="footer-name serif">村花弄囍婚禮工作室</div>
+    <div class="footer-tag">A Wedding Decoration Studio</div>
+    <div class="footer-divider"></div>
+    <div class="footer-meta">T H A N K　Y O U　F O R　Y O U R　T R U S T</div>
+    <div class="footer-version" style="margin-top:18px;font-size:12px;letter-spacing:1px;color:#9a8a78;opacity:0.75;">最後更新：2026-04-29　·　版本 v1</div>
+  </footer>
+
+</div>
+
+<script type="a8029ea17501b68f6c8bc532-text/javascript">
+  var AUTOPLAY_MS = 3000;
+  document.querySelectorAll('[data-carousel]').forEach(function(c) {
+    var slides = c.querySelectorAll('.slide');
+    var dots = c.querySelectorAll('.dot');
+    var prev = c.querySelector('.cprev');
+    var next = c.querySelector('.cnext');
+    var cur = c.querySelector('.counter .cur');
+    var i = 0;
+    var n = slides.length;
+    var timer = null;
+    function show(k) {
+      i = (k + n) % n;
+      slides.forEach(function(s, idx) { s.classList.toggle('active', idx === i); });
+      dots.forEach(function(d, idx) { d.classList.toggle('active', idx === i); });
+      if (cur) cur.textContent = (i + 1);
+    }
+    function startAuto() {
+      stopAuto();
+      if (n <= 1) return;
+      timer = setInterval(function() { show(i + 1); }, AUTOPLAY_MS);
+    }
+    function stopAuto() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+    function bump(k) { show(k); startAuto(); }
+
+    if (prev) prev.addEventListener('click', function(e) { e.stopPropagation(); bump(i - 1); });
+    if (next) next.addEventListener('click', function(e) { e.stopPropagation(); bump(i + 1); });
+    dots.forEach(function(d, idx) { d.addEventListener('click', function(e) { e.stopPropagation(); bump(idx); }); });
+
+    // Pause on hover
+    c.addEventListener('mouseenter', stopAuto);
+    c.addEventListener('mouseleave', startAuto);
+    // Pause when tab is hidden
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) stopAuto(); else startAuto();
+    });
+
+    // touch / swipe
+    var sx = 0, sy = 0, moved = false;
+    c.addEventListener('touchstart', function(e) { stopAuto(); sx = e.touches[0].clientX; sy = e.touches[0].clientY; moved = false; }, {passive: true});
+    c.addEventListener('touchmove', function(e) {
+      var dx = e.touches[0].clientX - sx;
+      var dy = e.touches[0].clientY - sy;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) moved = true;
+    }, {passive: true});
+    c.addEventListener('touchend', function(e) {
+      if (moved) {
+        var dx = e.changedTouches[0].clientX - sx;
+        if (Math.abs(dx) > 40) show(i + (dx < 0 ? 1 : -1));
+      }
+      startAuto();
+    });
+    // keyboard
+    c.tabIndex = 0;
+    c.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowLeft') bump(i - 1);
+      if (e.key === 'ArrowRight') bump(i + 1);
+    });
+
+    // start
+    startAuto();
+  });
+</script>
+
+
+</body>
+</html>
