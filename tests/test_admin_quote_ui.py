@@ -49,6 +49,8 @@ class AdminQuoteUiTest(unittest.TestCase):
         self.assertIn('id="quotes-list"', html)
         self.assertIn('value="quotes.manage"', html)
         self.assertIn('placeholder="至少 8 碼，留空代表不變更"', html)
+        self.assertIn('/controlcenter/app.js', html)
+        self.assertNotIn('/admin/app.js', html)
 
     def test_admin_js_has_quote_management_api_calls(self):
         js = self.read("admin/app.js")

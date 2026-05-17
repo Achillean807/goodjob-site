@@ -13,7 +13,7 @@
 - **Netflix 風格介面**：深色主題（`#141414`）搭配金色強調（`#c4a44a`），作品以橫向捲軸展示
 - **四大分類**：主題活動、春酒尾牙、魔法學院、戶政改造
 - **SPA 架構**：Hash-based routing，作品詳情以 modal 呈現，含 YouTube 影片嵌入與 Lightbox 圖庫
-- **CMS 後台**：`/admin/` 單頁管理介面，支援拖曳排序、圖片上傳、即時預覽
+- **CMS 後台**：`/controlcenter/` 單頁管理介面，支援拖曳排序、圖片上傳、即時預覽
 - **零依賴部署**：Python 3 stdlib 即可運行，無需 pip install
 
 ## 快速開始
@@ -35,7 +35,7 @@ python3 server.py --port 10814
 | `/` | 首頁 — Hero 輪播 + 精選作品 + 四大分類作品列 |
 | `/teabar.html` | 村花囍茶 — 迎賓花果茶方案展示 |
 | `/workflow.html` | 合作流程 — 四步合作說明 + FAQ |
-| `/admin/` | CMS 後台 — 文章 CRUD、圖片管理 |
+| `/controlcenter/` | CMS 後台 — 文章 CRUD、圖片管理 |
 | `/sort-hat/` | 分類帽 — 婚禮座位查詢互動系統（銷售頁） |
 | `/wedding-packages/` | 婚禮套組 — 室內/戶外佈置方案展示 |
 

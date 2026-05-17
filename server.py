@@ -88,6 +88,8 @@ QUOTE_AUTH_FAILURE_WINDOW_SECONDS = max(
 )
 QUOTE_AUTH_LOCK_SECONDS = max(1, _env_int("GOODJOB_QUOTE_AUTH_LOCK_SECONDS", 300))
 QUOTE_AUTH_FAILURES = {}
+ADMIN_PUBLIC_PREFIX = "/controlcenter"
+ADMIN_LEGACY_PREFIX = "/admin"
 PRIVATE_DATA_FILENAMES = {
     "accounts.json",
     "config.json",
@@ -1235,22 +1237,45 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         return self.path.startswith("/api/")
 
     def _is_admin_page(self):
-        """Check if requesting /admin or /admin/ — used for path rewrite to /admin/index.html.
+        """Check if requesting /controlcenter or /controlcenter/.
 
-        Do NOT extend this to subpaths; doing so would rewrite /admin/app.js → /admin/index.html
+        Do NOT extend this to subpaths; doing so would rewrite app.js to index.html
         and break the admin SPA. For noindex header logic, use _is_admin_path() instead.
         """
         stripped = self.path.split("?")[0].split("#")[0].lower()
-        return stripped in ("/admin", "/admin/")
+        return stripped in (ADMIN_PUBLIC_PREFIX, ADMIN_PUBLIC_PREFIX + "/")
 
     def _is_admin_path(self):
-        """Check if request targets /admin or any subpath under /admin/ — used for X-Robots-Tag noindex.
+        """Check if request targets the public or legacy admin URL for noindex headers.
 
-        Covers /admin, /admin/, /admin/index.html, /admin/app.js, /admin/anything.
         Decoded via unquote to defeat URL-escape evasion (e.g., %2fadmin%2f).
         """
         stripped = unquote(self.path.split("?")[0].split("#")[0]).lower()
-        return stripped == "/admin" or stripped.startswith("/admin/")
+        return (
+            stripped == ADMIN_PUBLIC_PREFIX
+            or stripped.startswith(ADMIN_PUBLIC_PREFIX + "/")
+            or stripped == ADMIN_LEGACY_PREFIX
+            or stripped.startswith(ADMIN_LEGACY_PREFIX + "/")
+        )
+
+    def _is_legacy_admin_path(self):
+        stripped = unquote(self.path.split("?")[0].split("#")[0]).lower()
+        return stripped == ADMIN_LEGACY_PREFIX or stripped.startswith(ADMIN_LEGACY_PREFIX + "/")
+
+    def _rewrite_controlcenter_asset_path(self):
+        path_part, sep, query = self.path.partition("?")
+        clean = unquote(path_part.split("#", 1)[0])
+        clean_lower = clean.lower()
+        prefix = ADMIN_PUBLIC_PREFIX + "/"
+        if not clean_lower.startswith(prefix):
+            return False
+        rel = clean[len(prefix):]
+        normalized = posixpath.normpath("/" + rel).lstrip("/")
+        if not normalized or normalized.startswith("../") or normalized == "..":
+            self.send_error(404, "Not found")
+            return True
+        self.path = ADMIN_LEGACY_PREFIX + "/" + normalized + (sep + query if sep else "")
+        return False
 
     def _is_quote_path(self):
         """Proposal pages are private client-facing previews, not search results."""
@@ -2242,15 +2267,21 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             if not self._route_api("GET"):
                 self._send_error_json(404, "Not found")
             return
+        if self._is_legacy_admin_path():
+            self.send_error(404, "Not found")
+            return
         if _is_private_data_path(self.path):
             self.send_error(404, "Not found")
             return
         if self._is_quote_path():
             if self._serve_quote_request(head_only=False):
                 return
-        # Serve /admin and /admin/ as admin/index.html
+        # Serve /controlcenter from the existing admin static bundle.
         if self._is_admin_page():
             self.path = "/admin/index.html"
+        else:
+            if self._rewrite_controlcenter_asset_path():
+                return
         clean_path = self.path.split("?")[0].split("#")[0]
         # Serve homepage with featured-cases SSR injection (Phase 1.5)
         if clean_path in ("/", "/index.html"):
@@ -2620,6 +2651,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             if not self._route_api("GET"):
                 self._send_error_json(404, "Not found")
             return
+        if self._is_legacy_admin_path():
+            self.send_error(404, "Not found")
+            return
         if _is_private_data_path(self.path):
             self.send_error(404, "Not found")
             return
@@ -2628,6 +2662,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 return
         if self._is_admin_page():
             self.path = "/admin/index.html"
+        else:
+            if self._rewrite_controlcenter_asset_path():
+                return
         clean_path = self.path.split("?")[0].split("#")[0]
         if clean_path in ("/", "/index.html"):
             self._serve_homepage_ssr(head_only=True)

@@ -180,7 +180,7 @@ ssh achilean@100.102.51.64 "sudo systemctl restart murayama-goodjob.service"
 無自動化測試。手動流程：
 1. 本機跑 `python3 server.py --port 8000`
 2. 瀏覽器視覺檢查
-3. `/admin/` 測 CRUD + 帳號管理
+3. `/controlcenter/` 測 CRUD + 帳號管理
 4. 部署後確認線上
 
 ## 編碼規範
@@ -195,10 +195,10 @@ ssh achilean@100.102.51.64 "sudo systemctl restart murayama-goodjob.service"
 ## 常見問題 (FAQ)
 
 **Q: 如何新增作品？**
-A: `/admin/` CMS 後台上傳。圖片自動轉 WebP + 上 R2，articles.json 自動更新。
+A: `/controlcenter/` CMS 後台上傳。圖片自動轉 WebP + 上 R2，articles.json 自動更新。
 
 **Q: 如何新增 admin 帳號？**
-A: 用既有 admin 登入 `/admin/` → 帳號管理 UI，或 Basic Auth 直接打 `POST /api/accounts`。系統擋最後一個 active admin 被刪或停用。
+A: 用既有 admin 登入 `/controlcenter/` → 帳號管理 UI，或 Basic Auth 直接打 `POST /api/accounts`。系統擋最後一個 active admin 被刪或停用。
 
 **Q: 圖片部署後沒更新？**
 A: R2 URL 不變所以圖片本身快取沒問題。若是 CSS/JS 要升 `?v=...` 查詢字串強制 CF edge 重抓。

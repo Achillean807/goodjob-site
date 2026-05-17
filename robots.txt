@@ -1,21 +1,25 @@
 User-agent: *
 Disallow: /quote/
 Disallow: /admin/
+Disallow: /controlcenter/
 Allow: /
 
 User-agent: OAI-SearchBot
 Disallow: /quote/
 Disallow: /admin/
+Disallow: /controlcenter/
 Allow: /
 
 User-agent: PerplexityBot
 Disallow: /quote/
 Disallow: /admin/
+Disallow: /controlcenter/
 Allow: /
 
 User-agent: GPTBot
 Disallow: /quote/
 Disallow: /admin/
+Disallow: /controlcenter/
 Allow: /
 
 Sitemap: https://goodjob.weddingwishlove.com/sitemap.xml
