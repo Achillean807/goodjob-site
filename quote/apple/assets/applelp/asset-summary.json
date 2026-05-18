@@ -1,0 +1,625 @@
+{
+  "site": "感覺就是改變世界的起點｜品牌規劃師曾蘋果",
+  "front_id": 6329,
+  "asset_dir": "/home/achilean/teaching-sites/ai-wp-68000-workshop/assets/applelp",
+  "records": [
+    {
+      "idx": 1,
+      "file": "01-0325-1.png",
+      "url": "https://applelp.com/wp-content/uploads/2025/03/0325-1.png",
+      "bytes": 84931,
+      "ct": "image/png"
+    },
+    {
+      "idx": 2,
+      "file": "02-0224-4.png",
+      "url": "https://applelp.com/wp-content/uploads/2025/02/0224-4.png",
+      "bytes": 10254,
+      "ct": "image/png"
+    },
+    {
+      "idx": 3,
+      "file": "03-0224-5.png",
+      "url": "https://applelp.com/wp-content/uploads/2025/02/0224-5.png",
+      "bytes": 8346,
+      "ct": "image/png"
+    },
+    {
+      "idx": 4,
+      "file": "04-0224-6.png",
+      "url": "https://applelp.com/wp-content/uploads/2025/02/0224-6.png",
+      "bytes": 11459,
+      "ct": "image/png"
+    },
+    {
+      "idx": 5,
+      "file": "05-0326-1.jpg",
+      "url": "https://applelp.com/wp-content/uploads/2025/03/0326-1.jpg",
+      "bytes": 121163,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 6,
+      "file": "06-0326-2.jpg",
+      "url": "https://applelp.com/wp-content/uploads/2025/03/0326-2.jpg",
+      "bytes": 169026,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 7,
+      "file": "07-0326-3.jpg",
+      "url": "https://applelp.com/wp-content/uploads/2025/03/0326-3.jpg",
+      "bytes": 149982,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 8,
+      "file": "08-0223-2-768x515.jpg",
+      "url": "https://applelp.com/wp-content/uploads/2025/02/0223-2-768x515.jpg",
+      "bytes": 49780,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 9,
+      "url": "https://applelp.com/wp-content/uploads/2025/02/參考素材6-1-300x116.png",
+      "file": "09--6-1-300x116.png",
+      "bytes": 17924,
+      "ct": "image/png"
+    },
+    {
+      "idx": 10,
+      "url": "https://applelp.com/wp-content/uploads/2025/11/蘋果-網站封面.png",
+      "file": "10----.png",
+      "bytes": 1132551,
+      "ct": "image/png"
+    },
+    {
+      "idx": 11,
+      "url": "https://applelp.com/wp-content/uploads/2025/08/封面.jpg",
+      "file": "11--.jpg",
+      "bytes": 181488,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 12,
+      "file": "12-IP-face.jpg",
+      "url": "https://applelp.com/wp-content/uploads/2025/08/IP-face.jpg",
+      "bytes": 129473,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 13,
+      "url": "https://applelp.com/wp-content/uploads/2025/07/實體講義BN.jpg",
+      "file": "13--BN.jpg",
+      "bytes": 333466,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 14,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_15.jpg",
+      "file": "14--5-_15.jpg",
+      "bytes": 364063,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 15,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_14.jpg",
+      "file": "15--5-_14.jpg",
+      "bytes": 367545,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 16,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_13.jpg",
+      "file": "16--5-_13.jpg",
+      "bytes": 534668,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 17,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_12.jpg",
+      "file": "17--5-_12.jpg",
+      "bytes": 647227,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 18,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_11.jpg",
+      "file": "18--5-_11.jpg",
+      "bytes": 584264,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 19,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_10.jpg",
+      "file": "19--5-_10.jpg",
+      "bytes": 427769,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 20,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_09.jpg",
+      "file": "20--5-_09.jpg",
+      "bytes": 456950,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 21,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_08.jpg",
+      "file": "21--5-_08.jpg",
+      "bytes": 455908,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 22,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_07.jpg",
+      "file": "22--5-_07.jpg",
+      "bytes": 259384,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 23,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_06.jpg",
+      "file": "23--5-_06.jpg",
+      "bytes": 341911,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 24,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_05.jpg",
+      "file": "24--5-_05.jpg",
+      "bytes": 496152,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 25,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_04.jpg",
+      "file": "25--5-_04.jpg",
+      "bytes": 465484,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 26,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_03.jpg",
+      "file": "26--5-_03.jpg",
+      "bytes": 451192,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 27,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_02.jpg",
+      "file": "27--5-_02.jpg",
+      "bytes": 530264,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 28,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/打造個人品牌5大關鍵要素_01.jpg",
+      "file": "28--5-_01.jpg",
+      "bytes": 624102,
+      "ct": "image/jpeg"
+    },
+    {
+      "idx": 29,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/蘋果-網站封面-1.png",
+      "file": "29-----1.png",
+      "bytes": 932595,
+      "ct": "image/png"
+    },
+    {
+      "idx": 30,
+      "url": "https://applelp.com/wp-content/uploads/2025/06/蘋果-網站封面.png",
+      "file": "30----.png",
+      "bytes": 928488,
+      "ct": "image/png"
+    }
+  ],
+  "top_hexes": [
+    [
+      "#fff",
+      478
+    ],
+    [
+      "#fff0",
+      128
+    ],
+    [
+      "#000",
+      87
+    ],
+    [
+      "#2575fc",
+      63
+    ],
+    [
+      "#333",
+      58
+    ],
+    [
+      "#ffffff",
+      27
+    ],
+    [
+      "#41454f",
+      26
+    ],
+    [
+      "#663d38",
+      20
+    ],
+    [
+      "#fff7f1",
+      20
+    ],
+    [
+      "#d4a583",
+      19
+    ],
+    [
+      "#f44337",
+      19
+    ],
+    [
+      "#eff1f6",
+      18
+    ],
+    [
+      "#dcdfe5",
+      17
+    ],
+    [
+      "#fe8f75",
+      17
+    ],
+    [
+      "#ed9700",
+      16
+    ],
+    [
+      "#e0e2ea",
+      16
+    ],
+    [
+      "#b0b6c8",
+      16
+    ],
+    [
+      "#e9e9ea",
+      15
+    ],
+    [
+      "#e7e7e7",
+      15
+    ],
+    [
+      "#7ed500",
+      15
+    ],
+    [
+      "#4285f4",
+      14
+    ],
+    [
+      "#f2709c",
+      14
+    ],
+    [
+      "#ddd",
+      13
+    ],
+    [
+      "#ccc",
+      13
+    ],
+    [
+      "#9460ff",
+      13
+    ],
+    [
+      "#666",
+      12
+    ],
+    [
+      "#757c8e",
+      12
+    ],
+    [
+      "#111",
+      12
+    ],
+    [
+      "#cdcfd5",
+      11
+    ],
+    [
+      "#e3e5eb",
+      11
+    ],
+    [
+      "#f5f5f5",
+      11
+    ],
+    [
+      "#eaeaea",
+      11
+    ],
+    [
+      "#d7d7d7",
+      11
+    ],
+    [
+      "#777",
+      10
+    ],
+    [
+      "#5b616f",
+      10
+    ],
+    [
+      "#767c8e",
+      10
+    ],
+    [
+      "#212327",
+      10
+    ],
+    [
+      "#3e64de",
+      10
+    ],
+    [
+      "#444",
+      10
+    ],
+    [
+      "#ff3984",
+      10
+    ],
+    [
+      "#cc24fc",
+      10
+    ],
+    [
+      "#00e49a",
+      10
+    ],
+    [
+      "#f96933",
+      10
+    ],
+    [
+      "#53f8a2",
+      10
+    ],
+    [
+      "#35ed7e",
+      10
+    ],
+    [
+      "#d2d8d8",
+      9
+    ],
+    [
+      "#eee",
+      9
+    ],
+    [
+      "#24a148",
+      9
+    ],
+    [
+      "#c0c3cb",
+      9
+    ],
+    [
+      "#e8eff1",
+      9
+    ],
+    [
+      "#69727d",
+      9
+    ],
+    [
+      "#f9f9f9",
+      9
+    ],
+    [
+      "#f6f8fd",
+      8
+    ],
+    [
+      "#d2dbf5",
+      8
+    ],
+    [
+      "#999",
+      8
+    ],
+    [
+      "#0000",
+      8
+    ],
+    [
+      "#151515",
+      8
+    ],
+    [
+      "#9197a8",
+      7
+    ],
+    [
+      "#f3f3f3",
+      7
+    ],
+    [
+      "#dadada",
+      7
+    ]
+  ],
+  "fonts": [
+    [
+      "'Roboto'",
+      162
+    ],
+    [
+      "'Roboto Slab'",
+      63
+    ],
+    [
+      "tutor",
+      7
+    ],
+    [
+      "eicons",
+      6
+    ],
+    [
+      "inherit",
+      5
+    ],
+    [
+      "\"woo\"",
+      5
+    ],
+    [
+      "tutor!important",
+      4
+    ],
+    [
+      "\"Source Code Pro\",monospace",
+      4
+    ],
+    [
+      "\"Courier New\",Courier,monospace",
+      4
+    ],
+    [
+      "-apple-system,blinkmacsystemfont,Helvetica Neue,helvetica,sans-serif",
+      4
+    ],
+    [
+      "'Font Awesome 5 Free'",
+      3
+    ],
+    [
+      "\"Roboto\"",
+      3
+    ],
+    [
+      "\"star\"",
+      3
+    ],
+    [
+      "WooCommerce",
+      3
+    ],
+    [
+      "'FontAwesome'",
+      2
+    ],
+    [
+      "'Font Awesome 5 Brands'",
+      2
+    ],
+    [
+      "'slick'",
+      2
+    ],
+    [
+      "var(--theme-font-stack-default)",
+      1
+    ],
+    [
+      "Georgia",
+      1
+    ],
+    [
+      "monospace",
+      1
+    ],
+    [
+      "'fontAwesome'",
+      1
+    ],
+    [
+      "Helvetica Neue,helvetica,arial,sans-serif",
+      1
+    ],
+    [
+      "Helvetica,Arial,sans-serif",
+      1
+    ],
+    [
+      "Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace",
+      1
+    ],
+    [
+      "\"Rock Salt\",cursive",
+      1
+    ],
+    [
+      "\"Roboto Slab\"",
+      1
+    ],
+    [
+      "var(--theme-font-family)",
+      1
+    ],
+    [
+      "var(--theme-form-font-family)",
+      1
+    ],
+    [
+      "var(--theme-button-font-family, var(--theme-font-family))",
+      1
+    ],
+    [
+      "\"dashicons\"",
+      1
+    ],
+    [
+      "Arial,Baskerville,monospace",
+      1
+    ],
+    [
+      "\"Font Awesome 5 Free\"",
+      1
+    ],
+    [
+      "Roboto,sans-serif",
+      1
+    ],
+    [
+      "Roboto",
+      1
+    ],
+    [
+      "-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,\"Noto Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\"",
+      1
+    ],
+    [
+      "Archivo,sans-serif",
+      1
+    ],
+    [
+      "\"Playfair Display\",serif",
+      1
+    ],
+    [
+      "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif",
+      1
+    ],
+    [
+      "elementskit",
+      1
+    ],
+    [
+      "elementskit!important",
+      1
+    ]
+  ],
+  "css_urls": [
+    "https://applelp.com/wp-content/litespeed/css/e2d8bf38b2969c2e1db4d720ce3b75d9.css?ver=d8b7f",
+    "https://applelp.com/wp-content/themes/blocksy/static/bundle/no-scripts.min.css"
+  ]
+}

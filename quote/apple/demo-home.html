@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>感覺就是改變世界的起點｜品牌規劃師曾蘋果</title>
+  <meta name="description" content="曾蘋果帶你從 0 到 1 建立品牌定位，找到獨有的市場切入點，讓你的品牌被所有人看見。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;700;900&family=Roboto:wght@400;500;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset ──────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    img { max-width: 100%; height: auto; display: block; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── Design System ─────────────────────────────── */
+    :root {
+      --cream: #fff7f1;
+      --cream-deep: #f6f1ec;
+      --rose-gold: #d4a583;
+      --rose-gold-light: #e8c9b0;
+      --rose-gold-soft: rgba(212,165,131,.12);
+      --rose-gold-glow: rgba(212,165,131,.25);
+      --coffee: #663d38;
+      --coffee-light: #7d5550;
+      --coral: #fe8f75;
+      --coral-soft: rgba(254,143,117,.10);
+      --dark: #41454f;
+      --dark-text: #333;
+      --white: #ffffff;
+      --line: rgba(102,61,56,.10);
+
+      --sans: 'Noto Sans TC', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+      --serif: 'Noto Serif TC', 'Roboto Slab', Georgia, serif;
+      --display: 'Roboto Slab', 'Noto Serif TC', Georgia, serif;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--cream);
+      color: var(--dark-text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Reduced Motion ────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ── Top Nav ───────────────────────────────────── */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(255,247,241,.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+      padding: 0 24px;
+    }
+    .topbar .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+    .topbar .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--coffee);
+    }
+    .topbar .mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--rose-gold), var(--coral));
+      color: #fff;
+      font-weight: 900;
+      font-size: 16px;
+    }
+    .topbar .links {
+      display: flex;
+      gap: 4px;
+    }
+    .topbar .links a {
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--coffee-light);
+      border-radius: 8px;
+      transition: color .2s, background .2s;
+    }
+    .topbar .links a:hover {
+      color: var(--coffee);
+      background: var(--rose-gold-soft);
+    }
+    .topbar .btn-back {
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--coffee);
+      border: 1.5px solid var(--rose-gold-light);
+      border-radius: 999px;
+      transition: background .2s, border-color .2s;
+    }
+    .topbar .btn-back:hover {
+      background: var(--rose-gold-soft);
+      border-color: var(--rose-gold);
+    }
+
+    /* ── Hero ──────────────────────────────────────── */
+    .dh-hero {
+      position: relative;
+      padding: 120px 0 80px;
+      background:
+        radial-gradient(ellipse 70% 60% at 30% 40%, rgba(212,165,131,.15), transparent),
+        radial-gradient(ellipse 50% 50% at 85% 20%, rgba(254,143,117,.08), transparent),
+        var(--cream);
+      overflow: hidden;
+    }
+    .dh-hero::before {
+      content: "";
+      position: absolute;
+      top: -100px; right: -60px;
+      width: 480px; height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(212,165,131,.10), transparent 70%);
+      pointer-events: none;
+    }
+    .dh-hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: center;
+    }
+    .dh-hero-text .dh-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      color: var(--rose-gold);
+      margin-bottom: 18px;
+    }
+    .dh-hero-text .dh-eyebrow::before {
+      content: "";
+      width: 28px; height: 2px;
+      background: var(--rose-gold);
+      border-radius: 2px;
+    }
+    .dh-hero-text h1 {
+      font-family: var(--serif);
+      font-size: clamp(34px, 5vw, 60px);
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      color: var(--coffee);
+      margin-bottom: 20px;
+      text-wrap: balance;
+    }
+    .dh-hero-text h1 em {
+      font-style: normal;
+      color: var(--coral);
+    }
+    .dh-hero-text .dh-lead {
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--coffee-light);
+      max-width: 520px;
+      margin-bottom: 32px;
+    }
+    .dh-hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .dh-hero-img {
+      position: relative;
+    }
+    .dh-hero-img img {
+      border-radius: 24px;
+      box-shadow:
+        0 24px 64px rgba(102,61,56,.12),
+        0 0 0 1px var(--line);
+      object-fit: cover;
+      width: 100%;
+      aspect-ratio: 3/2;
+    }
+    .dh-hero-img::after {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 30px;
+      border: 2px solid var(--rose-gold-light);
+      opacity: .3;
+      pointer-events: none;
+    }
+
+    /* ── Buttons ───────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, var(--rose-gold), var(--coral));
+      color: #fff;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 15px;
+      font-family: var(--sans);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 28px var(--rose-gold-glow);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 36px rgba(212,165,131,.35);
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--white);
+      color: var(--coffee);
+      border: 1.5px solid var(--rose-gold-light);
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 15px;
+      font-family: var(--sans);
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .btn-secondary:hover {
+      border-color: var(--rose-gold);
+      background: var(--rose-gold-soft);
+    }
+
+    /* ── Trust Bar ─────────────────────────────────── */
+    .dh-trust {
+      padding: 44px 0;
+      background: var(--coffee);
+      color: var(--cream);
+    }
+    .dh-trust-row {
+      display: flex;
+      justify-content: center;
+      gap: 56px;
+      flex-wrap: wrap;
+      text-align: center;
+    }
+    .dh-trust-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .dh-trust-num {
+      font-family: var(--display);
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--rose-gold-light), #f0d4b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .dh-trust-label {
+      font-size: 13px;
+      color: rgba(255,247,241,.55);
+      font-weight: 500;
+    }
+
+    /* ── Section Shared ────────────────────────────── */
+    .dh-section {
+      padding: 80px 0;
+    }
+    .dh-section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--rose-gold);
+      margin-bottom: 12px;
+    }
+    .dh-section-label::before {
+      content: "";
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--rose-gold);
+    }
+    .dh-section-title {
+      font-family: var(--serif);
+      font-size: clamp(26px, 3.8vw, 44px);
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      color: var(--coffee);
+      margin-bottom: 12px;
+    }
+    .dh-section-sub {
+      font-size: 16px;
+      color: var(--coffee-light);
+      max-width: 580px;
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+
+    /* ── Philosophy / About ────────────────────────── */
+    .dh-philosophy {
+      background: var(--cream-deep);
+    }
+    .dh-philo-inner {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .dh-philo-img img {
+      border-radius: 20px;
+      box-shadow: 0 16px 48px rgba(102,61,56,.10);
+      object-fit: cover;
+      width: 100%;
+      aspect-ratio: 4/5;
+    }
+    .dh-philo-text blockquote {
+      font-family: var(--serif);
+      font-size: clamp(22px, 3vw, 34px);
+      line-height: 1.35;
+      color: var(--coffee);
+      margin-bottom: 20px;
+      position: relative;
+      padding-left: 24px;
+      border-left: 3px solid var(--rose-gold);
+    }
+    .dh-philo-text blockquote em {
+      font-style: normal;
+      color: var(--coral);
+    }
+    .dh-philo-text p {
+      font-size: 16px;
+      color: var(--coffee-light);
+      line-height: 1.75;
+      max-width: 480px;
+    }
+
+    /* ── Position / Pain Points ────────────────────── */
+    .dh-position { background: var(--cream); }
+    .dh-pain-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .dh-pain-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .dh-pain-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 44px rgba(102,61,56,.08);
+    }
+    .dh-pain-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--rose-gold), var(--coral));
+      border-radius: 20px 20px 0 0;
+    }
+    .dh-pain-num {
+      font-family: var(--display);
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 1;
+      color: rgba(212,165,131,.15);
+      margin-bottom: 8px;
+    }
+    .dh-pain-card h3 {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--coffee);
+      margin-bottom: 8px;
+    }
+    .dh-pain-card p {
+      font-size: 15px;
+      color: var(--coffee-light);
+      line-height: 1.65;
+    }
+
+    /* ── Three Powers ──────────────────────────────── */
+    .dh-powers {
+      background: var(--cream-deep);
+    }
+    .dh-powers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .dh-power-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 32px 26px;
+      text-align: center;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .dh-power-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 48px rgba(102,61,56,.08);
+    }
+    .dh-power-icon {
+      width: 72px; height: 72px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+    .dh-power-icon.p1 { background: linear-gradient(135deg, rgba(254,143,117,.15), rgba(212,165,131,.15)); }
+    .dh-power-icon.p2 { background: linear-gradient(135deg, rgba(212,165,131,.18), rgba(102,61,56,.08)); }
+    .dh-power-icon.p3 { background: linear-gradient(135deg, rgba(254,143,117,.12), rgba(254,143,117,.05)); }
+    .dh-power-card h3 {
+      font-family: var(--serif);
+      font-size: 22px;
+      color: var(--coffee);
+      margin-bottom: 10px;
+    }
+    .dh-power-card p {
+      font-size: 15px;
+      color: var(--coffee-light);
+      line-height: 1.65;
+    }
+
+    /* ── Course Scene Band ─────────────────────────── */
+    .dh-scene-band {
+      padding: 64px 0;
+      background: var(--cream);
+    }
+    .dh-scene-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .dh-scene-grid img {
+      border-radius: 18px;
+      object-fit: cover;
+      width: 100%;
+      aspect-ratio: 16/10;
+      box-shadow: 0 8px 32px rgba(102,61,56,.08);
+    }
+
+    /* ── Lead Capture ──────────────────────────────── */
+    .dh-lead-section {
+      background:
+        radial-gradient(ellipse 50% 60% at 80% 40%, rgba(212,165,131,.12), transparent),
+        var(--cream-deep);
+    }
+    .dh-lead-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .dh-lead-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 36px 30px;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s;
+    }
+    .dh-lead-card:hover {
+      transform: translateY(-3px);
+    }
+    .dh-lead-icon {
+      width: 64px; height: 64px;
+      margin-bottom: 16px;
+    }
+    .dh-lead-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .dh-lead-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .dh-lead-badge.freebie {
+      background: var(--rose-gold-soft);
+      color: var(--coffee);
+    }
+    .dh-lead-badge.quiz {
+      background: rgba(254,143,117,.10);
+      color: #c45a3e;
+    }
+    .dh-lead-card h3 {
+      font-family: var(--serif);
+      font-size: 21px;
+      line-height: 1.25;
+      color: var(--coffee);
+      margin-bottom: 12px;
+    }
+    .dh-lead-card p {
+      font-size: 15px;
+      color: var(--coffee-light);
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+    .dh-mock-form {
+      display: flex;
+      gap: 10px;
+    }
+    .dh-mock-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: var(--cream);
+      font-size: 14px;
+      color: var(--coffee-light);
+      font-family: var(--sans);
+    }
+    .dh-mock-submit {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, var(--rose-gold), var(--coral));
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: opacity .2s;
+    }
+    .dh-mock-submit:hover { opacity: .9; }
+
+    /* Quiz visual */
+    .dh-quiz-visual {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .dh-quiz-bar {
+      height: 8px;
+      border-radius: 99px;
+      background: rgba(212,165,131,.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .dh-quiz-bar::after {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--rose-gold), var(--coral));
+    }
+    .dh-quiz-bar.b1::after { width: 75%; }
+    .dh-quiz-bar.b2::after { width: 50%; }
+    .dh-quiz-bar.b3::after { width: 90%; }
+
+    /* ── Social Proof ──────────────────────────────── */
+    .dh-proof {
+      padding: 72px 0;
+      background: var(--cream);
+    }
+    .dh-proof-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .dh-proof-header .dh-section-label { justify-content: center; }
+    .dh-proof-header .dh-section-title { text-align: center; }
+    .dh-proof-content {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 32px;
+      align-items: start;
+    }
+    .dh-proof-img img {
+      border-radius: 18px;
+      box-shadow: 0 12px 40px rgba(102,61,56,.08);
+      object-fit: cover;
+      width: 100%;
+      aspect-ratio: 4/3;
+    }
+    .dh-proof-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .dh-proof-card {
+      padding: 24px;
+      border-radius: 18px;
+      background: var(--white);
+      border: 1px solid var(--line);
+    }
+    .dh-proof-card::before {
+      content: "\201C";
+      font-family: var(--serif);
+      font-size: 40px;
+      line-height: 1;
+      color: var(--rose-gold);
+      opacity: .4;
+    }
+    .dh-proof-card blockquote {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--coffee-light);
+    }
+    .dh-proof-author {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dh-proof-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--rose-gold), var(--coral));
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 13px;
+    }
+    .dh-proof-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--coffee);
+    }
+    .dh-proof-role {
+      font-size: 12px;
+      color: var(--coffee-light);
+    }
+
+    /* ── Course CTA ────────────────────────────────── */
+    .dh-course {
+      padding: 80px 0;
+      background: var(--cream-deep);
+    }
+    .dh-course-panel {
+      background: linear-gradient(135deg, var(--coffee), #4a2a25);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(102,61,56,.18);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .dh-course-text {
+      padding: 48px 44px;
+      color: var(--cream);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .dh-course-label {
+      font-family: var(--display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--rose-gold-light);
+      margin-bottom: 10px;
+    }
+    .dh-course-text h2 {
+      font-family: var(--serif);
+      font-size: clamp(24px, 3vw, 38px);
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .dh-course-text > p {
+      font-size: 15px;
+      color: rgba(255,247,241,.65);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .dh-course-features {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .dh-course-feat {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+    }
+    .dh-course-feat-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--rose-gold-light);
+      flex-shrink: 0;
+    }
+    .dh-course-feat span {
+      color: rgba(255,247,241,.8);
+    }
+    .dh-course-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .dh-course-actions .btn-primary {
+      background: linear-gradient(135deg, var(--rose-gold-light), var(--rose-gold));
+      color: var(--coffee);
+      box-shadow: 0 10px 30px rgba(212,165,131,.3);
+    }
+    .dh-course-actions .btn-secondary {
+      background: transparent;
+      color: var(--cream);
+      border-color: rgba(255,247,241,.2);
+    }
+    .dh-course-actions .btn-secondary:hover {
+      border-color: rgba(255,247,241,.4);
+      background: rgba(255,247,241,.06);
+    }
+    .dh-course-img {
+      position: relative;
+    }
+    .dh-course-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* ── Podcast / Self-media ──────────────────────── */
+    .dh-podcast {
+      padding: 72px 0;
+      background: var(--cream);
+    }
+    .dh-podcast-inner {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .dh-podcast-text .dh-podcast-title {
+      font-family: var(--serif);
+      font-size: clamp(24px, 3vw, 36px);
+      color: var(--coffee);
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+    .dh-podcast-text p {
+      font-size: 16px;
+      color: var(--coffee-light);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      max-width: 480px;
+    }
+    .dh-podcast-img img {
+      border-radius: 18px;
+      box-shadow: 0 12px 40px rgba(102,61,56,.08);
+      object-fit: cover;
+      width: 100%;
+      aspect-ratio: 1/1;
+    }
+
+    /* ── Sticky CTA ────────────────────────────────── */
+    .dh-sticky-cta {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 50;
+      background: rgba(102,61,56,.96);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid rgba(212,165,131,.2);
+      padding: 12px 0;
+      transform: translateY(100%);
+      animation: dh-slideUp .4s .8s forwards;
+    }
+    @keyframes dh-slideUp {
+      to { transform: translateY(0); }
+    }
+    .dh-sticky-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .dh-sticky-text {
+      font-size: 14px;
+      color: rgba(255,247,241,.7);
+      font-weight: 500;
+    }
+    .dh-sticky-text strong {
+      color: var(--rose-gold-light);
+    }
+    .dh-sticky-cta .btn-primary {
+      padding: 10px 22px;
+      font-size: 14px;
+    }
+
+    /* ── Footer ────────────────────────────────────── */
+    .dh-footer {
+      padding: 36px 0;
+      border-top: 1px solid var(--line);
+      background: var(--cream-deep);
+    }
+    .dh-footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .dh-footer-disclaimer {
+      font-size: 13px;
+      color: var(--coffee-light);
+      line-height: 1.5;
+      max-width: 640px;
+    }
+    .dh-footer-back {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--rose-gold);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dh-footer-back:hover { color: var(--coffee); }
+
+    /* ── Responsive ─────────────────────────────────── */
+    @media (max-width: 880px) {
+      .topbar .links { display: none; }
+      .dh-hero { padding: 90px 0 56px; }
+      .dh-hero-inner { grid-template-columns: 1fr; gap: 36px; }
+      .dh-hero-img { order: -1; }
+      .dh-hero-img img { aspect-ratio: 16/10; object-position: center 20%; }
+      .dh-philo-inner { grid-template-columns: 1fr; }
+      .dh-philo-img img { aspect-ratio: 16/10; max-height: 380px; }
+      .dh-pain-grid { grid-template-columns: 1fr; }
+      .dh-powers-grid { grid-template-columns: 1fr; }
+      .dh-scene-grid { grid-template-columns: 1fr; }
+      .dh-lead-grid { grid-template-columns: 1fr; }
+      .dh-proof-content { grid-template-columns: 1fr; }
+      .dh-proof-img { display: none; }
+      .dh-course-panel { grid-template-columns: 1fr; }
+      .dh-course-img { max-height: 280px; order: -1; }
+      .dh-course-text { padding: 32px 24px; }
+      .dh-podcast-inner { grid-template-columns: 1fr; }
+      .dh-podcast-img { order: -1; }
+      .dh-sticky-inner { flex-direction: column; text-align: center; gap: 8px; }
+      .dh-trust-row { gap: 24px; }
+    }
+    @media (max-width: 540px) {
+      .dh-hero-text h1 { font-size: 30px; }
+      .dh-hero-actions { flex-direction: column; }
+      .dh-hero-actions .btn-primary,
+      .dh-hero-actions .btn-secondary { width: 100%; justify-content: center; }
+      .dh-course-actions { flex-direction: column; }
+      .dh-course-actions .btn-primary,
+      .dh-course-actions .btn-secondary { width: 100%; justify-content: center; }
+      .dh-mock-form { flex-direction: column; }
+    }
+    @media print {
+      .dh-sticky-cta, .topbar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ TOP NAV ═══ -->
+<header class="topbar">
+  <div class="wrap nav">
+    <a class="brand" href="#hero"><span class="mark">蘋</span><span>曾蘋果｜品牌規劃師</span></a>
+    <nav class="links">
+      <a href="#hero">首頁</a>
+      <a href="#position">品牌定位</a>
+      <a href="#powers">三大能力</a>
+      <a href="#lead">免費資源</a>
+      <a href="#course">課程</a>
+    </nav>
+    <a class="btn-back" href="index.html">回提案頁 ←</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- ═══ HERO ═══ -->
+  <section id="hero" class="dh-hero">
+    <div class="wrap dh-hero-inner">
+      <div class="dh-hero-text">
+        <span class="dh-eyebrow">品牌規劃師｜曾蘋果</span>
+        <h1>感覺，就是<br><em>改變世界</em>的起點</h1>
+        <p class="dh-lead">每個偉大的品牌，都是從一個小小的感覺開始。讓蘋果帶你紮穩品牌的根，讓你的品牌被所有人看見。</p>
+        <div class="dh-hero-actions">
+          <a class="btn-primary" href="#lead">免費領取品牌啟動計畫 →</a>
+          <a class="btn-secondary" href="#course">了解品牌課程</a>
+        </div>
+      </div>
+      <div class="dh-hero-img">
+        <img src="assets/applelp/08-0223-2-768x515.jpg" alt="品牌規劃師曾蘋果形象照" loading="eager">
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TRUST BAR ═══ -->
+  <section class="dh-trust" aria-label="品牌成果數據">
+    <div class="wrap">
+      <div class="dh-trust-row">
+        <div class="dh-trust-item">
+          <span class="dh-trust-num">3,200+</span>
+          <span class="dh-trust-label">品牌學員</span>
+        </div>
+        <div class="dh-trust-item">
+          <span class="dh-trust-num">8 年</span>
+          <span class="dh-trust-label">品牌教學經驗</span>
+        </div>
+        <div class="dh-trust-item">
+          <span class="dh-trust-num">150+</span>
+          <span class="dh-trust-label">企業內訓場次</span>
+        </div>
+        <div class="dh-trust-item">
+          <span class="dh-trust-num">92%</span>
+          <span class="dh-trust-label">學員推薦率</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHILOSOPHY / ABOUT ═══ -->
+  <section class="dh-section dh-philosophy">
+    <div class="wrap dh-philo-inner">
+      <div class="dh-philo-img">
+        <img src="assets/applelp/07-0326-3.jpg" alt="曾蘋果教學與演講現場" loading="lazy">
+      </div>
+      <div class="dh-philo-text">
+        <span class="dh-section-label">Brand Philosophy</span>
+        <blockquote>個人品牌不是包裝自己，而是讓市場<em>看懂你的價值</em>。</blockquote>
+        <p>從 0 到 1 建立品牌定位，找到獨有的市場切入點。扎營式建立行銷思維，創造專屬你的品牌銷售模式。當有人因你而快樂的時候，生活才是最美好的。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ POSITION / PAIN POINTS ═══ -->
+  <section id="position" class="dh-section dh-position">
+    <div class="wrap">
+      <span class="dh-section-label">Brand Positioning</span>
+      <h2 class="dh-section-title">你不是沒有專業，是市場還沒看懂你的價值</h2>
+      <p class="dh-section-sub">讓品牌從「我什麼都可以做」，變成「市場清楚知道為什麼要選你」。</p>
+      <div class="dh-pain-grid">
+        <article class="dh-pain-card">
+          <div class="dh-pain-num">01</div>
+          <h3>定位說不清</h3>
+          <p>知道自己很會，但一開口就變成「我什麼都可以做」，客戶反而不知道為什麼要選你。</p>
+        </article>
+        <article class="dh-pain-card">
+          <div class="dh-pain-num">02</div>
+          <h3>內容很努力，轉換很安靜</h3>
+          <p>一直發文、拍影片、做活動，卻缺少從信任到報名的明確路徑。</p>
+        </article>
+        <article class="dh-pain-card">
+          <div class="dh-pain-num">03</div>
+          <h3>學很多方法，沒有變成系統</h3>
+          <p>行銷技巧越學越多，網站卻還是只像名片，沒有承接流量與名單。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ THREE POWERS ═══ -->
+  <section id="powers" class="dh-section dh-powers">
+    <div class="wrap">
+      <span class="dh-section-label">Core Abilities</span>
+      <h2 class="dh-section-title">三大能力，建立你的品牌變現力</h2>
+      <p class="dh-section-sub">蘋果老師的品牌系統，幫你打造從定位到成交的完整路徑。</p>
+      <div class="dh-powers-grid">
+        <article class="dh-power-card">
+          <div class="dh-power-icon p1">⚡</div>
+          <h3>極速變現力</h3>
+          <p>找到市場切入點，讓專業不再只是興趣，而是能被客戶理解並願意付費的價值。</p>
+        </article>
+        <article class="dh-power-card">
+          <div class="dh-power-icon p2">✦</div>
+          <h3>獨家產品力</h3>
+          <p>把經驗、知識與服務，整理成清楚可銷售的產品、課程或顧問方案。</p>
+        </article>
+        <article class="dh-power-card">
+          <div class="dh-power-icon p3">♡</div>
+          <h3>吸睛圈粉力</h3>
+          <p>透過內容、社群與網站設計，讓精準客戶看見你、信任你，願意持續靠近你。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ COURSE SCENE IMAGES ═══ -->
+  <section class="dh-scene-band" aria-label="教學現場">
+    <div class="wrap">
+      <div class="dh-scene-grid">
+        <img src="assets/applelp/05-0326-1.jpg" alt="曾蘋果品牌課程教學現場" loading="lazy">
+        <img src="assets/applelp/06-0326-2.jpg" alt="曾蘋果品牌工作坊互動" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LEAD CAPTURE ═══ -->
+  <section id="lead" class="dh-section dh-lead-section">
+    <div class="wrap">
+      <span class="dh-section-label">Free Resources</span>
+      <h2 class="dh-section-title">還不確定方向？先從這裡開始</h2>
+      <p class="dh-section-sub">免費資源讓你不用付費，就能感受蘋果老師的方法，並找到自己的品牌起點。</p>
+      <div class="dh-lead-grid">
+        <article class="dh-lead-card">
+          <div class="dh-lead-icon">
+            <img src="assets/applelp/03-0224-5.png" alt="免費資源鑽石圖示" loading="lazy">
+          </div>
+          <span class="dh-lead-badge freebie">★ 免費資源</span>
+          <h3>免費領取 7 天個人品牌啟動計畫</h3>
+          <p>如果你正在經營個人品牌，卻還不確定自己的定位、內容方向與變現方式，這份 7 天啟動計畫會帶你一步一步釐清品牌基礎。</p>
+          <div class="dh-mock-form">
+            <input class="dh-mock-input" type="text" placeholder="輸入你的 Email" disabled aria-label="Email 輸入欄位示意">
+            <button class="dh-mock-submit" disabled>免費領取</button>
+          </div>
+        </article>
+        <article class="dh-lead-card">
+          <div class="dh-lead-icon">
+            <img src="assets/applelp/04-0224-6.png" alt="品牌能量測驗圖示" loading="lazy">
+          </div>
+          <span class="dh-lead-badge quiz">◎ 互動測驗</span>
+          <h3>品牌能量測驗：3 分鐘找出你的品牌優勢</h3>
+          <p>透過 3 分鐘品牌能量測驗，找出你目前最適合的品牌發展方向，並依照結果推薦適合的內容與課程。</p>
+          <div class="dh-quiz-visual" aria-hidden="true">
+            <div class="dh-quiz-bar b1"></div>
+            <div class="dh-quiz-bar b2"></div>
+            <div class="dh-quiz-bar b3"></div>
+          </div>
+          <a class="btn-primary" href="#lead" style="width:100%;justify-content:center">立即測驗品牌能量 →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SOCIAL PROOF ═══ -->
+  <section class="dh-proof" aria-label="學員回饋">
+    <div class="wrap">
+      <div class="dh-proof-header">
+        <span class="dh-section-label">Student Stories</span>
+        <h2 class="dh-section-title">她們都從這裡開始</h2>
+      </div>
+      <div class="dh-proof-content">
+        <div class="dh-proof-img">
+          <img src="assets/applelp/16--5-_13.jpg" alt="學員回饋與社群見證" loading="lazy">
+        </div>
+        <div class="dh-proof-cards">
+          <article class="dh-proof-card">
+            <blockquote>上完課才發現，我過去一年都在做沒有方向的內容。現在品牌訊息清楚了，客戶自己找上門。</blockquote>
+            <div class="dh-proof-author">
+              <span class="dh-proof-avatar">A</span>
+              <div>
+                <div class="dh-proof-name">學員 A</div>
+                <div class="dh-proof-role">手作品牌經營者</div>
+              </div>
+            </div>
+          </article>
+          <article class="dh-proof-card">
+            <blockquote>蘋果老師的方法讓我三個月內把散亂的服務整理成一套完整方案，課程首發就超過預期。</blockquote>
+            <div class="dh-proof-author">
+              <span class="dh-proof-avatar">B</span>
+              <div>
+                <div class="dh-proof-name">學員 B</div>
+                <div class="dh-proof-role">線上課程講師</div>
+              </div>
+            </div>
+          </article>
+          <article class="dh-proof-card">
+            <blockquote>從完全不知道怎麼開始，到現在有了穩定的內容節奏和報名轉換，這套系統真的有效。</blockquote>
+            <div class="dh-proof-author">
+              <span class="dh-proof-avatar">C</span>
+              <div>
+                <div class="dh-proof-name">學員 C</div>
+                <div class="dh-proof-role">自媒體創作者</div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ COURSE CTA ═══ -->
+  <section id="course" class="dh-course">
+    <div class="wrap">
+      <div class="dh-course-panel">
+        <div class="dh-course-text">
+          <span class="dh-course-label">Signature Course</span>
+          <h2>想更快建立自己的<br>個人品牌獲利路徑？</h2>
+          <p>如果你不想再自己摸索，可以從個人品牌獲利實體課開始。這堂課會帶你釐清品牌定位、變現方向、客戶痛點、內容主軸與下一步行動。</p>
+          <div class="dh-course-features">
+            <div class="dh-course-feat">
+              <span class="dh-course-feat-dot"></span>
+              <span>品牌定位 — 找到你被選擇的理由</span>
+            </div>
+            <div class="dh-course-feat">
+              <span class="dh-course-feat-dot"></span>
+              <span>產品設計 — 整理可銷售的課程與服務</span>
+            </div>
+            <div class="dh-course-feat">
+              <span class="dh-course-feat-dot"></span>
+              <span>內容變現 — 讓網站與社群一起推進成交</span>
+            </div>
+          </div>
+          <div class="dh-course-actions">
+            <a class="btn-primary" href="index.html">回到課程提案頁 →</a>
+            <a class="btn-secondary" href="#lead">先免費體驗</a>
+          </div>
+        </div>
+        <div class="dh-course-img">
+          <img src="assets/applelp/14--5-_15.jpg" alt="曾蘋果個人品牌課程" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PODCAST / SELF-MEDIA ═══ -->
+  <section class="dh-podcast" aria-label="自媒體專區">
+    <div class="wrap dh-podcast-inner">
+      <div class="dh-podcast-text">
+        <span class="dh-section-label">Self-media</span>
+        <h2 class="dh-podcast-title">網紅，紅什麼</h2>
+        <p>蘋果老師的自媒體頻道，分享品牌經營的第一手心得、個人品牌趨勢觀察，以及學員的真實成長故事。</p>
+        <a class="btn-secondary" href="#hero">探索更多內容 →</a>
+      </div>
+      <div class="dh-podcast-img">
+        <img src="assets/applelp/20--5-_09.jpg" alt="曾蘋果品牌成果與權威" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══ STICKY CTA ═══ -->
+<div class="dh-sticky-cta" role="complementary" aria-label="快速行動">
+  <div class="wrap dh-sticky-inner">
+    <span class="dh-sticky-text"><strong>曾蘋果</strong>｜感覺就是改變世界的起點</span>
+    <a class="btn-primary" href="#lead">免費開始探索 →</a>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="dh-footer">
+  <div class="wrap dh-footer-inner">
+    <p class="dh-footer-disclaimer">此頁為提案用首頁重新製作範例，目的為展示 Claude × WordPress 課程可帶出的網站優化方向，非 applelp.com 正式改版頁。所有數據為示意用途。</p>
+    <a class="dh-footer-back" href="index.html">← 回提案頁</a>
+  </div>
+</footer>
+<script src="assets/script.js"></script>
+</body>
+</html>
