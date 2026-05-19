@@ -1463,7 +1463,7 @@ function renderQuotesList() {
         '<td><strong>' + esc(quote.title || quote.id) + '</strong><div class="muted">' + esc(quote.id) + '</div></td>' +
         '<td><span class="status-chip ' + (quote.status === 'active' && quote.hasPassword ? 'is-enabled' : 'is-disabled') + '">' +
           esc(quoteStatusLabel(quote.status, quote.hasPassword)) + '</span></td>' +
-        '<td>' + (quote.hasPassword ? '已設定' : '<span class="muted">未設定</span>') + '</td>' +
+        '<td>' + (quote.password ? '<code class="quote-pw">' + esc(quote.password) + '</code>' : (quote.hasPassword ? '<span class="muted">已設定（舊資料，重設後顯示）</span>' : '<span class="muted">未設定</span>')) + '</td>' +
         '<td><a href="' + esc(quote.url) + '" target="_blank" rel="noopener noreferrer">' + esc(quote.url) + '</a></td>' +
       '</tr>'
     );
@@ -1476,6 +1476,7 @@ function openQuoteForm(id) {
   selectedQuoteId = quote ? quote.id : '';
   renderQuotesList();
   document.getElementById('quote-password').value = '';
+  var pwCurrentEl = document.getElementById('quote-password-current');
 
   if (!quote) {
     document.getElementById('quote-form-title').textContent = '選擇提案';
@@ -1484,7 +1485,14 @@ function openQuoteForm(id) {
     document.getElementById('quote-title').value = '';
     document.getElementById('quote-status').value = 'hidden';
     document.getElementById('quote-delete-btn').style.display = 'none';
+    if (pwCurrentEl) { pwCurrentEl.value = ''; }
     return;
+  }
+
+  if (pwCurrentEl) {
+    pwCurrentEl.value = quote.password
+      ? quote.password
+      : (quote.hasPassword ? '（舊資料，重設密碼後才會顯示）' : '（尚未設定）');
   }
 
   document.getElementById('quote-form-title').textContent = '編輯提案';

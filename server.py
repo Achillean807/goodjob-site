@@ -1073,6 +1073,9 @@ def _public_quote_record(quote_id, record, exists=True):
         "title": (record or {}).get("title") or quote_id,
         "status": status,
         "hasPassword": has_password,
+        # 明文密碼：僅 _public_quote_record 的三個呼叫端皆在 quotes.manage 後方，
+        # 不會洩漏給公開的提案密碼頁。舊雜湊資料無明文時回空字串。
+        "password": (record or {}).get("passwordPlain") or "",
         "exists": bool(exists),
         "url": f"/quote/{quote_id}/",
         "createdAt": (record or {}).get("createdAt"),
@@ -1915,6 +1918,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             salt = _generate_salt()
             record["passwordSalt"] = salt
             record["passwordHash"] = _hash_password(salt, data["password"])
+            # 明文留存供後台提醒村長告知客人；僅限 quotes.manage 權限可見。
+            record["passwordPlain"] = data["password"]
         record.pop("password", None)
 
         if record.get("status") == "active" and not _quote_has_password(record):
