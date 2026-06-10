@@ -210,6 +210,7 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
       <a href="/blog-netflix/" target="_blank">前台預覽</a>
       <button class="btn btn-secondary btn-sm" id="accounts-btn" onclick="openAccountsModal()">帳戶管理</button>
       <button class="btn btn-secondary btn-sm" id="quotes-btn" onclick="openQuotesModal()">提案管理</button>
+      <button class="btn btn-secondary btn-sm" id="dashboard-btn" onclick="openDashboardModal()">📊 數據儀表板</button>
       <button class="btn btn-secondary btn-sm" onclick="doLogout()">登出</button>
     </div>
   </div>
@@ -530,6 +531,32 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
   </div>
 </div>
 
+<!-- 數據儀表板 Modal（嵌入 Looker Studio GA4 報表 / goodjob property 540995551）-->
+<div class="modal-overlay" id="dashboard-modal" style="align-items:stretch;padding:20px">
+  <div class="modal modal-wide" style="max-width:96vw;width:96vw;padding:16px;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h2 style="margin:0">📊 goodjob 數據儀表板</h2>
+      <button class="btn btn-secondary btn-sm" onclick="closeDashboardModal()">關閉 ✕</button>
+    </div>
+    <iframe id="dashboard-iframe" title="goodjob 數據儀表板"
+      style="width:100%;height:80vh;border:0;border-radius:6px;background:#fff"
+      sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+      allowfullscreen></iframe>
+  </div>
+</div>
+<script>
+(function(){
+  var SRC="https://lookerstudio.google.com/embed/reporting/74351d59-be91-4fb9-b0e4-ab71ccbf4994/page/kIV1C";
+  window.openDashboardModal=function(){
+    var f=document.getElementById('dashboard-iframe');
+    if(f&&!f.src){f.src=SRC;}            /* 延遲載入：開啟時才載 iframe */
+    document.getElementById('dashboard-modal').classList.add('is-open');
+  };
+  window.closeDashboardModal=function(){
+    document.getElementById('dashboard-modal').classList.remove('is-open');
+  };
+})();
+</script>
 <script src="/controlcenter/app.js?v=20260519a"></script>
 </body>
 </html>
