@@ -2528,12 +2528,12 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   <script type="application/ld+json">{jsonld_str}</script>
   <script type="application/ld+json">{breadcrumb_jsonld_str}</script>
   <!-- Google Analytics 4 (村山良作 Property) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FVG726LELF"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RCWT3M1FWX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){{dataLayer.push(arguments);}}
     gtag('js', new Date());
-    gtag('config', 'G-FVG726LELF');
+    gtag('config', 'G-RCWT3M1FWX');
   </script>
   <!-- Microsoft Clarity -->
   <script type="text/javascript">
