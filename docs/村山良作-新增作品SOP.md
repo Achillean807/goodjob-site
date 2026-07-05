@@ -33,7 +33,7 @@ slug 用 kebab-case、純 ASCII（當圖片目錄名與 DB 主鍵）。
 
 ## 2. Schema（純 INSERT 新列，**絕不 UPDATE/DELETE 既有資料**）
 
-**`articles`**（15 欄）：`id`(PK,text)、`title`、`description`(HTML)、`category`、`featured`(int)、`featured_order`(int)、`hero_image`(text)、`link_url`(null)、`video_id`(null)、`video_vertical`(int)、`sort_order`(int)、`created_at`(ISO text)、`updated_at`(ISO text)、`row_index`(int)、`case_blocks`(jsonb)。
+**`articles`**（15 欄）：`id`(PK,text)、`title`、`description`(**純文字**，空行分段，禁 HTML 標籤)、`category`、`featured`(int)、`featured_order`(int)、`hero_image`(text)、`link_url`(null)、`video_id`(null)、`video_vertical`(int)、`sort_order`(int)、`created_at`(ISO text)、`updated_at`(ISO text)、`row_index`(int)、`case_blocks`(jsonb)。
 
 **`article_images`**：`(article_id, position, url)`，PK `(article_id, position)`，position **0-based**。
 
@@ -131,7 +131,7 @@ SET client_encoding = 'UTF8';
 BEGIN;
 INSERT INTO articles (id,title,description,category,featured,featured_order,hero_image,
   link_url,video_id,video_vertical,sort_order,created_at,updated_at,row_index,case_blocks)
-VALUES ('{id}','{標題}','{HTML描述}','business',0,0,'{CDN}/works/{id}/{id}-1.webp',
+VALUES ('{id}','{標題}','{純文字描述·空行分段·禁HTML標籤}','{category}',0,0,'{CDN}/works/{id}/{id}-1.webp',
   NULL,NULL,0,
   (SELECT COALESCE(MAX(sort_order),0)+1 FROM articles),
   to_char(now() AT TIME ZONE 'Asia/Taipei','YYYY-MM-DD"T"HH24:MI:SS'),
@@ -157,3 +157,4 @@ COMMIT;
 4. **憑證**：主機 peer-auth + rclone 已設定，無明文；本文檔與 commit 不得出現任何密碼。
 5. 轉檔記得 `exif_transpose`（server.py 未做，直傳 admin 會躺倒豎圖，本 SOP 手動補正）。
 6. 上架後**視覺驗收**：Read 幾張 webp + 開 `/works/{id}` 確認方向、順序、封面對。
+7. **description 存純文字**（前端 `textContent` + CSS `white-space:pre-wrap`），段落用**空行**分隔，**嚴禁 `<p>`／HTML 標籤**——否則會原樣顯示成文字（2026-07-06 踩坑）。SSR `/works/{id}` 由 server.py 自己包一層 `<p class="works-desc">`，你只需給乾淨純文字。

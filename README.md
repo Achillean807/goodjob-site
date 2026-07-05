@@ -91,7 +91,7 @@ src/
 |------|------|------|
 | `id` | string | 唯一識別（kebab-case） |
 | `title` | string | 顯示標題 |
-| `description` | string | HTML 描述文字 |
+| `description` | string | 純文字（空行分段，前端 pre-wrap 渲染，禁 HTML 標籤）|
 | `category` | enum | `business` / `party` / `magic` / `civil` |
 | `featured` | boolean | 是否為精選作品 |
 | `featuredOrder` | number | 精選排序 |

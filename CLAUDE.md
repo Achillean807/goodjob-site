@@ -3,7 +3,7 @@
 > 2026-05-05 最新部署狀態：正式站 runtime 資料已改由 PostgreSQL `goodjob_site` 管理。作品文案、相簿圖片 URL/順序、帳號、權限與設定都在 PostgreSQL；圖片檔本體在 Cloudflare R2/CDN。`data/articles.json`、`data/accounts.json`、`data/config.json` 只作為舊資料/備份材料，不再是正式資料源，也不可用部署覆蓋。詳見 `docs/村山良作-部署資訊清單.md`。
 
 > **變更記錄 (Changelog)**
-> - 2026-07-06: 新增作品「政大企家班43屆畢業典禮 · 華章未央」（`nccu-qijiaban-43`，business，21 圖），直連正式站 DB + R2 上架，作品數 62→63；新增 `docs/村山良作-新增作品SOP.md` 並索引於本檔。
+> - 2026-07-06: 新增作品「政大企家班43屆畢業典禮 · 華章未央」（`nccu-qijiaban-43`，party 春酒尾牙，21 圖，緊鄰43屆迎新），直連正式站 DB + R2 上架，作品數 62→63；新增 `docs/村山良作-新增作品SOP.md` 並索引於本檔。踩坑校正：description 存**純文字**（前端 textContent + CSS pre-wrap），空行分段，禁 HTML 標籤。
 > - 2026-05-13: ✅ GATE-1A 解果 — 實測 PostgreSQL `goodjob_site.articles` 共 **62 篇**（business 27 / party 16 / civil 14 / magic 5），舊紀錄 27 為過時值；同步修正全專案文件作品數。
 > - 2026-04-17: 從 monorepo 拆分為獨立 repo（`goodjob-site`），圖片遷移至 Cloudflare R2 CDN，admin 上傳端點走 R2，新增多帳號管理系統（`accounts.json` + 5 種 permission + `/api/session` + `/api/accounts` CRUD），新增 migrate/rewrite/cleanup/upload helper 腳本，server.py 擴充至 1099 行。
 > - 2026-04-16: 新增 `/works/{id}` 動態 SSR 頁面與 `sitemap.xml` 端點、server.py 更新至 ~730 行（含 WebP 轉換、Pillow 可選依賴）。
@@ -123,7 +123,7 @@ Environment="HOME=/home/achilean"
 {
   "id": "kebab-case-slug",
   "title": "顯示標題",
-  "description": "HTML 描述文字",
+  "description": "純文字（空行分段，前端 textContent + pre-wrap 渲染，禁 HTML 標籤）",
   "category": "party" | "business" | "civil" | "magic",
   "featured": true/false,
   "featuredOrder": 0,
