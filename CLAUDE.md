@@ -3,6 +3,7 @@
 > 2026-05-05 最新部署狀態：正式站 runtime 資料已改由 PostgreSQL `goodjob_site` 管理。作品文案、相簿圖片 URL/順序、帳號、權限與設定都在 PostgreSQL；圖片檔本體在 Cloudflare R2/CDN。`data/articles.json`、`data/accounts.json`、`data/config.json` 只作為舊資料/備份材料，不再是正式資料源，也不可用部署覆蓋。詳見 `docs/村山良作-部署資訊清單.md`。
 
 > **變更記錄 (Changelog)**
+> - 2026-07-06: 新增作品「政大企家班43屆畢業典禮 · 華章未央」（`nccu-qijiaban-43`，business，21 圖），直連正式站 DB + R2 上架，作品數 62→63；新增 `docs/村山良作-新增作品SOP.md` 並索引於本檔。
 > - 2026-05-13: ✅ GATE-1A 解果 — 實測 PostgreSQL `goodjob_site.articles` 共 **62 篇**（business 27 / party 16 / civil 14 / magic 5），舊紀錄 27 為過時值；同步修正全專案文件作品數。
 > - 2026-04-17: 從 monorepo 拆分為獨立 repo（`goodjob-site`），圖片遷移至 Cloudflare R2 CDN，admin 上傳端點走 R2，新增多帳號管理系統（`accounts.json` + 5 種 permission + `/api/session` + `/api/accounts` CRUD），新增 migrate/rewrite/cleanup/upload helper 腳本，server.py 擴充至 1099 行。
 > - 2026-04-16: 新增 `/works/{id}` 動態 SSR 頁面與 `sitemap.xml` 端點、server.py 更新至 ~730 行（含 WebP 轉換、Pillow 可選依賴）。
@@ -39,7 +40,7 @@ python3 server.py --port 8000
 ### 文章
 | 方法 | 端點 | 權限 | 說明 |
 |------|------|------|------|
-| GET | `/api/articles` | 公開 | 列出全部 62 篇 |
+| GET | `/api/articles` | 公開 | 列出全部 63 篇 |
 | GET | `/api/images/{id}` | 公開 | 取單篇圖片清單 |
 | POST | `/api/articles` | `articles.write` | 新增 |
 | PUT | `/api/articles/{id}` | `articles.write` | 更新欄位 |
@@ -175,6 +176,10 @@ ssh achilean@100.102.51.64 "sudo systemctl restart murayama-goodjob.service"
 | `upload_asset.py` | 單檔上傳 helper（新頁面插圖拿 R2 URL）|
 | `convert_images_to_webp.py` | 舊的 WebP 批次轉檔（已被 migrate_to_r2 取代，保留歷史參考）|
 
+## 新增作品 SOP
+
+新增一篇作品（選圖 → 轉檔 → 上 R2 → 寫 DB → 驗證）照 **`docs/村山良作-新增作品SOP.md`** 走。該 runbook 記錄實測路徑：SSH 進龍蝦之家主機直接操作 PostgreSQL `goodjob_site` + rclone，走 peer-auth **免任何後台明文憑證**；含轉檔參數（對齊 `server.py`，額外補 `exif_transpose`）、`{id}-{N}.webp` 命名鐵律、純 INSERT SQL 骨架、四步驗證儀式與 Windows SSH 傳中文鐵律。
+
 ## 測試與品質
 
 無自動化測試。手動流程：
@@ -224,7 +229,7 @@ A: `wedding-packages/images/` 下的 `classic/`、`deluxe/`、`carousel/`（暫�
 | `assets/site.css` | 1254 | 所有樣式 |
 | `admin/index.html` + `admin/app.js` | — | CMS 後台（文章 + 帳號管理）|
 | `index.html` | — | 首頁模板 |
-| `data/articles.json` | — | 舊資料備份（正式資料源已切至 PostgreSQL `goodjob_site.articles` 共 62 篇） |
+| `data/articles.json` | — | 舊資料備份（正式資料源已切至 PostgreSQL `goodjob_site.articles` 共 63 篇） |
 | `data/config.json` | git-ignored | 舊版單一 admin（fallback） |
 | `data/accounts.json` | git-ignored | 多帳號 + permissions |
 | `path-map.json` | — | R2 遷移反查表（回滾用） |
