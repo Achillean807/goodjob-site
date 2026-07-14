@@ -1,0 +1,82 @@
+{
+ "article": "nuannuan-civil",
+ "title": "基隆暖暖戶政・文青角落",
+ "date": "2026-07-14",
+ "sourceFolder": "E:/CloudStation/Share/13 商業佈置/12_里民會堂、區公所/07_暖暖韶光",
+ "before": {
+  "count": 13,
+  "order": [
+   "hero.webp",
+   "nuannuan-civil-2.webp",
+   "nuannuan-civil-14.webp",
+   "nuannuan-civil-1.webp",
+   "nuannuan-civil-3.webp",
+   "nuannuan-civil-13.webp",
+   "nuannuan-civil-5.webp",
+   "nuannuan-civil-6.webp",
+   "nuannuan-civil-8.webp",
+   "nuannuan-civil-9.webp",
+   "nuannuan-civil-10.webp",
+   "nuannuan-civil-11.webp",
+   "nuannuan-civil-4.webp"
+  ]
+ },
+ "after": {
+  "count": 15,
+  "order": [
+   "hero.webp",
+   "nuannuan-civil-14.webp",
+   "nuannuan-civil-2.webp",
+   "nuannuan-civil-15.webp",
+   "nuannuan-civil-10.webp",
+   "nuannuan-civil-5.webp",
+   "nuannuan-civil-1.webp",
+   "nuannuan-civil-3.webp",
+   "nuannuan-civil-13.webp",
+   "nuannuan-civil-8.webp",
+   "nuannuan-civil-6.webp",
+   "nuannuan-civil-9.webp",
+   "nuannuan-civil-4.webp",
+   "nuannuan-civil-16.webp",
+   "nuannuan-civil-17.webp"
+  ]
+ },
+ "added": [
+  {
+   "file": "nuannuan-civil-15.webp",
+   "source": "全景/DSC04582-已增強-雜訊減少.jpg",
+   "why": "新做的木作天花結構（蓋掉辦公室日光燈天花的解法照）"
+  },
+  {
+   "file": "nuannuan-civil-16.webp",
+   "source": "改造前/暖暖_空間 (3).jpg",
+   "why": "改造前：粉紫塑膠花牆＋人工草皮＋白鞦韆＋規費一覽表。此張完全無人入鏡"
+  },
+  {
+   "file": "nuannuan-civil-17.webp",
+   "source": "改造前/定稿素材/合成示意圖.png",
+   "why": "設計稿合成進真實辦公室，佐證「午後陽光」是刻意設計"
+  }
+ ],
+ "removed": [
+  {
+   "file": "nuannuan-civil-11.webp",
+   "why": "與 -9 幾乎同機位，全冊最冗；檔案仍留在 R2，僅不引用"
+  }
+ ],
+ "privacyExcluded": [
+  {
+   "file": "改造前/暖暖_空間 (1).jpg",
+   "why": "民眾與工作人員清楚入鏡"
+  },
+  {
+   "file": "改造前/1191435.jpg",
+   "why": "民眾正面入鏡"
+  },
+  {
+   "file": "改造前/暖暖_空間 (2).jpg",
+   "why": "玻璃門後有人影，且與 (3) 內容重複"
+  }
+ ],
+ "r2Untouched": "未覆蓋任何既有檔案，新圖使用新編號 15/16/17"
+}
