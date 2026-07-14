@@ -1,0 +1,599 @@
+{
+  "auditedAt": "2026-07-14",
+  "auditedCount": 22,
+  "scope": "album-descriptions-humanize-review-20260714.json (13 篇 rewrite) + -batch2.json (9 篇 rewrite)",
+  "levelCriteria": {
+    "fabricated": "憑空生出、原文與標題皆無任何影子的事實宣稱（尤其是量化數字）→ 必須刪除",
+    "unverifiable": "貌似合理但無法從原文/標題查證的真實世界斷言、場地細節、道具擺放位置、效果宣稱 → 建議刪改，交人工裁決（SOP 明文禁止「不確定的場地」）",
+    "interpretive": "修辭、設計意圖重述、無可證偽的事實核心 → 可接受，列出供人工過目",
+    "derived": "來自該篇 title 或 oldDescription 其他段落的合理改寫 → 合法可接受"
+  },
+  "globalNotes": [
+    "四個被點名的專有名詞全部落在 derived：Babyface（3d9f4fed 原文）、BON VOYAGE（59483d61 原文）、格萊天漾（3f65f0ab 原文）、南豐國際連鎖飯店集團（1c45c415 原文）。改寫稿沒有新增任何原文沒有的客戶名／品牌名／場地名／IP 名／人名。",
+    "所有年份與屆數皆為 derived：2022／2023／2024／2025（豪鼎飯店品牌日系列，全在 title）、2026（6031ac6a title）、2023（d65a02f9 原文）、第 43 屆（nccu-qijiaban-43 title＋原文）、甲辰龍年（1c45c415 原文）。無任何新增年份。",
+    "全 22 篇皆無價格、優惠、保證效果宣稱。SOP 該項零違規。",
+    "最常見的新增類型是「道具擺放位置」（牆前／兩側／旁邊／圓月上／桌面）——原文只列出道具清單，改寫稿補上了空間關係。需比對相簿照片才能確認，故一律列為 unverifiable。"
+  ],
+  "summary": {
+    "fabricated": 1,
+    "unverifiable": 13,
+    "interpretive": 7,
+    "derived": 0,
+    "clean": 1
+  },
+  "findings": [
+    {
+      "id": "7369ddb5",
+      "title": "新北新店戶政・花好月圓",
+      "verdict": "fabricated",
+      "addedClaims": [
+        {
+          "claim": "登記那天，新人在戶政事務所待不到一小時",
+          "level": "fabricated",
+          "sourceInOld": null,
+          "recommendation": "刪除。這是憑空生出的量化時間宣稱，原文與標題完全沒有依據。改寫成「登記那天在戶政事務所待的時間不長，但那張合照會留很久」——或直接砍掉前半句，從「那張合照會留很久」起頭。"
+        },
+        {
+          "claim": "但那張合照會留很久",
+          "level": "interpretive",
+          "sourceInOld": "無直接對應，但原文「步入婚姻是人生的重要里程碑，而戶政事務所的登記現場，正是這份承諾的起點」為同一意圖",
+          "recommendation": "可接受（無可證偽的事實宣稱）"
+        },
+        {
+          "claim": "圓月上點櫻花、繞蝴蝶，一側鑲進《詩經·桃夭》的句子",
+          "level": "unverifiable",
+          "sourceInOld": "以巨大圓月為視覺核心，點綴粉嫩櫻花與翩翩蝴蝶，象徵圓滿與生機；特別鑲嵌《詩經·桃夭》名句",
+          "recommendation": "改寫。道具全部有據，但「圓月上」「一側」是原文沒有的擺放位置。需比對照片；若無法確認，改回「以巨大圓月為視覺核心，點綴櫻花與蝴蝶，並鑲進《詩經·桃夭》的句子」。"
+        },
+        {
+          "claim": "地面鋪紅毯，壓上金色「Welcome to XinDian」字樣，兩側配窗花與花藝，新人正面合影、親友從旁側拍都有畫面可用",
+          "level": "derived",
+          "sourceInOld": "地面鋪設喜氣紅毯與金色「Welcome to XinDian」字樣，營造尊榮感；搭配精緻的窗花設計與側邊花藝，無論是新人合影或親友側拍，都能捕捉到動人瞬間",
+          "recommendation": "可接受"
+        }
+      ]
+    },
+    {
+      "id": "6d34499b",
+      "title": "豪鼎飯店 2023品牌日活動佈置",
+      "verdict": "unverifiable",
+      "addedClaims": [
+        {
+          "claim": "讓打卡區在飯店大廳裡自成一角",
+          "level": "unverifiable",
+          "sourceInOld": null,
+          "recommendation": "刪除「在飯店大廳裡」。原文只說「為商務活動營造出極具視覺張力的打卡空間」，從未提到大廳；title 只有「豪鼎飯店」不等於大廳。SOP 明文禁止「不確定的場地」。改為「讓打卡區在現場自成一角」。（註：姊妹篇 172eeceb 的原文才有大廳，不能跨篇借用。）"
+        },
+        {
+          "claim": "以粉橙與清爽藍調對比配色",
+          "level": "interpretive",
+          "sourceInOld": "場景巧妙運用柔和粉橙色系與清爽藍調",
+          "recommendation": "可接受（「對比」是配色關係的描述性重述，色彩本身有據）"
+        },
+        {
+          "claim": "品牌日的背板要撐得住致詞，也要讓人願意排隊合照",
+          "level": "interpretive",
+          "sourceInOld": null,
+          "recommendation": "可接受（通則式破題句，非對本案的事實斷言；「致詞」「排隊」都是泛指而非宣稱本場有）"
+        },
+        {
+          "claim": "豪鼎飯店 2023 品牌日",
+          "level": "derived",
+          "sourceInOld": "此次專案為豪鼎飯店 2023 品牌日量身訂製（＋title「豪鼎飯店 2023品牌日活動佈置」）",
+          "recommendation": "可接受"
+        }
+      ]
+    },
+    {
+      "id": "59483d61",
+      "title": "豪鼎飯店 2025品牌日活動佈置",
+      "verdict": "unverifiable",
+      "addedClaims": [
+        {
+          "claim": "又不能讓飯店大廳看起來像臨時佈景",
+          "level": "unverifiable",
+          "sourceInOld": null,
+          "recommendation": "刪除「飯店大廳」。原文只說「突顯了場地的精緻感」，沒有指明大廳。SOP 禁止不確定場地。改為「又不能讓現場看起來像臨時佈景」。"
+        },
+        {
+          "claim": "貝殼與海星散在陳列與桌面之間",
+          "level": "unverifiable",
+          "sourceInOld": "現場配置貝殼、海星等細膩道具",
+          "recommendation": "改寫。貝殼、海星有據，但「陳列與桌面之間」是原文沒有的擺放位置（原文從未提到桌面／餐桌）。改為「貝殼與海星散在陳列之間」。"
+        },
+        {
+          "claim": "花藝收在低彩度的杏色系裡",
+          "level": "unverifiable",
+          "sourceInOld": "運用海洋藍與優雅杏色交織出層次豐富的活動氛圍 ／ 專業花藝則點綴其間",
+          "recommendation": "改寫。杏色是「整體配色」，原文並未說花藝本身是杏色系。改為「花藝點綴其間，收在整體的低彩度調性裡」。"
+        },
+        {
+          "claim": "BON VOYAGE",
+          "level": "derived",
+          "sourceInOld": "豪鼎飯店2025品牌日以「BON VOYAGE」為核心",
+          "recommendation": "可接受（原文既有的主題名，非新增 IP／品牌名）"
+        },
+        {
+          "claim": "整體安靜不吵",
+          "level": "interpretive",
+          "sourceInOld": null,
+          "recommendation": "可接受（設計調性的主觀重述）"
+        }
+      ]
+    },
+    {
+      "id": "92387fe2",
+      "title": "企業公司 尾牙佈置",
+      "verdict": "unverifiable",
+      "addedClaims": [
+        {
+          "claim": "這場企業尾牙做了好萊塢電影風的「星光大賞」拍照區、霓虹光影配熱帶花卉的舞台，以及亮片牆與藝術氣球堆出的美陳角落。",
+          "level": "unverifiable",
+          "sourceInOld": "我們提供全方位的主題設計方案，包括極具張力的好萊塢電影風「星光大賞」拍照區、結合霓虹光影與熱帶花卉的現代感舞台，以及運用奢華亮片牆與藝術氣球構築的摩登美陳。",
+          "recommendation": "改寫。三個佈置元素本身都有據，但原文是「我們提供的方案包括 A／B／C」（跨案場的服務選單），改寫稿變成「這場尾牙做了 A＋B＋C」——把選單斷言成單一場次同時具備三者。若照片無法佐證同場同時存在，改回選單語氣：「這類企業尾牙我們做過好萊塢電影風的『星光大賞』拍照區、霓虹光影配熱帶花卉的舞台，以及亮片牆與藝術氣球堆出的美陳角落。」"
+        },
+        {
+          "claim": "同仁記得的往往只有那面願意排隊拍照的牆",
+          "level": "interpretive",
+          "sourceInOld": null,
+          "recommendation": "可接受（通則式修辭破題，非對本案的事實斷言）"
+        }
+      ]
+    },
+    {
+      "id": "d42dfa46",
+      "title": "新北林口戶政・典雅中式",
+      "verdict": "unverifiable",
+      "addedClaims": [
+        {
+          "claim": "以月亮門窗花為框、寫意梅花收邊",
+          "level": "unverifiable",
+          "sourceInOld": "融合月亮門窗花與寫意梅花，打造具深度視覺層次",
+          "recommendation": "改寫。兩樣元素有據，但「為框」「收邊」是原文沒有的構圖位置關係。需照片佐證；否則改回「以月亮門窗花與寫意梅花構出層次」。"
+        },
+        {
+          "claim": "背板選低反射面料，讓立體花藝在鏡頭裡還撐得出層次",
+          "level": "derived",
+          "sourceInOld": "專業級攝影友善：選用低反射面料與立體花藝，完美適應各類手機與相機紀錄",
+          "recommendation": "可接受"
+        },
+        {
+          "claim": "登記結婚那天，背景牆會被親友的手機從各個角度輪流拍",
+          "level": "interpretive",
+          "sourceInOld": "完美適應各類手機與相機紀錄",
+          "recommendation": "可接受"
+        }
+      ]
+    },
+    {
+      "id": "172eeceb",
+      "title": "豪鼎飯店 2024品牌日活動佈置",
+      "verdict": "unverifiable",
+      "addedClaims": [
+        {
+          "claim": "飯店大廳挑高又寬，最難處理的其實是空曠",
+          "level": "unverifiable",
+          "sourceInOld": "重塑飯店大廳視覺 ／ 我們透過結構化的美陳設計解決大型場地空曠感",
+          "recommendation": "改寫。「飯店大廳」與「空曠」都有據，但「挑高」是原文沒有的建築事實。改為「飯店大廳又大又空，最難處理的其實是空曠」。"
+        },
+        {
+          "claim": "「Our Debut」／「Timeslip Romance」／大型擬真紙花／復古膠卷",
+          "level": "derived",
+          "sourceInOld": "以「Our Debut」為題，融合大型擬真紙花藝術與「Timeslip Romance」復古膠卷元素",
+          "recommendation": "可接受"
+        },
+        {
+          "claim": "把大廳收成一座有氛圍的劇院",
+          "level": "derived",
+          "sourceInOld": "以沉浸式劇院氛圍提升賓客參與度",
+          "recommendation": "可接受"
+        }
+      ]
+    },
+    {
+      "id": "2c4af1fc",
+      "title": "聖誕節 系列佈置",
+      "verdict": "unverifiable",
+      "addedClaims": [
+        {
+          "claim": "白色壁爐堆出層次，旁邊擺一頂北歐風帳篷休憩區",
+          "level": "unverifiable",
+          "sourceInOld": "現場配置包含華麗燈飾聖誕樹、豐富層次感的白色壁爐陳列，以及夢幻北歐風帳篷休憩區",
+          "recommendation": "改寫。壁爐與帳篷都有據，但「旁邊」是原文沒有的相對位置（原文只是並列三個元素）。改為「白色壁爐堆出層次，另設一頂北歐風帳篷休憩區」。"
+        },
+        {
+          "claim": "以燈飾聖誕樹為核心",
+          "level": "interpretive",
+          "sourceInOld": "現場配置包含華麗燈飾聖誕樹",
+          "recommendation": "可接受（「為核心」是主次判斷，非硬事實）"
+        },
+        {
+          "claim": "聖誕檔期人人都掛燈，差別在於有沒有一個讓人願意坐下來的角落",
+          "level": "interpretive",
+          "sourceInOld": null,
+          "recommendation": "可接受（通則式修辭；「坐下來」呼應原文既有的休憩區）"
+        }
+      ]
+    },
+    {
+      "id": "bc700965",
+      "title": "北市信義戶政・絕美101",
+      "verdict": "unverifiable",
+      "addedClaims": [
+        {
+          "claim": "再用莫蘭迪粉的花藝拱門，把冷硬的洽公櫃台圈成一個站得住人的儀式區",
+          "level": "unverifiable",
+          "sourceInOld": "搭配浪漫輕奢的莫蘭迪粉花藝 arch，成功將洽公環境轉化為充滿儀式感的幸福地標",
+          "recommendation": "改寫。花藝拱門與莫蘭迪粉有據，但原文說的是「洽公環境」，改寫稿收窄成「洽公櫃台」，並斷言拱門「圈住」櫃台——這是原文沒有的空間關係。改為「把冷硬的洽公環境圈出一個站得住人的儀式區」。"
+        },
+        {
+          "claim": "把台北 101 的城市剪影收進背板",
+          "level": "derived",
+          "sourceInOld": "設計中巧妙融入台北101城市剪影",
+          "recommendation": "可接受"
+        },
+        {
+          "claim": "在信義區登記結婚，照片裡最好還是看得到 101",
+          "level": "interpretive",
+          "sourceInOld": null,
+          "recommendation": "可接受（修辭破題，非可證偽宣稱）"
+        }
+      ]
+    },
+    {
+      "id": "3d9f4fed",
+      "title": "台中婦幼展 展區佈置",
+      "verdict": "unverifiable",
+      "addedClaims": [
+        {
+          "claim": "從一束白玫瑰與蘭花開始",
+          "level": "unverifiable",
+          "sourceInOld": "**高雅花藝佈置**：選用白玫瑰與蘭花交織綠意，營造清新溫馨的法式氛圍",
+          "recommendation": "改寫。白玫瑰與蘭花有據，但原文寫的是整體「花藝佈置」，不是「一束」花。改為「從白玫瑰與蘭花的花藝開始」。"
+        },
+        {
+          "claim": "禮盒放在純白幾何底座上墊高，過路客不彎腰就看得到細節",
+          "level": "unverifiable",
+          "sourceInOld": "**層次化展台**：運用純白幾何底座陳列精品禮盒，讓過路客一眼聚焦商品細節",
+          "recommendation": "改寫。底座與禮盒有據，但「墊高」「不彎腰」是原文沒有的高度宣稱（原文只說「一眼聚焦」）。改為「禮盒放在純白幾何底座上，過路客一眼就看得到細節」。"
+        },
+        {
+          "claim": "攤位只有幾步距離可以把品牌講完 ／ 難的都是三步之內讓人看懂品牌在賣什麼",
+          "level": "interpretive",
+          "sourceInOld": null,
+          "recommendation": "可接受（「幾步」「三步」是修辭而非量測，且為通則陳述而非本案宣稱；如要保守可改為「短短幾秒」）"
+        },
+        {
+          "claim": "Babyface 手工烘焙",
+          "level": "derived",
+          "sourceInOld": "我們為 Babyface 手工烘焙量身打造的展區佈置",
+          "recommendation": "可接受（原文既有的客戶名，非新增）"
+        },
+        {
+          "claim": "「in the name of love」／大型產品背板／簡約插圖／法式調性",
+          "level": "derived",
+          "sourceInOld": "**品牌視覺牆**：大型產品背板搭配簡約插圖，強化「in the name of love」的情感連結 ／ 營造清新溫馨的法式氛圍",
+          "recommendation": "可接受"
+        }
+      ]
+    },
+    {
+      "id": "62e743ef",
+      "title": "新北新莊戶政・植生牆",
+      "verdict": "unverifiable",
+      "addedClaims": [
+        {
+          "claim": "村山良作在牆前擺上「Xinzhuang」立體字樣，兩側配木質陳設與復古提燈",
+          "level": "unverifiable",
+          "sourceInOld": "精緻的「Xinzhuang」立體字樣搭配木質陳設、復古提燈等質感道具",
+          "recommendation": "改寫。三樣道具全部有據，但「牆前」「兩側」是原文沒有的擺放位置。需比對照片；否則改為「搭配『Xinzhuang』立體字樣、木質陳設與復古提燈」。"
+        },
+        {
+          "claim": "讓來登記的新人有一個站得住的位置",
+          "level": "unverifiable",
+          "sourceInOld": "轉化為媲美專業婚禮現場的高質感拍照場域，定格最美幸福瞬間",
+          "recommendation": "可接受但留意。原文的主體是「民眾辦理行政業務」，「新人」是從婚禮語境合理推得；風險低，但若該相簿照片沒有新人，語氣需鬆綁為「讓來拍照的人有一個站得住的位置」。"
+        },
+        {
+          "claim": "洽公環境要改，最怕改成一整面塑膠花牆",
+          "level": "interpretive",
+          "sourceInOld": null,
+          "recommendation": "可接受（修辭破題；非對任何真實案場的斷言）"
+        }
+      ]
+    },
+    {
+      "id": "95deb3cd",
+      "title": "基隆中正戶政・彩虹屋",
+      "verdict": "unverifiable",
+      "addedClaims": [
+        {
+          "claim": "動線一併整理過，拍照的人不會擋到洽公的人。",
+          "level": "unverifiable",
+          "sourceInOld": "（僅服務清單）商業空間美化與動線規劃",
+          "recommendation": "刪改。原文的「動線規劃」是服務項目清單裡的一條（泛指能力），改寫稿把它斷言成本案的實際成果，且加上「不會擋到洽公的人」這種可證偽的效果宣稱。改為「動線也一併納入規劃」，或直接刪除該句。"
+        },
+        {
+          "claim": "以異材質拼接還原立面層次",
+          "level": "interpretive",
+          "sourceInOld": "透過異材質拼接與互動式道具設計",
+          "recommendation": "可接受（「立面層次」是彩虹屋建物語彙的合理重述）"
+        },
+        {
+          "claim": "讓結婚登記拍照區有東西可以拿、可以站",
+          "level": "derived",
+          "sourceInOld": "互動式道具設計 ／ 客製化拍照背板與標語道具 ／ 打造出深具儀式感的結婚登記拍照區",
+          "recommendation": "可接受"
+        }
+      ]
+    },
+    {
+      "id": "d579ef80",
+      "title": "基隆安樂戶政・情人湖",
+      "verdict": "unverifiable",
+      "addedClaims": [
+        {
+          "claim": "情人湖的吊橋，是基隆人約會會走的一段路。",
+          "level": "unverifiable",
+          "sourceInOld": "以在地名勝情人湖吊橋與蓊鬱森林景觀為視覺核心",
+          "recommendation": "刪改。「情人湖吊橋」是原文既有的在地名勝，但「是基隆人約會會走的一段路」是對真實地點與真實人群行為的事實性斷言，原文與標題都沒有依據，也無從查證。改為「情人湖的吊橋，是基隆人熟得不能再熟的一段路」仍屬斷言；建議直接改成不帶事實宣稱的寫法：「情人湖的吊橋，基隆人一眼就認得。」——或更保守：「安樂戶政把在地名勝情人湖的吊橋與森林，做成一面森林系結婚牆。」"
+        },
+        {
+          "claim": "登記與合影可以在同一個空間裡接續完成",
+          "level": "unverifiable",
+          "sourceInOld": "現場更貼心配置…機動櫃台佈置",
+          "recommendation": "刪改。「機動櫃台佈置」有據，但「登記與合影在同一空間接續完成」是原文沒有的流程宣稱。改為「櫃台採機動佈置，可依現場需要調整位置」。"
+        },
+        {
+          "claim": "來登記的新人一抬頭就認得出來",
+          "level": "interpretive",
+          "sourceInOld": null,
+          "recommendation": "可接受但可一併鬆綁（若上面第一句改寫，這句的預設也跟著弱化）"
+        },
+        {
+          "claim": "安樂戶政把吊橋和背後的森林做成一面森林系結婚牆",
+          "level": "derived",
+          "sourceInOld": "以在地名勝情人湖吊橋與蓊鬱森林景觀為視覺核心 ／ 打造清新森林系結婚牆",
+          "recommendation": "可接受（「背後」為構圖描述，風險低）"
+        }
+      ]
+    },
+    {
+      "id": "d65a02f9",
+      "title": "奇技邦舞會丨2023超時空舞會",
+      "verdict": "unverifiable",
+      "addedClaims": [
+        {
+          "claim": "光影壓暗再打亮重點，合影自帶戲劇感",
+          "level": "unverifiable",
+          "sourceInOld": "透過大型藝術背板、主題裝飾與光影佈局，建構極具張力的社交空間",
+          "recommendation": "改寫。原文只說「光影佈局」，「壓暗再打亮重點」是原文沒有的具體打光手法。改為「光影佈局讓合影自帶戲劇感」。"
+        },
+        {
+          "claim": "數位指示系統把賓客從入場、入席帶到合影，不必問人",
+          "level": "unverifiable",
+          "sourceInOld": "整合數位指示系統，優化賓客流暢體驗",
+          "recommendation": "改寫。「數位指示系統」有據，但「入場、入席、合影」三段動線與「不必問人」是原文沒有的功能宣稱（那組動線字眼來自其他篇的跨篇模板段）。改為「數位指示系統讓賓客的動線更好走」。"
+        },
+        {
+          "claim": "2023「Dance Chic Bon」超時空舞會／超現實主義／3D 質感大型藝術背板／羽毛裝飾／金色燈座",
+          "level": "derived",
+          "sourceInOld": "針對 2023 \"Dance Chic Bon\" 超時空舞會，我們以「超現實主義」為核心… 3D 質感大型藝術背板… 精緻主題道具（如羽毛裝飾、金色燈座）",
+          "recommendation": "可接受"
+        },
+        {
+          "claim": "舞會的門一開，賓客就知道今晚演哪一齣",
+          "level": "interpretive",
+          "sourceInOld": null,
+          "recommendation": "可接受（修辭破題）"
+        }
+      ]
+    },
+    {
+      "id": "nuannuan-civil",
+      "title": "基隆暖暖戶政・文青角落",
+      "verdict": "unverifiable",
+      "addedClaims": [
+        {
+          "claim": "在服務櫃台之外整理出一處「文青角落」",
+          "level": "unverifiable",
+          "sourceInOld": "（無）原文只有「以暖色調、在地文化元素與親切的視覺配置」與「從色系、牆面到拍照點」",
+          "recommendation": "改寫。「文青角落」本身來自 title（derived，合法），但「在服務櫃台之外」是原文與標題都沒有的空間位置宣稱。改為「整理出一處『文青角落』」，刪掉方位詞。"
+        },
+        {
+          "claim": "讓文青角落成為民眾願意停下來拍一張的位置",
+          "level": "derived",
+          "sourceInOld": "從色系、牆面到拍照點都讓來訪者更願意停留",
+          "recommendation": "可接受"
+        }
+      ]
+    },
+    {
+      "id": "6031ac6a",
+      "title": "奇技邦舞會丨2026百獸舞匯",
+      "verdict": "interpretive",
+      "addedClaims": [
+        {
+          "claim": "再以多層次花藝把東方紋樣的細節補回來",
+          "level": "interpretive",
+          "sourceInOld": "輔以多層次花藝設計 ／ 巧妙將東方文化精髓與當代時尚美學深度融合",
+          "recommendation": "可接受但可微調。「東方紋樣」是把原文的「東方文化精髓」具體化成一種視覺元素；若照片裡花藝沒有紋樣元素，建議改回「把東方語彙的細節補回來」。"
+        },
+        {
+          "claim": "主舞台到打卡牆設計走同一套語彙，商業空間佈置才不會東一塊、西一塊。",
+          "level": "interpretive",
+          "sourceInOld": "從入場拱門、主舞台背板、席間花藝到拍照打卡牆設計，村山良作的派對佈置同時兼顧視覺記憶點與動線安全（同篇原文之跨篇模板段）",
+          "recommendation": "可接受（設計原則的重述，元素名稱來自同篇原文）"
+        },
+        {
+          "claim": "奇技邦 2026「百獸舞匯」／「龍鳳呈祥」與「百獸氣場」／大型浮雕背板／多層次花藝",
+          "level": "derived",
+          "sourceInOld": "奇技邦 2026「百獸舞匯」年度成果發表舞會，以「龍鳳呈祥」與「百獸氣場」為設計主軸… 現場佈置運用沉浸式的大型浮雕背板，輔以多層次花藝設計",
+          "recommendation": "可接受"
+        }
+      ]
+    },
+    {
+      "id": "2c7a16f6",
+      "title": "育兒品牌 展區佈置",
+      "verdict": "interpretive",
+      "addedClaims": [
+        {
+          "claim": "人造草皮鋪出柔軟地面",
+          "level": "interpretive",
+          "sourceInOld": "透過柔和光影與人造草皮營造高質感氛圍",
+          "recommendation": "可接受（「柔軟」是人造草皮的常識屬性，非新增事實）"
+        },
+        {
+          "claim": "嬰童品牌的展區，爸媽會蹲下來看細節，陳列就不能只做給大人",
+          "level": "interpretive",
+          "sourceInOld": null,
+          "recommendation": "可接受（通則式修辭破題，非對本案的事實斷言）"
+        },
+        {
+          "claim": "Chicco／雲朵背板／情境式推車／人造草皮／印地安帳篷／木質導覽牌／骨董打字機／護膚產品",
+          "level": "derived",
+          "sourceInOld": "本案為 Chicco 展區規畫多層次質感陳列，從夢幻雲朵背板到情境式推車展示，透過柔和光影與人造草皮營造高質感氛圍。我們巧妙運用印地安帳篷、木質導覽牌與骨董打字機陳列護膚產品",
+          "recommendation": "可接受（全數道具逐一對應，無新增、無遺漏）"
+        }
+      ]
+    },
+    {
+      "id": "5a1e1bc3",
+      "title": "小型宴會 慶功宴 會場佈置",
+      "verdict": "interpretive",
+      "addedClaims": [
+        {
+          "claim": "慶功宴場地通常不大，反而更需要一個能把人聚過去的焦點",
+          "level": "interpretive",
+          "sourceInOld": "（title「小型宴會 慶功宴 會場佈置」）",
+          "recommendation": "可接受（通則陳述，「小」由 title 支撐）"
+        },
+        {
+          "claim": "小坪數練出來的比例感，放到快閃活動佈置與展場佈置一樣管用",
+          "level": "interpretive",
+          "sourceInOld": "適用案場橫跨企業春酒、尾牙、品牌活動佈置、快閃活動佈置與展場佈置（同篇原文之跨篇模板段）",
+          "recommendation": "可接受（能力延伸宣稱，案場類別來自同篇原文）"
+        },
+        {
+          "claim": "以亮片牆當主背板，搭配透明球中球與地景花藝／飯店宴會廳或私人場域",
+          "level": "derived",
+          "sourceInOld": "我們擅長運用時尚亮片牆、質感球藝與花藝組合，在飯店宴會廳或私人場域中建立獨特風格 ／ 結合透明球中球與精緻地景花藝",
+          "recommendation": "可接受"
+        }
+      ]
+    },
+    {
+      "id": "1c45c415",
+      "title": "飯店春節佈置",
+      "verdict": "interpretive",
+      "addedClaims": [
+        {
+          "claim": "在南豐國際連鎖飯店集團的案場，紅金配色再往企業 CI 靠攏",
+          "level": "derived",
+          "sourceInOld": "在南豐國際連鎖飯店集團的實作中，我們完美融合了企業 CI 與節慶紅金配色",
+          "recommendation": "可接受。客戶全名為原文既有，非本次新增。（提醒：SOP 禁止「照片和標題都沒出現的客戶全名」——本篇 title「飯店春節佈置」不含此名，屬原文遺留風險，建議另案人工確認是否已取得客戶露出同意，非本次改寫造成。）"
+        },
+        {
+          "claim": "飯店大廳本來就是最難處理的商業空間佈置，年節只是把難度再加一層",
+          "level": "interpretive",
+          "sourceInOld": "針對大型飯店與企業大廳量身打造",
+          "recommendation": "可接受（主觀難度判斷；「飯店大廳」有原文依據）"
+        },
+        {
+          "claim": "甲辰龍年「龍騰四海」／圓形燈箱／屏風／扇形元素／多層次手作仿真花藝",
+          "level": "derived",
+          "sourceInOld": "實景案例展示了甲辰龍年「龍騰四海」的主題佈置，運用大氣的圓形燈箱、屏風與精緻扇形元素，搭配多層次的手作仿真花藝",
+          "recommendation": "可接受"
+        }
+      ]
+    },
+    {
+      "id": "3f65f0ab",
+      "title": "花博婚禮展 展區佈置",
+      "verdict": "interpretive",
+      "addedClaims": [
+        {
+          "claim": "以會噴煙的大釜當視覺核心",
+          "level": "interpretive",
+          "sourceInOld": "專業噴煙特效大釜，營造真實動態神秘感",
+          "recommendation": "可接受（「視覺核心」是主次判斷；道具與噴煙特效皆有據）"
+        },
+        {
+          "claim": "白綠色系花藝把飯店大廳原有的質感拉回來",
+          "level": "derived",
+          "sourceInOld": "我們將經典魔法世界搬進飯店大廳 ／ 高雅白綠色系花藝點綴，平衡魔法感與飯店質感",
+          "recommendation": "可接受（大廳與白綠花藝均為原文既有）"
+        },
+        {
+          "claim": "格萊天漾",
+          "level": "derived",
+          "sourceInOld": "讓「格萊天漾」的魔法主題佈置，為您的企業晚宴或品牌活動增添神秘而華麗的視覺震撼",
+          "recommendation": "可接受（原文既有的場地名，非新增）"
+        },
+        {
+          "claim": "歐式粉筆黑板背板收邊",
+          "level": "interpretive",
+          "sourceInOld": "歐式粉筆風格黑板背板，完美提升場域層次感",
+          "recommendation": "可接受（「收邊」是構圖角色描述，風險低）"
+        }
+      ]
+    },
+    {
+      "id": "27137c13",
+      "title": "基隆信義戶政・童話書花",
+      "verdict": "interpretive",
+      "addedClaims": [
+        {
+          "claim": "把公家機關的洽公空間換成一頁攤開的童話書",
+          "level": "interpretive",
+          "sourceInOld": "基隆信義戶政事務所全新打造「童話書花」主題結婚牆 ／ 展現出超越傳統公務機關的溫馨質感",
+          "recommendation": "可接受（比喻，呼應原文既有的「童話書花」主題名）"
+        },
+        {
+          "claim": "結婚登記那天，背景牆會被親友的手機從各個角度拍下來",
+          "level": "interpretive",
+          "sourceInOld": null,
+          "recommendation": "可接受（修辭破題）"
+        },
+        {
+          "claim": "巨大的立體手作紙花與心型氣球噴繪",
+          "level": "derived",
+          "sourceInOld": "從巨大的立體手作紙花到唯美的心型氣球噴繪",
+          "recommendation": "可接受"
+        }
+      ]
+    },
+    {
+      "id": "33def7c7",
+      "title": "豪鼎飯店 2022品牌日活動佈置",
+      "verdict": "interpretive",
+      "addedClaims": [
+        {
+          "claim": "把「Magic」的驚喜留在賓客進場的第一段路上",
+          "level": "interpretive",
+          "sourceInOld": "從主舞台的層次背景到迎賓區流線佈置 ／ 村山良作都能創造充滿「Magic」驚喜的空間美學",
+          "recommendation": "可接受但留意。原文的「Magic」出現在一句泛指的能力宣稱裡（「無論年度發表或 VIP 酒會…都能創造」），改寫稿把它繫到本案的迎賓動線上。迎賓區確有其事，風險低；若要保守可改為「迎賓區走流線佈置，把『Magic』的調性帶進場」。"
+        },
+        {
+          "claim": "商務活動的場子容易一板一眼，那就先讓光替它鬆開",
+          "level": "interpretive",
+          "sourceInOld": "成功打破商務活動的沉悶邊界",
+          "recommendation": "可接受"
+        },
+        {
+          "claim": "GLOW／大面積柔美花卉／主舞台層次背景／迎賓區流線佈置",
+          "level": "derived",
+          "sourceInOld": "本案利用大面積柔美花卉與「GLOW」光影設計… 從主舞台的層次背景到迎賓區流線佈置",
+          "recommendation": "可接受"
+        }
+      ]
+    },
+    {
+      "id": "nccu-qijiaban-43",
+      "title": "政大企家班43屆畢業典禮 · 華章未央",
+      "verdict": "clean",
+      "addedClaims": []
+    }
+  ]
+}
