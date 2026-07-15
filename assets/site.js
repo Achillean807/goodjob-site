@@ -412,6 +412,8 @@
           iframe.style.opacity = '1';
         }, 900);
       };
+      // 保底：onload 若未觸發（慢網/封鎖），2.5 秒後仍淡入，避免影片永久隱形
+      setTimeout(function () { iframe.style.opacity = '1'; }, 2500);
       popupDots.style.display = 'none';
     }
 
