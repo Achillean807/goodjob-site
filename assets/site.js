@@ -575,7 +575,7 @@
     });
 
     if (detailVideoToggle) {
-      detailVideoToggle.hidden = !currentDetailArticle.videoId;
+      detailVideoToggle.hidden = !currentDetailArticle.videoId || currentDetailMode === 'video';
       detailVideoToggle.disabled = currentDetailMode === 'video';
       detailVideoToggle.textContent = currentDetailMode === 'video' ? '正在播放影片' : '▶ 播放影片';
     }
