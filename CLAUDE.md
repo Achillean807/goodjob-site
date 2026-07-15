@@ -3,6 +3,7 @@
 > 2026-05-05 最新部署狀態：正式站 runtime 資料已改由 PostgreSQL `goodjob_site` 管理。作品文案、相簿圖片 URL/順序、帳號、權限與設定都在 PostgreSQL；圖片檔本體在 Cloudflare R2/CDN。`data/articles.json`、`data/accounts.json`、`data/config.json` 只作為舊資料/備份材料，不再是正式資料源，也不可用部署覆蓋。詳見 `docs/村山良作-部署資訊清單.md`。
 
 > **變更記錄 (Changelog)**
+> - 2026-07-15: 作品數校正為 **64 篇**（business 27 / party 18 / civil 14 / magic 5）。追溯：6/10 新增 `guofeng-hsinchu-ambassador`（國風盛宴・新竹國賓）當時漏記 changelog，導致 7/6 誤記為「62→63」（實際 6/10 已達 63、7/6 新增 nccu-qijiaban-43 後為 64）。同步校正 README、DESIGN 的作品數。另完成全站作品文案去 AI 味（22 篇改寫）與暖暖戶政相簿重整。
 > - 2026-07-06: 新增作品「政大企家班43屆畢業典禮 · 華章未央」（`nccu-qijiaban-43`，party 春酒尾牙，21 圖，緊鄰43屆迎新），直連正式站 DB + R2 上架，作品數 62→63；新增 `docs/村山良作-新增作品SOP.md` 並索引於本檔。踩坑校正：description 存**純文字**（前端 textContent + CSS pre-wrap），空行分段，禁 HTML 標籤。
 > - 2026-05-13: ✅ GATE-1A 解果 — 實測 PostgreSQL `goodjob_site.articles` 共 **62 篇**（business 27 / party 16 / civil 14 / magic 5），舊紀錄 27 為過時值；同步修正全專案文件作品數。
 > - 2026-04-17: 從 monorepo 拆分為獨立 repo（`goodjob-site`），圖片遷移至 Cloudflare R2 CDN，admin 上傳端點走 R2，新增多帳號管理系統（`accounts.json` + 5 種 permission + `/api/session` + `/api/accounts` CRUD），新增 migrate/rewrite/cleanup/upload helper 腳本，server.py 擴充至 1099 行。
@@ -40,7 +41,7 @@ python3 server.py --port 8000
 ### 文章
 | 方法 | 端點 | 權限 | 說明 |
 |------|------|------|------|
-| GET | `/api/articles` | 公開 | 列出全部 63 篇 |
+| GET | `/api/articles` | 公開 | 列出全部 64 篇 |
 | GET | `/api/images/{id}` | 公開 | 取單篇圖片清單 |
 | POST | `/api/articles` | `articles.write` | 新增 |
 | PUT | `/api/articles/{id}` | `articles.write` | 更新欄位 |
@@ -229,7 +230,7 @@ A: `wedding-packages/images/` 下的 `classic/`、`deluxe/`、`carousel/`（暫�
 | `assets/site.css` | 1254 | 所有樣式 |
 | `admin/index.html` + `admin/app.js` | — | CMS 後台（文章 + 帳號管理）|
 | `index.html` | — | 首頁模板 |
-| `data/articles.json` | — | 舊資料備份（正式資料源已切至 PostgreSQL `goodjob_site.articles` 共 63 篇） |
+| `data/articles.json` | — | 舊資料備份（正式資料源已切至 PostgreSQL `goodjob_site.articles` 共 64 篇） |
 | `data/config.json` | git-ignored | 舊版單一 admin（fallback） |
 | `data/accounts.json` | git-ignored | 多帳號 + permissions |
 | `path-map.json` | — | R2 遷移反查表（回滾用） |

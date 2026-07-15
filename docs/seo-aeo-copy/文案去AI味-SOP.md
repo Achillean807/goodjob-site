@@ -94,7 +94,7 @@
 ## 已知技術債
 
 - DB 中有 14 篇（未在 2026-07-14 改寫範圍內）的 description 殘留 `\r`（CRLF），屬舊資料問題，日後可一併清理。
-- 文件記載作品數 63，實測 DB 為 **64**（business 27 / party 18 / civil 14 / magic 5）。
+- 作品數：實測 DB **64 篇**（business 27 / party 18 / civil 14 / magic 5）。2026-07-15 已校正 CLAUDE.md / README / DESIGN 對齊。
 
 ## 2026-07-14 執行紀錄
 
