@@ -2508,7 +2508,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         }
         breadcrumb_jsonld_str = _json.dumps(breadcrumb_jsonld, ensure_ascii=False)
 
-        css_v = "20260715c"
+        css_v = "20260715d"
         html = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>

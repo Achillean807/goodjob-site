@@ -112,6 +112,8 @@ img {
 
 .nav a.is-active {
   color: #fff;
+  padding-bottom: 3px;
+  border-bottom: 2px solid var(--accent);
 }
 
 .topbar-tools {

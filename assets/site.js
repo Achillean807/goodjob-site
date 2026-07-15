@@ -405,9 +405,11 @@
         '&playlist=' + article.videoId + '&playsinline=1';
       popupMedia.appendChild(iframe);
       // Hide image once video loads
+      iframe.style.opacity = '0';
+      iframe.style.transition = 'opacity .35s ease';
       iframe.onload = function () {
         popupHideImgTimer = setTimeout(function () {
-          popupImg.classList.add('is-hidden');
+          iframe.style.opacity = '1';
         }, 900);
       };
       popupDots.style.display = 'none';
