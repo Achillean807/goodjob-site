@@ -2571,17 +2571,36 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <nav class="site-nav">
-      <a href="/" class="site-logo">
-        <img src="/assets/images/logo.png" alt="村山良作" width="40" height="40">
-        <span class="site-name">村山良作</span>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="/" aria-label="村山良作首頁">
+        <img class="brand-logo" src="/assets/murayama-logo-white.png" alt="村山良作">
+        <div class="brand-text">
+          <span class="brand-name">村山良作</span>
+          <span class="brand-tagline">品牌活動・主題場景・展場空間</span>
+        </div>
       </a>
-      <div class="site-nav-links">
-        <a href="/sort-hat/">分類帽</a>
-        <a href="/teabar.html">囍茶方案</a>
-        <a href="/workflow.html">合作流程</a>
+      <nav class="nav">
+        <a href="/">首頁</a>
+        <a href="/services/business-event/">主題活動</a>
+        <a href="/services/party-spring-banquet/">春酒尾牙</a>
+        <a href="/services/magic-academy/">魔法學院</a>
+        <a href="/services/civil-makeover/">戶政改造</a>
+      </nav>
+      <div class="topbar-tools">
+        <a class="tool-button" href="/teabar.html" aria-label="婚禮花果茶">婚禮花果茶</a>
+        <a class="tool-button" href="/sort-hat/" aria-label="分類帽">分類帽</a>
+        <a class="tool-button" href="/workflow.html" aria-label="合作流程">合作流程</a>
       </div>
+    </div>
+    <nav class="mobile-quick-links" aria-label="手機版主要入口">
+      <a href="/services/business-event/">主題活動</a>
+      <a href="/services/party-spring-banquet/">春酒尾牙</a>
+      <a href="/services/magic-academy/">魔法學院</a>
+      <a href="/services/civil-makeover/">戶政改造</a>
+      <a href="/teabar.html">婚禮花果茶</a>
+      <a href="/sort-hat/">分類帽</a>
+      <a href="/workflow.html">合作流程</a>
     </nav>
   </header>
 
@@ -2605,6 +2624,19 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
       </div>
     </section>
   </main>
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <a class="button button-line footer-cta" href="https://lin.ee/P2HRySj" target="_blank" rel="noopener">
+        <svg class="line-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+        聯絡我們
+      </a>
+      <p class="footer-tagline">品牌活動・主題場景・展場空間——把每一個現場做成真的現場。</p>
+      <p class="footer-copy">&copy; 2025 村山良作 MURAYAMA GOODJOB. All rights reserved.</p>
+    </div>
+  </footer>
+  <a class="fab-line" href="https://lin.ee/P2HRySj" target="_blank" rel="noopener" aria-label="LINE 聯絡我們">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+  </a>
 </body>
 </html>"""
 

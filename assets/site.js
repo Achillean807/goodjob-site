@@ -48,6 +48,7 @@
   var currentDetailArticle = null;
   var currentDetailMode = 'image';
   var currentDetailImageIndex = 0;
+  var detailOpenedFromPage = false;
   var toast;
 
   // ══════════════════════════════════════════
@@ -194,7 +195,7 @@
       .sort(function (a, b) { return (a.featuredOrder || 0) - (b.featuredOrder || 0); });
 
     var business = articlesData.filter(function (a) { return a.category === 'business'; });
-    var party = articlesData.filter(function (a) { return a.category === 'party'; });
+    var party = articlesData.filter(function (a) { return a.category === 'party' || /尾牙/.test(a.title || ''); });
     var magic = articlesData.filter(function (a) { return a.category === 'magic'; });
     var civil = articlesData.filter(function (a) { return a.category === 'civil'; });
 
@@ -435,7 +436,8 @@
     popupPlayBtn.onclick = function (e) {
       e.preventDefault();
       e.stopPropagation();
-      openDetailModal(article);
+      detailOpenedFromPage = true;
+      window.location.hash = 'detail/' + article.id;
     };
 
     // 🔗 Copy link — links to 作品詳情 modal via hash
@@ -575,7 +577,7 @@
     if (detailVideoToggle) {
       detailVideoToggle.hidden = !currentDetailArticle.videoId;
       detailVideoToggle.disabled = currentDetailMode === 'video';
-      detailVideoToggle.textContent = currentDetailMode === 'video' ? '正在播放影片' : '回到影片';
+      detailVideoToggle.textContent = currentDetailMode === 'video' ? '正在播放影片' : '▶ 播放影片';
     }
 
     updateDetailGalleryArrows();
@@ -648,6 +650,15 @@
     document.body.style.overflow = '';
     currentDetailArticle = null;
     currentDetailMode = 'image';
+  }
+
+  function requestCloseDetailModal() {
+    if (detailOpenedFromPage && /^#detail\//.test(window.location.hash)) {
+      history.back();
+    } else {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      closeDetailModal();
+    }
   }
 
   // ══════════════════════════════════════════
@@ -733,7 +744,10 @@
           lastTapped = null;
           var articleId = card.getAttribute('data-article-id');
           var article = articleMap[articleId];
-          if (article) openDetailModal(article);
+          if (article) {
+            detailOpenedFromPage = true;
+            window.location.hash = 'detail/' + article.id;
+          }
           return;
         }
         lastTapped = card;
@@ -894,7 +908,8 @@
         var article = articleMap[articleId];
         if (article) {
           hidePopup();
-          openDetailModal(article);
+          detailOpenedFromPage = true;
+          window.location.hash = 'detail/' + article.id;
         }
       });
     });
@@ -955,8 +970,8 @@
     lightbox.addEventListener('click', function (e) {
       if (e.target === lightbox) closeLightbox();
     });
-    detailModal.querySelector('.detail-modal-close').addEventListener('click', closeDetailModal);
-    detailModal.querySelector('.detail-modal-backdrop').addEventListener('click', closeDetailModal);
+    detailModal.querySelector('.detail-modal-close').addEventListener('click', requestCloseDetailModal);
+    detailModal.querySelector('.detail-modal-backdrop').addEventListener('click', requestCloseDetailModal);
     detailVideoToggle.addEventListener('click', function () {
       if (currentDetailArticle && currentDetailArticle.videoId) setDetailMedia('video');
     });
@@ -1012,7 +1027,7 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
         if (!lightbox.hidden) { closeLightbox(); return; }
-        if (!detailModal.hidden) { closeDetailModal(); return; }
+        if (!detailModal.hidden) { requestCloseDetailModal(); return; }
       }
       // Detail modal arrow navigation (image mode)
       if (!detailModal.hidden && currentDetailMode === 'image') {
@@ -1073,6 +1088,8 @@
     var m = window.location.hash.match(/^#detail\/(.+)$/);
     if (m && articleMap[m[1]]) {
       openDetailModal(articleMap[m[1]]);
+    } else if (detailModal && !detailModal.hidden) {
+      closeDetailModal();
     }
   }
 })();
