@@ -297,20 +297,6 @@ body.js-ready .ssr-featured {
   color: #fff;
 }
 
-.hero-age {
-  position: absolute;
-  right: 0;
-  top: 54%;
-  z-index: 3;
-  min-width: 68px;
-  padding: 0.7rem 0.9rem;
-  border-left: 3px solid rgba(255, 255, 255, 0.85);
-  background: rgba(51, 51, 51, 0.52);
-  font-size: 1.8rem;
-  font-weight: 500;
-  text-align: center;
-}
-
 /* ── Shelf / Content Rows ── */
 
 .shelf {
@@ -1325,12 +1311,7 @@ body.js-ready .ssr-featured {
     max-width: 26ch;
   }
 
-  .hero-age {
-    min-width: 58px;
-    font-size: 1.3rem;
-  }
-
-  .section-head h2 {
+    .section-head h2 {
     font-size: 1.6rem;
   }
 
