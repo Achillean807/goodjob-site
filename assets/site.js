@@ -558,7 +558,7 @@
       detailStageImage.hidden = true;
       detailStageVideo.hidden = false;
       detailStageVideo.src = 'https://www.youtube.com/embed/' + currentDetailArticle.videoId +
-        '?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1';
+        '?autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1';
       detailMediaStatus.textContent = '正在播放影片';
     } else {
       currentDetailImageIndex = Math.max(0, Math.min(currentDetailImageIndex, images.length - 1));
@@ -633,6 +633,11 @@
     detailMediaNote.textContent = (article.images ? article.images.length : 0) + ' 張相片' +
       (article.videoId ? ' / 含影片介紹' : '');
     renderDetailThumbs(article);
+    if (detailVideoToggle) {
+      detailVideoToggle.hidden = !article.videoId;
+      detailVideoToggle.disabled = false;
+      detailVideoToggle.textContent = '▶ 播放影片';
+    }
     setDetailMedia(article.videoId ? 'video' : 'image', 0);
 
     detailModal.hidden = false;
