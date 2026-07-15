@@ -1478,6 +1478,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if not os.path.isdir(quote_root) and not (record and record.get("status") == "deleted"):
             self.send_error(404, "Not found")
             return True
+        if record and record.get("status") == "active" and record.get("public") is True:
+            self._serve_quote_static(quote_id, rel_path, head_only=head_only)
+            return True
         if not record or record.get("status") != "active" or not _quote_has_password(record):
             self._send_quote_paused(head_only=head_only)
             return True

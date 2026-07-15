@@ -216,6 +216,39 @@ main {
   color: #0a0a0a;
 }
 
+.pillar-cta p {
+  color: var(--pillar-muted);
+  line-height: 1.7;
+  margin: 0 0 20px;
+}
+
+.line-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 50px;
+  padding: 0 28px;
+  border-radius: 25px;
+  background: #06c755;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: background 200ms, transform 150ms;
+}
+
+.line-cta-btn:hover {
+  background: #05b34a;
+  transform: scale(1.04);
+}
+
+.line-cta-btn .line-icon {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
 .cta-link {
   display: inline-block;
   margin-top: 16px;
