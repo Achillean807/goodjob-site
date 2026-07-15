@@ -869,6 +869,8 @@ body.js-ready .ssr-featured {
   gap: 12px;
 }
 
+.detail-link[hidden] { display: none !important; }
+
 .detail-link {
   display: inline-flex;
   align-items: center;
