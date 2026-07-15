@@ -29,6 +29,7 @@
 
   // Popup state
   var popupTimer = null;
+  var popupHideImgTimer = null;
   var popupCard = null;
   var slideTimer = null;
   var slideIndex = 0;
@@ -375,6 +376,10 @@
   }
 
   function clearPopupVideo() {
+    if (popupHideImgTimer) {
+      clearTimeout(popupHideImgTimer);
+      popupHideImgTimer = null;
+    }
     var old = popupMedia.querySelector('.popup-yt-iframe');
     if (old) old.remove();
   }
@@ -401,7 +406,9 @@
       popupMedia.appendChild(iframe);
       // Hide image once video loads
       iframe.onload = function () {
-        popupImg.classList.add('is-hidden');
+        popupHideImgTimer = setTimeout(function () {
+          popupImg.classList.add('is-hidden');
+        }, 900);
       };
       popupDots.style.display = 'none';
     }

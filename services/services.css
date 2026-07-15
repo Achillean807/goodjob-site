@@ -13,6 +13,157 @@
   --pillar-radius: 8px;
 }
 
+/* === 全站導覽列 === */
+.topbar a { color: inherit; text-decoration: none; }
+
+.topbar {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 40;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.96), rgba(0, 0, 0, 0.88));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.topbar-inner {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+}
+
+.brand-logo {
+  height: 46px;
+  width: auto;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-left: 10px;
+}
+
+.brand-name {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.brand-tagline {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 26px;
+  margin-right: auto;
+  margin-left: 20px;
+}
+
+.nav a,
+.tool-button {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.nav a.is-active {
+  color: #fff;
+}
+
+.topbar-tools {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mobile-quick-links {
+  display: none;
+}
+
+.tool-button {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.tool-button.is-active {
+  color: #fff;
+}
+
+.pillar-breadcrumb {
+  margin-top: 68px;
+}
+
+@media (max-width: 980px) {
+  .nav {
+    display: none;
+  }
+
+  .topbar-tools {
+    display: none;
+  }
+
+  .mobile-quick-links {
+    width: var(--wrap);
+    margin: 0 auto;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 0 10px;
+    scrollbar-width: none;
+  }
+
+  .mobile-quick-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-quick-links a {
+    flex: 0 0 auto;
+    padding: 7px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(20, 20, 20, 0.66);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 760px) {
+  .topbar-inner {
+    min-height: 60px;
+  }
+
+  .brand-logo {
+    height: 38px;
+  }
+
+  .tool-button {
+    font-size: 0.84rem;
+  }
+
+  .pillar-breadcrumb {
+    margin-top: 60px;
+  }
+}
+
 html {
   background: var(--pillar-bg);
 }
