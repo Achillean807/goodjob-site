@@ -2508,7 +2508,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         }
         breadcrumb_jsonld_str = _json.dumps(breadcrumb_jsonld, ensure_ascii=False)
 
-        css_v = "20260715b"
+        css_v = "20260715c"
         html = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -2609,7 +2609,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   </nav>
 
   <main class="works-page">
-    <a href="/#shelf" class="works-back">← 所有作品</a>
+    <a href="/#works" class="works-back">← 所有作品</a>
     <img class="works-hero" src="{hero}" alt="{title} {cat_label}活動佈置 村山良作">
     <div class="works-meta">
       <span class="detail-tag">{cat_label}</span>
