@@ -3,6 +3,7 @@
 > 2026-05-05 最新部署狀態：正式站 runtime 資料已改由 PostgreSQL `goodjob_site` 管理。作品文案、相簿圖片 URL/順序、帳號、權限與設定都在 PostgreSQL；圖片檔本體在 Cloudflare R2/CDN。`data/articles.json`、`data/accounts.json`、`data/config.json` 只作為舊資料/備份材料，不再是正式資料源，也不可用部署覆蓋。詳見 `docs/村山良作-部署資訊清單.md`。
 
 > **變更記錄 (Changelog)**
+> - 2026-07-16: UX 稽核修復迴圈收官（福委會窗口人設，6 輪＋雙簽核，紀錄在 `.ux-audit/`）。修復：works SSR 版頭重建＋頁尾 LINE CTA、modal 返回鍵寫入 hash、teabar 22 張破圖復活、全站選單統一、topbar 疊字、hover 預覽黑框（iframe 淡入 v2）、services 四頁補全站導覽＋版心、is-active 紅底線、`/#shelf` 死錨點。村長裁決：官網不放統編（僅報價單、每份詢問）、16+ 徽章刪除、「婚禮花果茶」全站更名「迎賓花果茶」、DB 36 篇文案清除「來電諮詢」（僅承諾 LINE）、海運尾牙封面換港口航站圖。開工前發現 repo 落後 live 12 檔已同步（教訓：改主機必回寫 repo）。註：`wedding-packages/images/`（195MB）依 R2 手冊 §八屬刻意保留主機的資產，repo 無副本，部署時嚴禁刪除該目錄。
 > - 2026-07-15: 作品數校正為 **64 篇**（business 27 / party 18 / civil 14 / magic 5）。追溯：6/10 新增 `guofeng-hsinchu-ambassador`（國風盛宴・新竹國賓）當時漏記 changelog，導致 7/6 誤記為「62→63」（實際 6/10 已達 63、7/6 新增 nccu-qijiaban-43 後為 64）。同步校正 README、DESIGN 的作品數。另完成全站作品文案去 AI 味（22 篇改寫）與暖暖戶政相簿重整。
 > - 2026-07-06: 新增作品「政大企家班43屆畢業典禮 · 華章未央」（`nccu-qijiaban-43`，party 春酒尾牙，21 圖，緊鄰43屆迎新），直連正式站 DB + R2 上架，作品數 62→63；新增 `docs/村山良作-新增作品SOP.md` 並索引於本檔。踩坑校正：description 存**純文字**（前端 textContent + CSS pre-wrap），空行分段，禁 HTML 標籤。
 > - 2026-05-13: ✅ GATE-1A 解果 — 實測 PostgreSQL `goodjob_site.articles` 共 **62 篇**（business 27 / party 16 / civil 14 / magic 5），舊紀錄 27 為過時值；同步修正全專案文件作品數。
