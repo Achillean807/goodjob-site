@@ -2442,7 +2442,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if hero and not hero.startswith("http"):
             og_image = site_url + hero
         else:
-            og_image = hero or f"{site_url}/assets/images/og-default.jpg"
+            og_image = hero or f"{site_url}/assets/images/og-goodjob.png"
 
         cat_labels = {
             "business": "主題活動", "party": "春酒尾牙",
@@ -2469,7 +2469,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             "url": page_url,
             "author": {
                 "@type": "Organization",
-                "name": "村山良作 Murayama Goodjob",
+                "name": "村山良作 GOODJOB DESIGN",
                 "url": site_url
             },
             "genre": cat_label
@@ -2508,25 +2508,34 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         }
         breadcrumb_jsonld_str = _json.dumps(breadcrumb_jsonld, ensure_ascii=False)
 
-        css_v = "20260715d"
+        css_v = "20260724a"
         html = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{title}｜村山良作 Murayama Goodjob</title>
+  <title>{title}｜村山良作 GOODJOB DESIGN</title>
   <meta name="description" content="{meta_desc}">
   <meta property="og:type" content="website">
   <meta property="og:title" content="{title}｜村山良作">
   <meta property="og:description" content="{meta_desc}">
   <meta property="og:image" content="{og_image}">
   <meta property="og:url" content="{page_url}">
-  <meta property="og:site_name" content="村山良作 Murayama Goodjob">
+  <meta property="og:site_name" content="村山良作 GOODJOB DESIGN">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{title}｜村山良作">
   <meta name="twitter:description" content="{meta_desc}">
   <meta name="twitter:image" content="{og_image}">
   <link rel="canonical" href="{page_url}">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/favicon-512.png">
+  <link rel="icon" type="image/png" sizes="256x256" href="/assets/images/favicon-256.png">
+  <link rel="icon" type="image/png" sizes="128x128" href="/assets/images/favicon-128.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="/assets/images/favicon-64.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon-256.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/site.css?v={css_v}">
   <script type="application/ld+json">{jsonld_str}</script>
   <script type="application/ld+json">{breadcrumb_jsonld_str}</script>
@@ -2547,37 +2556,45 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     }})(window, document, "clarity", "script", "wqkwwcp7kt");
   </script>
   <style>
+    /* 鹽白編輯風：作品頁專屬版面（顏色沿用 site.css 的四色 token） */
     .works-page {{ max-width: 960px; margin: 0 auto; padding: 24px 24px 60px; }}
-    .works-hero {{ width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; display: block; }}
+    .works-hero {{ width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 4px; display: block; }}
     .works-meta {{ margin: 24px 0 8px; display: flex; align-items: center; gap: 12px; }}
-    .works-title {{ font-size: clamp(1.8rem, 3vw, 2.8rem); margin: 0 0 20px; line-height: 1.2; }}
-    .works-desc {{ font-size: 1rem; line-height: 1.9; color: rgba(255,255,255,.74); white-space: pre-wrap; margin: 0 0 40px; }}
+    .works-tag {{ display: inline-flex; align-items: center; gap: 7px; font-size: .82rem; font-weight: 700; color: var(--ink); letter-spacing: .04em; }}
+    .works-tag::before {{ content: ""; width: 8px; height: 8px; background: var(--point); flex: 0 0 auto; }}
+    .works-title {{ font-size: clamp(1.8rem, 3vw, 2.8rem); margin: 0 0 20px; line-height: 1.2; color: var(--ink); }}
+    .works-desc {{ font-size: 1rem; line-height: 1.9; color: var(--ink); white-space: pre-wrap; margin: 0 0 40px; }}
+    .works-section-title {{ display: inline-flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 800; color: var(--ink); margin: 0 0 16px; }}
+    .works-section-title::before {{ content: ""; width: 11px; height: 11px; background: var(--point); flex: 0 0 auto; }}
     .works-gallery {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 32px; }}
-    .works-gallery img {{ width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 6px; display: block; }}
-    .works-back {{ display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,.6); text-decoration: none; font-size: .9rem; margin-bottom: 32px; }}
-    .works-back:hover {{ color: #fff; }}
+    .works-gallery img {{ width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; display: block; }}
+    .works-back {{ display: inline-flex; align-items: center; gap: 8px; color: var(--stone); text-decoration: none; font-size: .9rem; margin-bottom: 32px; }}
+    .works-back:hover {{ color: var(--point); }}
     .pillar-breadcrumb {{
       max-width: 960px; margin: 100px auto 0; padding: 0 24px;
-      font-size: .9rem; color: rgba(255,255,255,.6);
+      font-size: .9rem; color: var(--stone);
     }}
-    .pillar-breadcrumb a {{ color: rgba(255,255,255,.78); text-decoration: none; }}
-    .pillar-breadcrumb a:hover {{ color: #fff; text-decoration: underline; }}
-    .pillar-breadcrumb .sep {{ margin: 0 8px; color: rgba(255,255,255,.4); }}
+    .pillar-breadcrumb a {{ color: var(--stone); text-decoration: none; }}
+    .pillar-breadcrumb a:hover {{ color: var(--ink); text-decoration: underline; }}
+    .pillar-breadcrumb .sep {{ margin: 0 8px; color: var(--stone); }}
     .works-cases {{ margin: 40px 0 0; }}
     .case-blocks {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px 32px; margin: 0; }}
-    .case-blocks dt {{ font-size: .85rem; font-weight: 600; color: rgba(255,255,255,.55); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }}
-    .case-blocks dd {{ margin: 0; font-size: .95rem; line-height: 1.8; color: rgba(255,255,255,.86); white-space: pre-wrap; }}
+    .case-blocks dt {{ font-size: .85rem; font-weight: 700; color: var(--point); letter-spacing: .08em; margin-bottom: 8px; }}
+    .case-blocks dd {{ margin: 0; font-size: .95rem; line-height: 1.8; color: var(--ink); white-space: pre-wrap; }}
     @media (max-width: 600px) {{ .case-blocks {{ grid-template-columns: 1fr; gap: 20px; }} }}
   </style>
 </head>
 <body>
   <header class="topbar">
     <div class="wrap topbar-inner">
-      <a class="brand" href="/" aria-label="村山良作首頁">
-        <img class="brand-logo" src="/assets/murayama-logo-white.png" alt="村山良作">
+      <a class="brand" href="/" aria-label="村山良作 GOODJOB DESIGN 首頁">
+        <svg class="brand-emblem" viewBox="0 0 1000 1000" role="img" aria-label="村山良作">
+          <path fill="#222322" d="M80 100 340 260v350H80zm0 535h260v205H80zM370 270l130 100 130-100v340H370zm0 365h260v205H370zM660 260l260-160v510H660zm0 375h260v205H660z"/>
+          <rect x="468" y="604" width="64" height="64" fill="#9B3E35" stroke="#F2F0EB" stroke-width="14"/>
+        </svg>
         <div class="brand-text">
           <span class="brand-name">村山良作</span>
-          <span class="brand-tagline">品牌活動・主題場景・展場空間</span>
+          <span class="brand-tagline">商業設計・場景製作</span>
         </div>
       </a>
       <nav class="nav">
@@ -2612,13 +2629,13 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     <a href="/#works" class="works-back">← 所有作品</a>
     <img class="works-hero" src="{hero}" alt="{title} {cat_label}活動佈置 村山良作">
     <div class="works-meta">
-      <span class="detail-tag">{cat_label}</span>
+      <span class="works-tag">{cat_label}</span>
     </div>
     <h1 class="works-title">{title}</h1>
     {works_desc_html}
     {case_blocks_html}
     <section>
-      <h2 style="font-size:1.4rem;margin:0 0 16px;">精彩花絮</h2>
+      <h2 class="works-section-title">精彩花絮</h2>
       <div class="works-gallery">
         {gallery_html}
       </div>
@@ -2631,7 +2648,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         聯絡我們
       </a>
       <p class="footer-tagline">品牌活動・主題場景・展場空間——把每一個現場做成真的現場。</p>
-      <p class="footer-copy">&copy; 2025 村山良作 MURAYAMA GOODJOB. All rights reserved.</p>
+      <p class="footer-copy">&copy; 2026 村山良作 GOODJOB DESIGN. All rights reserved.</p>
     </div>
   </footer>
   <a class="fab-line" href="https://lin.ee/P2HRySj" target="_blank" rel="noopener" aria-label="LINE 聯絡我們">
