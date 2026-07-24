@@ -3,40 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>村山良作 CMS</title>
-<link rel="icon" href="/assets/images/murayama-favicon.png" type="image/png">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<title>村山良作 GOODJOB DESIGN · 後台</title>
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/images/favicon-512.png">
+<link rel="icon" type="image/png" sizes="256x256" href="/assets/images/favicon-256.png">
+<link rel="icon" type="image/png" sizes="128x128" href="/assets/images/favicon-128.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/images/favicon-64.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon-256.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box}
-:root{--bg:#141414;--bg2:#1e1e1e;--bg3:#2a2a2a;--text:#fff;--muted:rgba(255,255,255,.6);--accent:#e50914;--blue:#2563eb;--purple:#7c3aed;--green:#16a34a;--gold:#eab308;--border:rgba(255,255,255,.1);--radius:6px}
+:root{--salt:#F2F0EB;--paper:#FBFAF8;--ink:#222322;--stone:#817C74;--point:#9B3E35;--bg:var(--salt);--bg2:var(--paper);--bg3:#ECE9E2;--text:var(--ink);--muted:var(--stone);--accent:var(--point);--danger:#7A2E27;--border:rgba(129,124,116,.30);--radius:6px}
 body{margin:0;background:var(--bg);color:var(--text);font-family:'Noto Sans TC',system-ui,sans-serif;font-size:14px}
 a{color:var(--accent);text-decoration:none}
 
 /* Layout */
 .app{max-width:1200px;margin:0 auto;padding:20px}
 .header{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:24px}
-.header h1{margin:0;font-size:1.4rem;font-weight:700}
+.brand-lockup{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand-emblem{width:34px;height:34px;flex:none}
+.brand-lines{display:flex;flex-direction:column;line-height:1.2}
+.brand-cn{font-size:1.25rem;font-weight:700;color:var(--ink);letter-spacing:.02em}
+.brand-en{font-family:'Archivo',system-ui,sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.14em;color:var(--stone);text-transform:uppercase}
 .header-right{display:flex;align-items:center;gap:12px}
 .session-pill{display:none;padding:6px 12px;border:1px solid var(--border);border-radius:999px;background:var(--bg3);color:var(--muted);font-size:12px}
 
 /* Login */
 .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh}
-.login-box{background:var(--bg2);padding:40px;border-radius:8px;width:360px}
-.login-box h2{margin:0 0 24px;text-align:center}
-.login-box input{width:100%;padding:10px 12px;margin-bottom:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg3);color:var(--text);font-size:14px}
-.login-box button{width:100%;padding:12px;border:0;border-radius:var(--radius);background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer}
-.login-box .error{color:var(--accent);font-size:13px;margin-bottom:8px;display:none}
+.login-box{background:var(--bg2);padding:40px;border-radius:10px;width:360px;border:1px solid var(--border);box-shadow:0 14px 44px rgba(34,35,34,.09)}
+.login-brand{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:24px;text-align:center}
+.login-brand .brand-emblem{width:54px;height:54px}
+.login-brand .brand-cn{font-size:1.35rem;font-weight:700;color:var(--ink);letter-spacing:.02em}
+.login-brand .brand-en{font-family:'Archivo',system-ui,sans-serif;font-size:.7rem;font-weight:600;letter-spacing:.16em;color:var(--stone);text-transform:uppercase}
+.login-box input{width:100%;padding:10px 12px;margin-bottom:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--salt);color:var(--text);font-size:14px}
+.login-box input:focus{outline:none;border-color:var(--point);box-shadow:0 0 0 3px rgba(155,62,53,.14)}
+.login-box button{width:100%;padding:12px;border:0;border-radius:var(--radius);background:var(--point);color:var(--paper);font-size:15px;font-weight:700;cursor:pointer}
+.login-box button:hover{background:#873429}
+.login-box .error{color:var(--point);font-size:13px;margin-bottom:8px;display:none}
 .login-box .hint{color:var(--muted);font-size:12px;line-height:1.6;margin-top:12px}
 
 /* Buttons */
 .btn{padding:8px 16px;border:0;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s}
 .btn:hover{opacity:.85}
 .btn:disabled{opacity:.4;cursor:not-allowed}
-.btn-primary{background:var(--accent);color:#fff}
+.btn-primary{background:var(--point);color:var(--paper)}
 .btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
 .btn-sm{padding:5px 10px;font-size:12px}
-.btn-danger{background:#991b1b;color:#fff}
+.btn-danger{background:var(--danger);color:#fff}
 
 /* Toolbar */
 .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
@@ -47,16 +63,13 @@ a{color:var(--accent);text-decoration:none}
 table{width:100%;border-collapse:collapse}
 th{text-align:left;padding:10px 12px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
 td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
-tr:hover td{background:rgba(255,255,255,.03)}
+tr:hover td{background:rgba(34,35,34,.05)}
 .thumb{width:60px;height:40px;object-fit:cover;border-radius:3px;background:var(--bg3)}
 
 /* Badges */
 .badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600}
-.badge-business{background:rgba(37,99,235,.2);color:#60a5fa}
-.badge-party{background:rgba(124,58,237,.2);color:#a78bfa}
-.badge-magic{background:rgba(234,179,8,.2);color:#facc15}
-.badge-civil{background:rgba(22,163,74,.2);color:#4ade80}
-.badge-featured{background:rgba(234,179,8,.15);color:var(--gold);margin-left:4px}
+.badge-business,.badge-party,.badge-magic,.badge-civil{background:var(--bg3);color:var(--ink);border:1px solid var(--border)}
+.badge-featured{background:rgba(155,62,53,.12);color:var(--point);margin-left:4px}
 
 /* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
@@ -94,14 +107,14 @@ tr:hover td{background:rgba(255,255,255,.03)}
 .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:10px;min-height:40px}
 .gallery-item{position:relative;aspect-ratio:3/2;border-radius:4px;overflow:hidden;cursor:pointer;background:var(--bg3);border:2px solid transparent;transition:border-color .15s,box-shadow .15s;content-visibility:auto;contain-intrinsic-size:100px 66px;contain:layout paint}
 .gallery-item.sortable-ghost{opacity:.4}
-.gallery-item.is-hero{border-color:var(--gold);box-shadow:0 0 0 2px rgba(234,179,8,.3)}
+.gallery-item.is-hero{border-color:var(--point);box-shadow:0 0 0 2px rgba(155,62,53,.3)}
 .gallery-item img{width:100%;height:100%;object-fit:cover;pointer-events:none}
-.gallery-item .gallery-badge{position:absolute;top:3px;left:3px;font-size:9px;padding:2px 6px;border-radius:2px;background:rgba(234,179,8,.9);color:#000;font-weight:700;letter-spacing:.5px}
+.gallery-item .gallery-badge{position:absolute;top:3px;left:3px;font-size:9px;padding:2px 6px;border-radius:2px;background:rgba(155,62,53,.92);color:#fff;font-weight:700;letter-spacing:.5px}
 .gallery-item .gallery-order{position:absolute;bottom:3px;left:3px;font-size:9px;padding:1px 5px;border-radius:2px;background:rgba(0,0,0,.7);color:#fff}
-.gallery-item .gallery-set-hero{position:absolute;bottom:3px;right:3px;padding:2px 6px;border-radius:2px;border:0;background:rgba(0,0,0,.7);color:var(--muted);font-size:9px;cursor:pointer;opacity:0;transition:opacity .15s}
+.gallery-item .gallery-set-hero{position:absolute;bottom:3px;right:3px;padding:2px 6px;border-radius:2px;border:0;background:rgba(0,0,0,.7);color:rgba(255,255,255,.8);font-size:9px;cursor:pointer;opacity:0;transition:opacity .15s}
 .gallery-item:hover .gallery-set-hero{opacity:1}
 .gallery-item.is-hero .gallery-set-hero{display:none}
-.gallery-item .gallery-remove{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;border:0;background:rgba(153,27,27,.9);color:#fff;font-size:11px;cursor:pointer;display:grid;place-items:center;opacity:0;transition:opacity .15s}
+.gallery-item .gallery-remove{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;border:0;background:rgba(122,46,39,.92);color:#fff;font-size:11px;cursor:pointer;display:grid;place-items:center;opacity:0;transition:opacity .15s}
 .gallery-item:hover .gallery-remove{opacity:1}
 .gallery-upload-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border:1px dashed var(--border);border-radius:var(--radius);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;position:relative;transition:border-color .2s}
 .gallery-upload-btn:hover{border-color:var(--accent);color:var(--text)}
@@ -123,8 +136,8 @@ tr:hover td{background:rgba(255,255,255,.03)}
 /* Category filter tabs */
 .cat-tabs{display:flex;gap:6px;flex-wrap:wrap}
 .cat-tab{padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
-.cat-tab:hover{border-color:rgba(255,255,255,.3);color:var(--text)}
-.cat-tab.is-active{background:var(--accent);border-color:var(--accent);color:#fff}
+.cat-tab:hover{border-color:var(--stone);color:var(--text)}
+.cat-tab.is-active{background:var(--point);border-color:var(--point);color:var(--paper)}
 
 /* Drag handle in table */
 .drag-handle{cursor:grab;color:var(--muted);font-size:16px;user-select:none;padding:0 4px;letter-spacing:-1px}
@@ -134,7 +147,7 @@ tr.drag-above td{box-shadow:inset 0 2px 0 var(--accent)}
 tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
 
 /* Toast */
-.admin-toast{position:fixed;bottom:24px;right:24px;padding:10px 20px;border-radius:var(--radius);background:#16a34a;color:#fff;font-weight:600;font-size:13px;opacity:0;transform:translateY(10px);transition:all .3s;z-index:300;pointer-events:none}
+.admin-toast{position:fixed;bottom:24px;right:24px;padding:10px 20px;border-radius:var(--radius);background:var(--ink);color:var(--paper);font-weight:600;font-size:13px;opacity:0;transform:translateY(10px);transition:all .3s;z-index:300;pointer-events:none}
 .admin-toast.is-visible{opacity:1;transform:translateY(0)}
 
 /* Gallery Lightbox */
@@ -146,11 +159,11 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
 .gallery-lightbox .lb-nav:hover{background:rgba(255,255,255,.3)}
 .gallery-lightbox .lb-prev{left:16px}
 .gallery-lightbox .lb-next{right:16px}
-.gallery-lightbox .lb-info{color:var(--muted);font-size:13px}
+.gallery-lightbox .lb-info{color:rgba(255,255,255,.72);font-size:13px}
 .gallery-lightbox .lb-actions{display:flex;gap:10px}
 .gallery-lightbox .lb-actions button{padding:8px 16px;border-radius:var(--radius);border:0;font-size:13px;font-weight:600;cursor:pointer}
-.gallery-lightbox .lb-set-hero{background:var(--gold);color:#000}
-.gallery-lightbox .lb-delete{background:#991b1b;color:#fff}
+.gallery-lightbox .lb-set-hero{background:var(--point);color:var(--paper)}
+.gallery-lightbox .lb-delete{background:var(--danger);color:#fff}
 
 /* Accounts */
 .accounts-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px}
@@ -159,19 +172,19 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
 .accounts-panel{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px}
 .accounts-table td,.accounts-table th{padding:10px 12px}
 .accounts-table tr{cursor:pointer}
-.accounts-table tr.is-selected td{background:rgba(229,9,20,.12)}
+.accounts-table tr.is-selected td{background:rgba(155,62,53,.10)}
 .accounts-table tr.is-disabled td{opacity:.55}
 .accounts-table .row-title{display:flex;align-items:center;gap:8px}
-.role-pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--text);font-size:11px;font-weight:700}
-.role-pill.role-admin{background:rgba(229,9,20,.15);color:#fda4af}
-.role-pill.role-editor{background:rgba(37,99,235,.16);color:#93c5fd}
-.role-pill.role-viewer{background:rgba(255,255,255,.08);color:#d4d4d8}
-.role-pill.role-custom{background:rgba(234,179,8,.16);color:#fde68a}
+.role-pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;background:var(--bg3);color:var(--ink);border:1px solid var(--border);font-size:11px;font-weight:700}
+.role-pill.role-admin{background:rgba(155,62,53,.12);color:var(--point);border-color:transparent}
+.role-pill.role-editor{background:var(--bg3);color:var(--ink)}
+.role-pill.role-viewer{background:var(--bg3);color:var(--stone)}
+.role-pill.role-custom{background:var(--bg3);color:var(--ink)}
 .status-chip{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700}
-.status-chip.is-enabled{background:rgba(22,163,74,.16);color:#86efac}
-.status-chip.is-disabled{background:rgba(153,27,27,.2);color:#fca5a5}
+.status-chip.is-enabled{background:var(--bg3);color:var(--ink);border:1px solid var(--border)}
+.status-chip.is-disabled{background:rgba(155,62,53,.12);color:var(--point)}
 .permission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
-.permission-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:rgba(255,255,255,.02)}
+.permission-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--paper)}
 .permission-item input{width:auto}
 .empty-state{padding:24px 12px;text-align:center;color:var(--muted)}
 
@@ -192,7 +205,14 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
 <!-- Login Screen -->
 <div id="login-screen" class="login-wrap">
   <div class="login-box">
-    <h2>村山良作 CMS</h2>
+    <div class="login-brand">
+      <svg class="brand-emblem" viewBox="0 0 1000 1000" role="img" aria-label="村山良作">
+        <path fill="#222322" d="M80 100 340 260v350H80zm0 535h260v205H80zM370 270l130 100 130-100v340H370zm0 365h260v205H370zM660 260l260-160v510H660zm0 375h260v205H660z"/>
+        <rect x="468" y="604" width="64" height="64" fill="#9B3E35" stroke="#F2F0EB" stroke-width="14"/>
+      </svg>
+      <span class="brand-cn">村山良作</span>
+      <span class="brand-en">GOODJOB DESIGN · 後台管理</span>
+    </div>
     <div class="error" id="login-error">帳號或密碼錯誤</div>
     <input type="text" id="login-user" placeholder="帳號" autocomplete="username">
     <input type="password" id="login-pass" placeholder="密碼" autocomplete="current-password">
@@ -204,10 +224,19 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
 <!-- Main App -->
 <div id="app-screen" class="app" style="display:none">
   <div class="header">
-    <h1>村山良作 CMS</h1>
+    <a class="brand-lockup" href="/controlcenter/" aria-label="村山良作 GOODJOB DESIGN 後台">
+      <svg class="brand-emblem" viewBox="0 0 1000 1000" role="img" aria-label="村山良作">
+        <path fill="#222322" d="M80 100 340 260v350H80zm0 535h260v205H80zM370 270l130 100 130-100v340H370zm0 365h260v205H370zM660 260l260-160v510H660zm0 375h260v205H660z"/>
+        <rect x="468" y="604" width="64" height="64" fill="#9B3E35" stroke="#F2F0EB" stroke-width="14"/>
+      </svg>
+      <span class="brand-lines">
+        <span class="brand-cn">村山良作</span>
+        <span class="brand-en">GOODJOB DESIGN · 後台</span>
+      </span>
+    </a>
     <div class="header-right">
       <span class="session-pill" id="session-user"></span>
-      <a href="/blog-netflix/" target="_blank">前台預覽</a>
+      <a href="/" target="_blank">前台預覽</a>
       <button class="btn btn-secondary btn-sm" id="accounts-btn" onclick="openAccountsModal()">帳戶管理</button>
       <button class="btn btn-secondary btn-sm" id="quotes-btn" onclick="openQuotesModal()">提案管理</button>
       <button class="btn btn-secondary btn-sm" id="dashboard-btn" onclick="openDashboardModal()">📊 數據儀表板</button>
@@ -259,7 +288,7 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
       <label>描述</label>
       <textarea id="f-desc" placeholder="簡短描述（1-2句）"></textarea>
     </div>
-    <details class="field" id="case-blocks-section" style="border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;background:rgba(255,255,255,.02)">
+    <details class="field" id="case-blocks-section" style="border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;background:var(--bg3)">
       <summary style="cursor:pointer;font-size:13px;font-weight:600;color:var(--text);user-select:none">案例 6 區塊（SEO 用，留空則 fallback 顯示描述）</summary>
       <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="field" style="margin:0">
@@ -557,6 +586,6 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
   };
 })();
 </script>
-<script src="/controlcenter/app.js?v=20260519a"></script>
+<script src="/controlcenter/app.js?v=20260724a"></script>
 </body>
 </html>

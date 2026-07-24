@@ -350,7 +350,7 @@ function renderList() {
     var categoryClass = CAT_CLASSES[item.category] || '';
     var featured = item.featured ? '<span class="badge badge-featured">★ ' + (item.featuredOrder || '') + '</span>' : '—';
     var video = item.videoId ? (item.videoVertical ? '📱' : '🎬') : '—';
-    var heroSrc = item.heroImage || (item.images && item.images[0]) || '/assets/images/murayama-favicon.png';
+    var heroSrc = item.heroImage || (item.images && item.images[0]) || '/assets/images/favicon-256.png';
     var imgCount = (item.images || []).length;
     var actionHtml = [];
 

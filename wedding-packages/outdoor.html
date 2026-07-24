@@ -9,15 +9,16 @@
 <meta property="og:type" content="website" />
 <meta property="og:title" content="雙境轉場婚禮場景｜戶外證婚・送客套組｜村花弄囍" />
 <meta property="og:description" content="戶外證婚與送客場景套組，含天氣備案、地形評估、進場動線。雙境轉場設計讓儀式與宴客自然銜接，村花弄囍美學團隊執行。" />
-<meta property="og:image" content="https://goodjob.weddingwishlove.com/wedding-packages/images/carousel/hero.jpg" />
-<meta property="og:image:alt" content="村花弄囍戶外證婚與雙境轉場婚禮現場" />
+<meta property="og:image" content="https://goodjob.weddingwishlove.com/assets/images/og-goodjob.png" />
+<meta property="og:image:alt" content="村山良作 GOODJOB DESIGN 品牌識別" />
 <meta property="og:url" content="https://goodjob.weddingwishlove.com/wedding-packages/outdoor.html" />
-<meta property="og:site_name" content="村花弄囍" />
+<meta property="og:site_name" content="村山良作 GOODJOB DESIGN" />
 <meta property="og:locale" content="zh_TW" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="雙境轉場婚禮場景｜戶外證婚・送客套組｜村花弄囍" />
 <meta name="twitter:description" content="戶外證婚與送客場景套組，含天氣備案、地形評估、進場動線。" />
-<meta name="twitter:image" content="https://goodjob.weddingwishlove.com/wedding-packages/images/carousel/hero.jpg" />
+<meta name="twitter:image" content="https://goodjob.weddingwishlove.com/assets/images/og-goodjob.png" />
+<meta name="twitter:image:alt" content="村山良作 GOODJOB DESIGN 品牌識別" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -50,80 +51,92 @@
   ]
 }
 </script>
-<link rel="icon" type="image/png" href="images/logo.png">
-<link rel="apple-touch-icon" href="images/logo.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/images/favicon-512.png">
+<link rel="icon" type="image/png" sizes="256x256" href="/assets/images/favicon-256.png">
+<link rel="icon" type="image/png" sizes="128x128" href="/assets/images/favicon-128.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/images/favicon-64.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon-256.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Noto+Serif+TC:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css?v=20260724a">
 <style>
 :root {
-  --cream: #FAF6F1;
-  --warm-white: #FFFCF7;
-  --champagne: #E8D5B7;
-  --gold: #C4A265;
-  --gold-dark: #9B7D4A;
-  --terracotta: #B8755C;
-  --blush: #E8C4B8;
-  --charcoal: #2C2420;
-  --brown: #5C4A3A;
-  --brown-light: #8B7355;
+  /* 鹽白編輯風：舊變數名沿用，值改指 site.css 的 CI tokens（body 內嵌 var() 才不會失效） */
+  --cream: var(--salt);          /* 頁面底：鹽白 */
+  --warm-white: var(--paper);    /* 卡片／區塊：紙白 */
+  --champagne: var(--line);      /* 淺分隔線 */
+  --gold: var(--point);          /* 眉標／英文標：定位紅 */
+  --gold-dark: #7E2F28;          /* 深一階紅（hover） */
+  --terracotta: var(--point);    /* 價格：定位紅 */
+  --blush: var(--line);          /* 淺線 */
+  --charcoal: var(--ink);        /* 主文字：墨黑 */
+  --brown: #4A463F;              /* 次要文字（深石灰） */
+  --brown-light: var(--stone);   /* 次要文字：石灰 */
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; font-size: 16px; }
+/* site.css 已提供 box-sizing／body 底色與字型；此處只補本頁內容元素的預設邊距歸零 */
+.wp h1, .wp h2, .wp h3, .wp h4, .wp p, .wp ul, .wp ol, .wp li, .wp button { margin: 0; padding: 0; }
+.wp ul { list-style: none; }
+.wp { overflow-x: hidden; }
 
-body {
-  font-family: 'Noto Serif TC', serif;
-  background: var(--cream);
-  color: var(--charcoal);
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
+/* 區塊眉標紅方點母題（比照首頁／迎賓花果茶） */
+.wp .eng { display: inline-flex; align-items: center; gap: 8px; }
+.wp .eng::before { content: ""; width: 8px; height: 8px; background: var(--point); flex: 0 0 auto; }
+
+/* 頁尾套餐附註（site.css 未定義） */
+.wp .footer-note { max-width: 640px; margin: 4px auto 0; font-size: 0.72rem; color: var(--stone); letter-spacing: 0.04em; line-height: 1.7; }
 
 /* ═══════════════════════════════════════
-   HERO — Split Screen
+   HERO — 雙屏方案選擇（鹽白編輯風）
 ═══════════════════════════════════════ */
-.hero {
+.wp .hero {
   position: relative;
   width: 100%;
-  height: 85vh;
-  min-height: 550px;
+  height: 84vh;
+  min-height: 560px;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  padding-top: 68px;              /* 讓開固定版頭 */
+  background: var(--salt);
   overflow: hidden;
+  box-sizing: border-box;
 }
 
-.hero-half {
+.wp .hero-half {
   position: relative;
   overflow: hidden;
   display: block;
   text-decoration: none;
+  background: var(--salt);        /* 圖未載入時為鹽白磚，不露破圖 */
+  cursor: pointer;
 }
 
-.hero-half img {
+.wp .hero-half img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 8s ease-out;
 }
 
-.hero-half:hover img { transform: scale(1.04); }
+.wp .hero-half:hover img { transform: scale(1.04); }
 
-.hero-half .overlay {
+.wp .hero-half .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(44,36,32,0.08) 0%, rgba(44,36,32,0.55) 100%);
+  background: linear-gradient(180deg, rgba(30,28,26,0) 38%, rgba(30,28,26,0.62) 100%);
   transition: background 0.5s ease;
 }
 
-.hero-half:hover .overlay {
-  background: linear-gradient(180deg, rgba(44,36,32,0.02) 0%, rgba(44,36,32,0.4) 100%);
+.wp .hero-half:hover .overlay {
+  background: linear-gradient(180deg, rgba(30,28,26,0) 42%, rgba(30,28,26,0.5) 100%);
 }
 
-.hero-label {
+.wp .hero-label {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  padding: 2.5rem;
+  padding: 2.4rem 2rem;
   z-index: 2;
   text-align: center;
   animation: fadeUp 1s ease-out 0.3s both;
@@ -134,55 +147,65 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.hero-label .tier {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.65rem;
-  letter-spacing: 0.5em;
+.wp .hero-label .tier {
+  display: inline-block;
+  font-family: 'Archivo', sans-serif;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
-  color: var(--champagne);
+  color: #F0E9DF;
   margin-bottom: 0.5rem;
 }
 
-.hero-label h2 {
-  font-size: clamp(1.3rem, 2.5vw, 2rem);
-  font-weight: 500;
-  color: #fff;
-  letter-spacing: 0.12em;
-  margin-bottom: 0.3rem;
-}
-
-.hero-label .original-price {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(0.85rem, 1.6vw, 1.15rem);
-  font-weight: 400;
-  color: rgba(255,255,255,0.6);
-  text-decoration: line-through;
-  text-decoration-thickness: 1px;
-  margin-bottom: 0.15rem;
-}
-
-.hero-label .price {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+.wp .hero-label h2 {
+  font-size: clamp(1.4rem, 2.6vw, 2.1rem);
   font-weight: 700;
   color: #fff;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.45rem;
 }
 
-.hero-divider {
+.wp .hero-label .original-price {
+  display: block;
+  font-family: 'Archivo', sans-serif;
+  font-size: clamp(0.85rem, 1.6vw, 1.1rem);
+  font-weight: 400;
+  color: rgba(255,255,255,0.62);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  margin-bottom: 0.1rem;
+}
+
+.wp .hero-label .price {
+  font-family: 'Archivo', sans-serif;
+  font-size: clamp(1.7rem, 3.6vw, 2.7rem);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+
+.wp .hero-divider {
   position: absolute;
-  top: 0; left: 50%;
+  top: 68px; left: 50%;
   transform: translateX(-50%);
-  width: 1px; height: 100%;
-  background: rgba(255,255,255,0.2);
+  width: 1px; height: calc(100% - 68px);
+  background: rgba(255,255,255,0.28);
   z-index: 5;
 }
 
-.hero-center {
+.wp .hero-center {
   position: absolute;
-  top: 50%; left: 50%;
+  top: calc(50% + 34px); left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
   pointer-events: none;
+  display: grid;
+  place-items: center;
+  width: 108px; height: 108px;
+  background: var(--paper);
+  border-radius: 50%;
+  box-shadow: 0 12px 40px rgba(20,18,16,0.28);
   animation: fadeCenter 1.2s ease-out 0.5s both;
 }
 
@@ -191,10 +214,9 @@ body {
   to { opacity: 1; transform: translate(-50%, -50%); }
 }
 
-.hero-logo {
-  width: 120px;
-  height: auto;
-  filter: drop-shadow(0 2px 12px rgba(0,0,0,0.3));
+.wp .hero-emblem {
+  width: 58px; height: 58px;
+  display: block;
 }
 
 /* ═══════════════════════════════════════
@@ -211,7 +233,7 @@ body {
 }
 
 .section-header .eng {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 0.75rem;
   letter-spacing: 0.5em;
   text-transform: uppercase;
@@ -221,8 +243,9 @@ body {
 
 .section-header h2 {
   font-size: clamp(1.5rem, 3vw, 2.2rem);
-  font-weight: 500;
-  letter-spacing: 0.15em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--ink);
 }
 
 .section-header .line {
@@ -247,16 +270,20 @@ body {
 }
 
 .pkg-card {
-  background: var(--cream);
+  background: var(--paper);
   padding: 3rem 2.5rem;
   position: relative;
   overflow: hidden;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  border: 1px solid var(--line);
+  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
 }
+
+.pkg-card.recommended { border-color: var(--point); }
 
 .pkg-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 60px rgba(44,36,32,0.08);
+  border-color: var(--point);
+  box-shadow: var(--shadow);
 }
 
 .pkg-card.recommended::before {
@@ -265,7 +292,7 @@ body {
   top: 1.5rem; right: -2.5rem;
   background: var(--terracotta);
   color: #fff;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 0.6rem;
   letter-spacing: 0.25em;
   padding: 0.4rem 3rem;
@@ -273,7 +300,7 @@ body {
 }
 
 .pkg-tier {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 0.7rem;
   letter-spacing: 0.5em;
   text-transform: uppercase;
@@ -287,8 +314,8 @@ body {
 .pkg-original .strike { text-decoration: line-through; text-decoration-color: var(--terracotta); }
 
 .pkg-price-row { display: flex; align-items: baseline; gap: 0.3rem; margin: 1rem 0 2rem; }
-.pkg-currency { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--terracotta); }
-.pkg-amount { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 700; color: var(--terracotta); line-height: 1; }
+.pkg-currency { font-family: 'Archivo', sans-serif; font-size: 1.2rem; color: var(--terracotta); }
+.pkg-amount { font-family: 'Archivo', sans-serif; font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 700; color: var(--terracotta); line-height: 1; }
 
 .pkg-items { list-style: none; border-top: 1px solid var(--champagne); padding-top: 1.5rem; }
 .pkg-items li { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.88rem; color: var(--brown); line-height: 1.8; letter-spacing: 0.05em; font-weight: 300; }
@@ -302,12 +329,12 @@ body {
   display: block; text-align: center; margin-top: 2rem;
   padding: 0.9rem 2rem; text-decoration: none;
   font-size: 0.8rem; letter-spacing: 0.25em;
-  font-family: 'Noto Serif TC', serif; transition: all 0.4s ease;
+  font-family: 'Noto Sans TC', sans-serif; transition: all 0.4s ease;
 }
 
-.pkg-card:not(.recommended) .pkg-btn { background: transparent; color: var(--charcoal); border: 1px solid var(--charcoal); }
-.pkg-card:not(.recommended) .pkg-btn:hover { background: var(--charcoal); color: var(--champagne); }
-.pkg-card.recommended .pkg-btn { background: var(--charcoal); color: var(--champagne); border: 1px solid var(--charcoal); }
+.pkg-card:not(.recommended) .pkg-btn { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+.pkg-card:not(.recommended) .pkg-btn:hover { background: var(--ink); color: var(--salt); }
+.pkg-card.recommended .pkg-btn { background: var(--point); color: #fff; border: 1px solid var(--point); }
 .pkg-card.recommended .pkg-btn:hover { background: var(--gold-dark); border-color: var(--gold-dark); color: #fff; }
 
 /* ═══════════════════════════════════════
@@ -315,6 +342,7 @@ body {
 ═══════════════════════════════════════ */
 .detail-section {
   padding: 5rem 5vw;
+  scroll-margin-top: 84px;   /* 讓開固定版頭：點「查看實景」跳錨點時標題不被蓋住 */
 }
 
 .detail-section.on-cream { background: var(--cream); }
@@ -332,6 +360,7 @@ body {
   position: relative;
   background: var(--warm-white);
   overflow: hidden;
+  border: 1px solid var(--line);
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.8s ease, transform 0.8s ease;
@@ -374,6 +403,7 @@ body {
 .item-img-wrap {
   position: relative;
   overflow: hidden;
+  background: var(--salt);
 }
 
 .item-img {
@@ -388,7 +418,7 @@ body {
 .item-num {
   position: absolute;
   top: 1.2rem; left: 1.2rem;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 0.7rem; font-style: italic;
   color: rgba(255,255,255,0.85);
   background: rgba(44,36,32,0.4);
@@ -423,7 +453,7 @@ body {
 }
 
 .item-eng {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 0.6rem;
   letter-spacing: 0.4em;
   text-transform: uppercase;
@@ -452,7 +482,7 @@ body {
 .item-price-tag {
   display: inline-block;
   margin-top: 1rem;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 0.8rem;
   color: var(--terracotta);
   border-bottom: 1px solid var(--blush);
@@ -504,28 +534,31 @@ body {
 ═══════════════════════════════════════ */
 .service-bar {
   padding: 3.5rem 5vw;
-  background: var(--charcoal);
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
   text-align: center;
 }
 
 .service-bar .eng {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 0.7rem;
-  letter-spacing: 0.5em;
+  font-weight: 600;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--point);
   margin-bottom: 1rem;
 }
 
 .service-bar p {
   font-size: 1rem;
-  color: rgba(255,255,255,0.8);
-  font-weight: 300;
-  letter-spacing: 0.12em;
-  line-height: 1.8;
+  color: var(--ink);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  line-height: 1.9;
 }
 
-.service-bar .sub { font-size: 0.8rem; opacity: 0.5; }
+.service-bar .sub { font-size: 0.8rem; color: var(--stone); }
 
 .cta {
   padding: 5rem 5vw;
@@ -548,7 +581,7 @@ body {
 .cta::after { bottom: -50px; right: -50px; }
 
 .cta .eng {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 0.75rem;
   letter-spacing: 0.5em;
   text-transform: uppercase;
@@ -574,7 +607,7 @@ body {
   text-decoration: none;
   font-size: 0.85rem;
   letter-spacing: 0.2em;
-  font-family: 'Noto Serif TC', serif;
+  font-family: 'Noto Sans TC', sans-serif;
   transition: all 0.4s ease;
   position: relative;
   z-index: 1;
@@ -624,7 +657,7 @@ body {
 }
 
 .footer-brand {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 0.85rem;
   letter-spacing: 0.3em;
   color: var(--champagne);
@@ -634,26 +667,25 @@ body {
 /* ═══════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════ */
+@media (max-width: 980px) {
+  .wp .hero { padding-top: 116px; }
+}
+
 @media (max-width: 900px) {
-  .hero {
+  .wp .hero {
     grid-template-columns: 1fr;
     height: auto; min-height: auto;
   }
 
-  .hero-half { height: 45vh; min-height: 280px; }
+  .wp .hero-half { height: 46vh; min-height: 300px; }
 
-  .hero-divider {
+  .wp .hero-divider {
     top: auto; bottom: 50%;
     left: 0; width: 100%; height: 1px;
     transform: none;
   }
 
-  .hero-center {
-    top: auto; bottom: 50%;
-    transform: translate(-50%, 50%);
-  }
-
-  .hero-logo { width: 48px; }
+  .wp .hero-center { display: none; }   /* 手機：兩半堆疊，中央徽章與價格標籤會疊字，故隱藏（徽章已在版頭） */
 
   @keyframes fadeCenter {
     from { opacity: 0; transform: translate(-50%, 60%); }
@@ -682,7 +714,7 @@ body {
 }
 
 @media (max-width: 600px) {
-  .hero-label { padding: 1.5rem; }
+  .wp .hero-label { padding: 1.5rem; }
   .pkg-card { padding: 2rem 1.5rem; }
   .item-body { padding: 1.5rem; }
   .item-card:not(.featured) .item-img-wrap,
@@ -732,7 +764,7 @@ body {
   font-size: 2rem;
   color: rgba(255,255,255,0.7);
   cursor: pointer;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Archivo', sans-serif;
   font-weight: 300;
   transition: color 0.3s;
   line-height: 1;
@@ -837,11 +869,43 @@ body {
   })(window, document, "clarity", "script", "wqkwwcp7kt");
 </script>
 </head>
-<body>
-<nav class="pillar-breadcrumb" style="padding:12px 20px;background:rgba(255,255,255,0.04);font-size:0.9rem;">
-  <a href="/teabar.html" style="color:#7a5f16;text-decoration:none;display:inline-block;padding:12px 10px;font-weight:600;">← 回到村花囍茶</a>
-  <a href="/" style="color:#7a5f16;text-decoration:none;display:inline-block;padding:12px 10px;font-weight:600;">村山良作首頁</a>
-</nav>
+<body class="wp">
+<!-- Topbar -->
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="/" aria-label="村山良作 GOODJOB DESIGN 首頁">
+      <svg class="brand-emblem" viewBox="0 0 1000 1000" role="img" aria-label="村山良作">
+        <path fill="#222322" d="M80 100 340 260v350H80zm0 535h260v205H80zM370 270l130 100 130-100v340H370zm0 365h260v205H370zM660 260l260-160v510H660zm0 375h260v205H660z"/>
+        <rect x="468" y="604" width="64" height="64" fill="#9B3E35" stroke="#F2F0EB" stroke-width="14"/>
+      </svg>
+      <div class="brand-text">
+        <span class="brand-name">村山良作</span>
+        <span class="brand-tagline">商業設計・場景製作</span>
+      </div>
+    </a>
+    <nav class="nav">
+      <a href="/">首頁</a>
+      <a href="/services/business-event/">主題活動</a>
+      <a href="/services/party-spring-banquet/">春酒尾牙</a>
+      <a href="/services/magic-academy/">魔法學院</a>
+      <a href="/services/civil-makeover/">戶政改造</a>
+    </nav>
+    <div class="topbar-tools">
+      <a class="tool-button" href="/teabar.html" aria-label="迎賓花果茶">迎賓花果茶</a>
+      <a class="tool-button" href="/sort-hat/" aria-label="分類帽">分類帽</a>
+      <a class="tool-button" href="/workflow.html" aria-label="合作流程">合作流程</a>
+    </div>
+  </div>
+  <nav class="mobile-quick-links" aria-label="手機版主要入口">
+    <a href="/services/business-event/">主題活動</a>
+    <a href="/services/party-spring-banquet/">春酒尾牙</a>
+    <a href="/services/magic-academy/">魔法學院</a>
+    <a href="/services/civil-makeover/">戶政改造</a>
+    <a href="/teabar.html">迎賓花果茶</a>
+    <a href="/sort-hat/">分類帽</a>
+    <a href="/workflow.html">合作流程</a>
+  </nav>
+</header>
 
 <!-- ═══ HERO ═══ -->
 <section class="hero">
@@ -866,8 +930,11 @@ body {
       <span class="price">NT$ 66,000</span>
     </div>
   </div>
-  <div class="hero-center">
-    <img src="images/logo-white.png" alt="村花弄囍" class="hero-logo">
+  <div class="hero-center" aria-hidden="true">
+    <svg class="hero-emblem" viewBox="0 0 1000 1000" role="img" aria-label="村山良作">
+      <path fill="#222322" d="M80 100 340 260v350H80zm0 535h260v205H80zM370 270l130 100 130-100v340H370zm0 365h260v205H370zM660 260l260-160v510H660zm0 375h260v205H660z"/>
+      <rect x="468" y="604" width="64" height="64" fill="#9B3E35" stroke="#F2F0EB" stroke-width="14"/>
+    </svg>
   </div>
 </section>
 
@@ -1422,9 +1489,17 @@ body {
   </div>
 </section>
 
-<!-- ═══ FOOTER BAR ═══ -->
-<footer class="disclaimer" style="background: var(--charcoal); border-top: none; padding: 1.5rem 5vw;">
-  <p style="color: rgba(255,255,255,0.4);">※套餐內容不得與其他優惠併用，已下訂新人恕不回溯，村花弄囍保留套餐內容最終解釋權※</p>
+<!-- ═══ FOOTER ═══ -->
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <a class="button button-line footer-cta" href="https://lin.ee/OG1T3R5" target="_blank" rel="noopener">
+      <svg class="line-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+      LINE 諮詢預約
+    </a>
+    <p class="footer-tagline">村花弄囍 戶外婚禮場景｜戶外證婚・雙境轉場・送客花藝，一套佈置串聯儀式與宴客。</p>
+    <p class="footer-note">※套餐內容不得與其他優惠併用，已下訂新人恕不回溯，村花弄囍保留套餐內容最終解釋權※</p>
+    <p class="footer-copy">&copy; 2026 村山良作 GOODJOB DESIGN. All rights reserved.</p>
+  </div>
 </footer>
 
 <!-- Lightbox -->
@@ -1432,6 +1507,11 @@ body {
   <span class="lightbox-close">&times;</span>
   <img src="" alt="">
 </div>
+
+<!-- Floating LINE FAB -->
+<a class="fab-line" href="https://lin.ee/OG1T3R5" target="_blank" rel="noopener" aria-label="LINE 諮詢預約">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+</a>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
