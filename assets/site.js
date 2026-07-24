@@ -15,6 +15,14 @@
     civil: '戶政改造'
   };
 
+  // 章節式相簿：每個分類 = 一個章節（英文分類名／中文章名／敘事一句／完整作品頁）
+  var CHAPTER_META = {
+    business: { en: 'BUSINESS', name: '主題活動', lead: '把品牌的故事，變成一個走得進去的現場。', more: '/services/business-event/' },
+    party:    { en: 'PARTY',    name: '春酒尾牙', lead: '一年一度的犒賞，值得一個被記住的舞台。', more: '/services/party-spring-banquet/' },
+    magic:    { en: 'MAGIC',    name: '魔法學院', lead: '讓活動長出一個世界觀，大人小孩都想留下來。', more: '/services/magic-academy/' },
+    civil:    { en: 'CIVIL',    name: '戶政改造', lead: '把辦證的冷空間，變成想拍照打卡的場景。', more: '/services/civil-makeover/' }
+  };
+
   // ── State ──
   var ytReady = false;
   var ytLoading = false;
@@ -154,41 +162,93 @@
     return btn;
   }
 
-  // ── Render Category Shelf ──
-  function renderShelf(category, articles) {
-    var sectionId = { business: 'business', party: 'party', magic: 'magic', civil: 'civil' }[category];
-    var section = document.getElementById(sectionId);
+  // ── Render Category Chapter（章節式相簿：沉浸開場 + 章內拼貼陳列）──
+  function renderChapter(category, articles, chapterNo) {
+    var section = document.getElementById(category);
     if (!section) return;
-    var rail = section.querySelector('.content-rail');
-    if (!rail) return;
-    rail.innerHTML = '';
+    section.innerHTML = '';
+    if (!articles.length) return;
 
-    articles.sort(function (a, b) { return (a.sortOrder || 0) - (b.sortOrder || 0); });
+    var meta = CHAPTER_META[category] ||
+      { en: (category || '').toUpperCase(), name: CAT_LABELS[category] || category, lead: '', more: '#' };
 
-    articles.forEach(function (a) {
-      var link = document.createElement('a');
-      link.className = 'landscape-card';
-      link.href = getArticleUrl(a);
-      link.setAttribute('data-article-id', a.id);
-      link.setAttribute('data-hero-img', a.heroImage);
-      if (a.videoId) {
-        link.setAttribute('data-video', a.videoId);
-        if (a.videoVertical) link.setAttribute('data-video-vertical', '');
-      }
+    // 依 sortOrder 排序；代表大圖優先取 featured（featuredOrder 最小），否則 sortOrder 最前
+    var sorted = articles.slice().sort(function (a, b) { return (a.sortOrder || 0) - (b.sortOrder || 0); });
+    var featured = sorted.filter(function (a) { return a.featured; })
+      .sort(function (a, b) { return (a.featuredOrder || 0) - (b.featuredOrder || 0); });
+    var hero = featured.length ? featured[0] : sorted[0];
+    // 章內陳列 = 其餘作品（排除代表作），保留完整清單不截斷
+    var rest = sorted.filter(function (a) { return a.id !== hero.id; });
 
-      var img = document.createElement('img');
-      img.src = a.heroImage;
-      img.alt = a.title;
-      img.loading = 'lazy';
-
-      var span = document.createElement('span');
-      span.textContent = a.title;
-
-      link.appendChild(img);
-      if (a.awards && a.awards.length) link.appendChild(buildAwardBadge(a.awards[0]));
-      link.appendChild(span);
-      rail.appendChild(link);
+    // ── 沉浸開場：滿寬大圖 + 左下漸層敘事 ──
+    var open = document.createElement('a');
+    open.className = 'chapter-open';
+    open.href = getArticleUrl(hero);
+    open.setAttribute('data-article-id', hero.id);
+    // 沿用現有 #detail/{id} 機制開 detail modal（比照其他卡片設定 detailOpenedFromPage）
+    open.addEventListener('click', function (e) {
+      e.preventDefault();
+      hidePopup();
+      detailOpenedFromPage = true;
+      window.location.hash = 'detail/' + hero.id;
     });
+
+    var openImg = document.createElement('img');
+    openImg.src = hero.heroImage;
+    openImg.alt = hero.title || meta.name;
+    openImg.loading = 'lazy';
+    open.appendChild(openImg);
+
+    var num = chapterNo < 10 ? '0' + chapterNo : '' + chapterNo;
+    var cap = document.createElement('div');
+    cap.className = 'chapter-open-cap';
+    cap.innerHTML =
+      '<div class="chapter-eyebrow"><span class="chapter-dot"></span>CHAPTER ' + num + ' · ' + meta.en + '</div>' +
+      '<h2 class="chapter-title"></h2>' +
+      '<p class="chapter-lead"></p>';
+    cap.querySelector('.chapter-title').textContent = meta.name;
+    cap.querySelector('.chapter-lead').textContent = meta.lead;
+    open.appendChild(cap);
+    section.appendChild(open);
+
+    // ── 章內拼貼陳列（masonry columns，大小交錯）──
+    if (rest.length) {
+      var lineup = document.createElement('div');
+      lineup.className = 'chapter-lineup';
+      rest.forEach(function (a) {
+        var link = document.createElement('a');
+        link.className = 'chapter-card';
+        link.href = getArticleUrl(a);
+        link.setAttribute('data-article-id', a.id);
+        link.setAttribute('data-hero-img', a.heroImage);
+        if (a.videoId) {
+          link.setAttribute('data-video', a.videoId);
+          if (a.videoVertical) link.setAttribute('data-video-vertical', '');
+        }
+
+        var img = document.createElement('img');
+        img.src = a.heroImage;
+        img.alt = a.title;
+        img.loading = 'lazy';
+
+        var span = document.createElement('span');
+        span.textContent = a.title;
+
+        link.appendChild(img);
+        if (a.awards && a.awards.length) link.appendChild(buildAwardBadge(a.awards[0]));
+        link.appendChild(span);
+        lineup.appendChild(link);
+      });
+      section.appendChild(lineup);
+    }
+
+    // ── 章末 CTA：看完整 N 件 XX 作品 ──
+    var more = document.createElement('a');
+    more.className = 'chapter-more';
+    more.href = meta.more;
+    more.innerHTML = '<span class="chapter-dot"></span>';
+    more.appendChild(document.createTextNode('看完整 ' + articles.length + ' 件' + meta.name + '作品 →'));
+    section.appendChild(more);
   }
 
   function renderAll() {
@@ -201,10 +261,11 @@
     var civil = articlesData.filter(function (a) { return a.category === 'civil'; });
 
     renderTop10(featured);
-    renderShelf('business', business);
-    renderShelf('party', party);
-    renderShelf('magic', magic);
-    renderShelf('civil', civil);
+    // 章節顯示順序沿用首頁現有分類順序（business→party→magic→civil = CHAPTER 01→04）
+    renderChapter('business', business, 1);
+    renderChapter('party', party, 2);
+    renderChapter('magic', magic, 3);
+    renderChapter('civil', civil, 4);
   }
 
   // ══════════════════════════════════════════
@@ -913,7 +974,7 @@
   // ══════════════════════════════════════════
 
   function rebindCardEvents() {
-    allCards = Array.from(document.querySelectorAll('.poster-card, .landscape-card'));
+    allCards = Array.from(document.querySelectorAll('.poster-card, .landscape-card, .chapter-card'));
 
     allCards.forEach(function (card) {
       card.addEventListener('mouseenter', function () { onCardEnter(card); });

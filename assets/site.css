@@ -1,16 +1,20 @@
 :root {
-  color-scheme: dark;
-  --bg: #141414;
-  --bg-deep: #0b0b0b;
-  --text: #ffffff;
-  --muted: rgba(255, 255, 255, 0.78);
-  --line: rgba(255, 255, 255, 0.14);
-  --accent: #e50914;
+  color-scheme: light;
+  /* ── 村山良作 CI 色票（鹽白編輯風 studio）── */
+  --salt: #F2F0EB;   /* 鹽白：頁面主底 */
+  --paper: #FBFAF8;  /* 紙白：卡片／浮起面 */
+  --ink: #222322;    /* 墨黑：主文字 */
+  --stone: #817C74;  /* 石灰：次要文字／分隔線 */
+  --point: #9B3E35;  /* 定位紅：小方點／細線／少量強調 */
+  /* 語意別名（沿用舊變數名，值換成新 CI） */
+  --bg: var(--salt);
+  --bg-deep: var(--paper);
+  --text: var(--ink);
+  --muted: var(--stone);
+  --line: rgba(129, 124, 116, 0.24);
+  --accent: var(--point);
   --wrap: min(1760px, calc(100vw - 28px));
-  --shadow: 0 18px 44px rgba(0, 0, 0, 0.36);
-  --gradient-gold: linear-gradient(135deg, #ffe28a 0%, #f5c645 45%, #d89a18 100%);
-  --gold-border: rgba(255, 236, 170, 0.9);
-  --gold-text: #2b1d00;
+  --shadow: 0 14px 34px rgba(34, 35, 34, 0.10);
 }
 
 *,
@@ -27,7 +31,8 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: "Sora", "Noto Sans TC", system-ui, sans-serif;
+  font-family: "Archivo", "Noto Sans TC", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
@@ -51,7 +56,8 @@ img {
   position: fixed;
   inset: 0 0 auto;
   z-index: 40;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.96), rgba(0, 0, 0, 0.88));
+  background: rgba(251, 250, 248, 0.92);
+  border-bottom: 1px solid var(--line);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -69,29 +75,33 @@ img {
   align-items: center;
 }
 
-.brand-logo {
-  height: 46px;
-  width: auto;
+/* 內嵌山形 emblem（CI：小尺寸只用獨立山形圖標） */
+.brand-emblem {
+  height: 38px;
+  width: 38px;
+  display: block;
+  flex: 0 0 auto;
 }
 
 .brand-text {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  margin-left: 10px;
+  gap: 2px;
+  margin-left: 11px;
 }
 
 .brand-name {
   font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1.2;
+  letter-spacing: 0.06em;
+  line-height: 1.15;
+  color: var(--ink);
 }
 
 .brand-tagline {
   font-size: 11px;
   color: var(--muted);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.08em;
   line-height: 1.2;
 }
 
@@ -100,26 +110,42 @@ img {
   align-items: center;
   gap: 26px;
   margin-right: auto;
-  margin-left: 20px;
+  margin-left: 28px;
 }
 
 .nav a,
 .tool-button {
-  font-size: 0.95rem;
+  font-size: 0.93rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--stone);
+  transition: color 160ms ease;
 }
 
+.nav a:hover,
+.tool-button:hover {
+  color: var(--ink);
+}
+
+/* is-active：紅色定位方點取代紅底線（CI 母題） */
 .nav a.is-active {
-  color: #fff;
-  padding-bottom: 3px;
-  border-bottom: 2px solid var(--accent);
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.nav a.is-active::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  background: var(--point);
+  flex: 0 0 auto;
 }
 
 .topbar-tools {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
 }
 
 .mobile-quick-links {
@@ -134,7 +160,7 @@ img {
 }
 
 .tool-button.is-active {
-  color: #fff;
+  color: var(--ink);
 }
 
 .avatar {
@@ -143,21 +169,22 @@ img {
   border-radius: 8px;
   display: grid;
   place-items: center;
-  background: linear-gradient(180deg, #d3333d, #8c0b14);
+  background: var(--point);
+  color: var(--salt);
   font-weight: 800;
 }
 
 /* ── SSR Featured (Phase 1.5, hidden after JS hydration) ── */
 
 .ssr-featured {
-  padding: 80px 0 40px;
-  background: var(--bg-deep, #0a0a0a);
-  color: rgba(255, 255, 255, 0.92);
+  padding: 96px 0 40px;
+  background: var(--salt);
+  color: var(--ink);
 }
 .ssr-featured-title {
   font-size: clamp(1.5rem, 2.4vw, 2rem);
   margin: 0 0 24px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
 }
 .ssr-featured-grid {
   display: grid;
@@ -168,8 +195,8 @@ img {
   display: block;
   text-decoration: none;
   color: inherit;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 8px;
+  background: var(--paper);
+  border: 1px solid var(--line);
   overflow: hidden;
   transition: transform 0.2s ease;
 }
@@ -190,7 +217,7 @@ img {
 }
 .ssr-featured-note {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--stone);
   margin: 16px 0 0;
 }
 body.js-ready .ssr-featured {
@@ -201,76 +228,73 @@ body.js-ready .ssr-featured {
 
 .hero {
   position: relative;
-  min-height: 88svh;
-  background: var(--bg-deep);
+  background: var(--salt);
   overflow: hidden;
 }
 
-.hero-bg,
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-}
-
-.hero-bg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(0.8) saturate(0.88);
-}
-
-.hero-overlay {
-  background:
-    linear-gradient(90deg, rgba(20, 20, 20, 0.94) 0%, rgba(20, 20, 20, 0.76) 27%, rgba(20, 20, 20, 0.18) 62%, rgba(20, 20, 20, 0.08) 100%),
-    linear-gradient(180deg, rgba(20, 20, 20, 0.16) 0%, rgba(20, 20, 20, 0.1) 50%, rgba(20, 20, 20, 0.98) 100%);
-}
-
+/* 編輯風雙欄：左文右框圖，克制留白 */
 .hero-content {
   position: relative;
   z-index: 2;
-  min-height: 88svh;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+  gap: clamp(32px, 5vw, 84px);
   align-items: center;
-  padding: 120px 0 160px;
+  padding: 128px 0 84px;
 }
 
 .hero-copy {
   max-width: 620px;
 }
 
+/* eyebrow：紅方點 + 英文品牌 */
 .hero-badge {
   display: inline-flex;
-  font-size: 0.78rem;
-  letter-spacing: 0.22em;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.76rem;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.86);
+  font-weight: 700;
+  color: var(--stone);
+}
+
+.hero-badge::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: var(--point);
+  flex: 0 0 auto;
 }
 
 .hero-copy h1 {
-  margin: 18px 0 0;
-  max-width: 8ch;
-  font-size: clamp(3.6rem, 8vw, 6.4rem);
-  line-height: 1.15;
-  letter-spacing: -0.06em;
+  margin: 22px 0 0;
+  max-width: 9ch;
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
 
 .hero-copy p {
-  margin: 18px 0 0;
-  color: var(--muted);
+  margin: 20px 0 0;
+  max-width: 32ch;
+  color: var(--stone);
   font-size: 1.05rem;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
 .hero-meta {
-  margin-top: 18px;
+  margin-top: 22px;
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
   font-size: 0.92rem;
+  color: var(--stone);
 }
 
 .meta-hot {
-  color: var(--accent);
+  color: var(--point);
   font-weight: 800;
 }
 
@@ -280,25 +304,63 @@ body.js-ready .ssr-featured {
   gap: 14px;
 }
 
+/* 右欄：框圖（暗調照片全出血於框內），JS 於此換圖/播預覽 */
+.hero-media {
+  position: relative;
+}
+
+.hero-frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+/* 定位紅方點：品質印記，貼在框左下外緣 */
+.hero-media::after {
+  content: "";
+  position: absolute;
+  left: -9px;
+  bottom: 34px;
+  width: 18px;
+  height: 18px;
+  background: var(--point);
+  z-index: 3;
+}
+
 .button {
-  min-height: 56px;
-  padding: 0 1.5rem;
-  border-radius: 6px;
+  min-height: 54px;
+  padding: 0 1.6rem;
+  border-radius: 2px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.02rem;
+  font-size: 1rem;
   font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
 }
 
 .button-primary {
-  background: #fff;
-  color: #000;
+  background: var(--ink);
+  color: var(--salt);
+  border: 1px solid var(--ink);
+}
+
+.button-primary:hover {
+  background: #000;
 }
 
 .button-secondary {
-  background: rgba(109, 109, 110, 0.76);
-  color: #fff;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--stone);
+}
+
+.button-secondary:hover {
+  border-color: var(--ink);
+  background: var(--paper);
 }
 
 /* ── Shelf / Content Rows ── */
@@ -306,16 +368,11 @@ body.js-ready .ssr-featured {
 .shelf {
   position: relative;
   z-index: 5;
-  margin-top: -84px;
-  padding: 0 0 28px;
-}
-
-.shelf + .shelf {
-  margin-top: 0;
+  padding: 28px 0 52px;
 }
 
 .section-head {
-  padding: 0 0 12px;
+  padding: 0 0 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -324,8 +381,22 @@ body.js-ready .ssr-featured {
 
 .section-head h2 {
   margin: 0;
-  font-size: 2.05rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.9rem;
   font-weight: 800;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+/* 紅方點母題：section 標題前的設計格線定位點 */
+.section-head h2::before {
+  content: "";
+  width: 11px;
+  height: 11px;
+  background: var(--point);
+  flex: 0 0 auto;
 }
 
 .shelf-arrows {
@@ -337,16 +408,18 @@ body.js-ready .ssr-featured {
 .shelf-arrow {
   width: 42px;
   height: 42px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--line);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  background: var(--paper);
+  color: var(--ink);
   font-size: 1.3rem;
   cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
 }
 
 .shelf-arrow:hover {
-  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--stone);
+  background: var(--salt);
 }
 
 .shelf-arrow[disabled] {
@@ -397,8 +470,7 @@ body.js-ready .ssr-featured {
   font-size: 16rem;
   line-height: 0.8;
   font-weight: 900;
-  color: #111;
-  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.22);
+  color: rgba(129, 124, 116, 0.24);
 }
 
 /* ── Hero Video Layer ── */
@@ -435,6 +507,12 @@ body.js-ready .ssr-featured {
 }
 
 .hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.96) contrast(1.02);
   transition: opacity 300ms ease;
 }
 
@@ -446,8 +524,8 @@ body.js-ready .ssr-featured {
 
 .hero-mute-toggle {
   position: absolute;
-  right: 0;
-  bottom: 26%;
+  right: 12px;
+  bottom: 12px;
   z-index: 6;
   width: 44px;
   height: 44px;
@@ -475,8 +553,8 @@ body.js-ready .ssr-featured {
 
 .poster-card.is-previewing,
 .landscape-card.is-previewing {
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
-  transform: scale(1.06);
+  box-shadow: 0 0 0 2px var(--point);
+  transform: translateY(-3px);
 }
 
 /* ── Cards ── */
@@ -487,14 +565,15 @@ body.js-ready .ssr-featured {
   z-index: 2;
   display: block;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 2px;
   box-shadow: var(--shadow);
-  transition: transform 180ms ease;
+  transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
 .poster-card:hover,
 .landscape-card:hover {
-  transform: scale(1.06);
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(34, 35, 34, 0.16);
 }
 
 .poster-card {
@@ -507,13 +586,34 @@ body.js-ready .ssr-featured {
   object-fit: cover;
 }
 
+/* 底部漸層遮罩：確保白字標題在任何明暗作品照上都清晰可讀 */
+.poster-card::after,
+.landscape-card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 48%;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.60) 0%,
+    rgba(0, 0, 0, 0.32) 45%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
 .poster-card span,
 .landscape-card span {
   position: absolute;
   inset: auto 12px 12px;
+  z-index: 2;
+  color: #fff;
   font-size: 1rem;
   font-weight: 700;
-  text-shadow: 0 10px 24px rgba(0, 0, 0, 0.9);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
 }
 
 .landscape-card img {
@@ -528,9 +628,10 @@ body.js-ready .ssr-featured {
   position: fixed;
   z-index: 100;
   width: 350px;
-  border-radius: 6px;
-  background: #181818;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.8);
+  border-radius: 3px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 48px rgba(34, 35, 34, 0.20);
   transform: scale(0.85);
   opacity: 0;
   transform-origin: center center;
@@ -617,10 +718,10 @@ body.js-ready .ssr-featured {
 .popup-btn {
   width: 36px;
   height: 36px;
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  border: 1.5px solid var(--stone);
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
+  background: transparent;
+  color: var(--ink);
   cursor: pointer;
   display: grid;
   place-items: center;
@@ -629,8 +730,8 @@ body.js-ready .ssr-featured {
 }
 
 .popup-btn:hover {
-  border-color: #fff;
-  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--ink);
+  background: var(--salt);
 }
 
 .popup-btn svg {
@@ -640,13 +741,13 @@ body.js-ready .ssr-featured {
 }
 
 .popup-btn-play {
-  background: #fff;
-  color: #000;
-  border-color: #fff;
+  background: var(--ink);
+  color: var(--salt);
+  border-color: var(--ink);
 }
 
 .popup-btn-play:hover {
-  background: rgba(255, 255, 255, 0.85);
+  background: #000;
 }
 
 .card-popup-meta {
@@ -659,17 +760,18 @@ body.js-ready .ssr-featured {
 .popup-tag {
   display: inline-block;
   padding: 2px 10px;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  background: var(--salt);
+  border: 1px solid var(--line);
   font-size: 0.78rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--stone);
 }
 
 .card-popup-desc {
   margin: 6px 0 0;
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--stone);
   line-height: 1.55;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -703,7 +805,7 @@ body.js-ready .ssr-featured {
 .card-popup-full-desc {
   margin: 0 0 12px;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--ink);
   line-height: 1.6;
 }
 
@@ -1157,7 +1259,7 @@ body.js-ready .ssr-featured {
 .footer-copy {
   margin: 12px 0 0;
   font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--stone);
 }
 
 /* ── Floating LINE FAB ── */
@@ -1260,11 +1362,11 @@ body.js-ready .ssr-featured {
 
   .mobile-quick-links a {
     flex: 0 0 auto;
-    padding: 7px 10px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    padding: 7px 12px;
+    border: 1px solid var(--line);
     border-radius: 999px;
-    background: rgba(20, 20, 20, 0.66);
-    color: rgba(255, 255, 255, 0.9);
+    background: var(--paper);
+    color: var(--ink);
     font-size: 0.82rem;
     font-weight: 700;
     line-height: 1;
@@ -1272,12 +1374,23 @@ body.js-ready .ssr-featured {
     white-space: nowrap;
   }
 
+  /* 行動裝置：圖文緊貼堆疊（文先、框圖後） */
   .hero-content {
-    padding-bottom: 120px;
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 104px 0 56px;
   }
 
   .hero-copy h1 {
-    font-size: clamp(3rem, 12vw, 5rem);
+    font-size: clamp(2.6rem, 11vw, 4rem);
+  }
+
+  .hero-copy p {
+    max-width: none;
+  }
+
+  .hero-frame {
+    aspect-ratio: 3 / 2;
   }
 
   .top10-rail {
@@ -1298,8 +1411,9 @@ body.js-ready .ssr-featured {
     min-height: 60px;
   }
 
-  .brand-logo {
-    height: 38px;
+  .brand-emblem {
+    height: 32px;
+    width: 32px;
   }
 
   .tool-button {
@@ -1367,19 +1481,18 @@ body.js-ready .ssr-featured {
   z-index: 3;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   padding: 5px 10px;
-  border-radius: 999px;
-  font-family: 'Sora', 'Noto Sans TC', sans-serif;
+  border-radius: 2px;
+  font-family: 'Archivo', 'Noto Sans TC', sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   line-height: 1;
-  color: var(--gold-text);
-  background: var(--gradient-gold);
-  border: 1px solid var(--gold-border);
-  box-shadow: 0 4px 14px rgba(212, 154, 24, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.15) inset;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid rgba(34, 35, 34, 0.14);
+  box-shadow: 0 4px 14px rgba(34, 35, 34, 0.20);
   white-space: nowrap;
   cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
@@ -1387,8 +1500,8 @@ body.js-ready .ssr-featured {
 
 .award-badge:hover,
 .award-badge:focus-visible {
-  transform: translateY(-1px) scale(1.04);
-  box-shadow: 0 8px 22px rgba(212, 154, 24, 0.7), 0 0 0 1px rgba(0, 0, 0, 0.2) inset;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(34, 35, 34, 0.28);
   outline: none;
 }
 
@@ -1399,47 +1512,282 @@ body.js-ready .ssr-featured {
 }
 
 .award-badge-silver {
-  background: linear-gradient(135deg, #f2f2f2 0%, #c8c8c8 50%, #8a8a8a 100%);
-  color: #1d1d1d;
-  border-color: rgba(240, 240, 240, 0.9);
-  box-shadow: 0 4px 14px rgba(120, 120, 120, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.15) inset;
+  color: var(--stone);
 }
 
 .award-badge-bronze {
-  background: linear-gradient(135deg, #f3c79a 0%, #c98347 50%, #8a4f1e 100%);
-  color: #2b1502;
-  border-color: rgba(250, 210, 170, 0.9);
-  box-shadow: 0 4px 14px rgba(170, 90, 30, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.15) inset;
+  color: var(--point);
 }
 
-/* Hero award ribbon */
+/* Hero award ribbon（編輯風：紙白底、細墨線、墨字） */
 .hero-award {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 14px;
-  padding: 8px 16px;
-  border-radius: 999px;
-  font-family: 'Sora', 'Noto Sans TC', sans-serif;
+  gap: 9px;
+  margin-top: 16px;
+  padding: 9px 16px;
+  border-radius: 2px;
+  font-family: 'Archivo', 'Noto Sans TC', sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
-  color: var(--gold-text);
-  background: var(--gradient-gold);
-  border: 1px solid var(--gold-border);
-  box-shadow: 0 6px 20px rgba(212, 154, 24, 0.5);
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
   text-decoration: none;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition: border-color 0.18s ease, transform 0.18s ease;
 }
 
 .hero-award:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 28px rgba(212, 154, 24, 0.6);
+  border-color: var(--stone);
 }
 
 .hero-award::before {
   content: "\1F3C6";
   font-size: 1rem;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   章節式相簿（分類 → 章節）：滿寬沉浸開場 + 章內拼貼陳列
+   全部使用新 class（chapter-*），不覆蓋首頁既有 shelf/card 樣式
+   ══════════════════════════════════════════════════════════════ */
+.chapter {
+  position: relative;
+  z-index: 5;
+  margin: 0 0 8px;
+}
+
+/* ── 沉浸開場：滿寬橫幅（桌面 21:9）＋ 左下漸層遮罩敘事 ── */
+.chapter-open {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  max-height: 80vh;
+  overflow: hidden;
+  background: var(--paper);
+  cursor: pointer;
+}
+
+.chapter-open img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms ease;
+}
+
+.chapter-open:hover img {
+  transform: scale(1.03);
+}
+
+/* 左下漸層遮罩：確保白字敘事在任何明暗大圖上都清晰可讀 */
+.chapter-open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.66) 0%,
+    rgba(0, 0, 0, 0.34) 42%,
+    rgba(0, 0, 0, 0) 74%
+  );
+}
+
+.chapter-open-cap {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  max-width: min(760px, 82vw);
+  padding: 40px clamp(20px, 5vw, 80px);
+  color: #fff;
+}
+
+.chapter-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 14px;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 紅方點母題：深色遮罩上補白框強化 */
+.chapter-dot {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  background: var(--point);
+}
+
+.chapter-open .chapter-dot {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
+}
+
+.chapter-title {
+  margin: 0 0 12px;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.chapter-lead {
+  margin: 0;
+  max-width: 42ch;
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* ── 章內拼貼陳列：masonry（columns，大小交錯、非呆板等格）── */
+.chapter-lineup {
+  columns: 3;
+  column-gap: 6px;
+  padding: 6px;
+  background: var(--salt);
+}
+
+.chapter-card {
+  position: relative;
+  display: block;
+  break-inside: avoid;
+  margin-bottom: 6px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--paper);
+  box-shadow: var(--shadow);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.chapter-lineup .chapter-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(34, 35, 34, 0.16);
+}
+
+.chapter-card img {
+  width: 100%;
+  display: block;
+  transition: transform 400ms ease;
+}
+
+.chapter-lineup .chapter-card:hover img {
+  transform: scale(1.04);
+}
+
+/* 底部漸層遮罩＋白字（比照首頁卡片，亮圖上標題可讀）*/
+.chapter-card::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50%;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.62) 0%,
+    rgba(0, 0, 0, 0.30) 46%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.chapter-card span {
+  position: absolute;
+  inset: auto 14px 12px;
+  z-index: 2;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+}
+
+/* ── 章末 CTA：看完整 N 件 ── */
+.chapter-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 6px 44px;
+  padding: 14px 20px;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--stone);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.chapter-more:hover {
+  color: var(--ink);
+  border-color: var(--stone);
+}
+
+.chapter-more .chapter-dot {
+  background: var(--point);
+}
+
+/* ── 章節式相簿：平板／手機 ── */
+@media (max-width: 980px) {
+  .chapter-lineup {
+    columns: 2;
+  }
+
+  .chapter-open-cap {
+    padding: 28px clamp(16px, 5vw, 40px);
+  }
+}
+
+@media (max-width: 760px) {
+  /* 手機：開場改 16:10、拼貼收 2 欄、緊貼堆疊 */
+  .chapter-open {
+    aspect-ratio: 16 / 10;
+    max-height: none;
+  }
+
+  .chapter-open-cap {
+    max-width: none;
+    padding: 20px 16px;
+  }
+
+  .chapter-eyebrow {
+    margin: 0 0 10px;
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+  }
+
+  .chapter-lineup {
+    column-gap: 4px;
+    padding: 4px;
+  }
+
+  .chapter-card {
+    margin-bottom: 4px;
+  }
+
+  .chapter-card span {
+    inset: auto 8px 8px;
+    font-size: 0.8rem;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .chapter-more {
+    margin: 4px 4px 32px;
+    font-size: 0.74rem;
+  }
 }
 
 

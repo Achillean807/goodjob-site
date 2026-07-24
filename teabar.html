@@ -10,954 +10,206 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="村花囍茶｜迎賓花果茶・客製LOGO・婚禮活動茶席｜村山良作">
 <meta property="og:description" content="村花囍茶——天然花果迎賓茶，客製專屬LOGO標籤，婚禮、品牌活動、記者會指定飲品。400ml瓶裝保冰配送，50瓶起訂，可加 Tea Bar 現場佈置。">
-<meta property="og:image" content="https://goodjob.weddingwishlove.com/assets/images/teabar/brand-event-20260515.jpg">
-<meta property="og:image:alt" content="村花囍茶品牌活動迎賓茶席現場">
+<meta property="og:image" content="https://goodjob.weddingwishlove.com/assets/images/og-goodjob.png">
+<meta property="og:image:alt" content="村山良作 GOODJOB DESIGN 品牌識別">
 <meta property="og:url" content="https://goodjob.weddingwishlove.com/teabar.html">
-<meta property="og:site_name" content="村山良作 MURAYAMA GOODJOB">
+<meta property="og:site_name" content="村山良作 GOODJOB DESIGN">
 <meta property="og:locale" content="zh_TW">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="村花囍茶｜迎賓花果茶・客製LOGO・婚禮活動茶席｜村山良作">
 <meta name="twitter:description" content="村花囍茶——天然花果迎賓茶，客製專屬LOGO標籤，婚禮、品牌活動、記者會指定飲品。400ml瓶裝保冰配送，50瓶起訂，可加 Tea Bar 現場佈置。">
-<meta name="twitter:image" content="https://goodjob.weddingwishlove.com/assets/images/teabar/brand-event-20260515.jpg">
-<meta name="twitter:image:alt" content="村花囍茶品牌活動迎賓茶席現場">
-<link rel="icon" href="/assets/images/murayama-favicon.png" type="image/png">
-<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+<meta name="twitter:image" content="https://goodjob.weddingwishlove.com/assets/images/og-goodjob.png">
+<meta name="twitter:image:alt" content="村山良作 GOODJOB DESIGN 品牌識別">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/images/favicon-512.png">
+<link rel="icon" type="image/png" sizes="256x256" href="/assets/images/favicon-256.png">
+<link rel="icon" type="image/png" sizes="128x128" href="/assets/images/favicon-128.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/images/favicon-64.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon-256.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Noto+Serif+TC:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <!-- AEO Crawler Tracking by Washinmura -->
 <link rel="aeo-profile" href="https://aeo.washinmura.jp/ai/goodjob.weddingwishlove.com/">
 <meta name="aeo-verified" content="washinmura-aeo-goodjob.weddingwishlove.com">
 <script src="https://aeo.washinmura.jp/widget/crawler-track.js" data-site="goodjob.weddingwishlove.com"></script>
+<link rel="stylesheet" href="./assets/site.css?v=20260724">
 <style>
-/* ─── Design Tokens ─────────────────────────────── */
+/* ── 迎賓花果茶 · 鹽白編輯風（本頁專屬，接續 site.css 的 CI tokens）── */
+/* 補齊 site.css 未定義、本頁沿用的別名，確保每個 var() 都能解析 */
 :root {
-  --bg: #141414;
-  --bg-deep: #0b0b0b;
-  --bg-card: #1a1a1a;
-  --text: #ffffff;
-  --text-muted: rgba(255,255,255,.7);
-  --line: rgba(255,255,255,.14);
-  --accent: #e50914;
-  --accent-light: #ff3d47;
-  --line-g: #06c755;
-  --wrap: min(1160px, calc(100vw - 48px));
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; font-size: 16px; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Sora', 'Noto Sans TC', system-ui, sans-serif;
-  line-height: 1.75;
-  overflow-x: hidden;
-}
-img { display: block; max-width: 100%; }
-a { color: var(--accent); text-decoration: none; }
-
-/* ─── Utilities ─────────────────────────────────── */
-.wrap    { width: var(--wrap); margin-inline: auto; }
-.serif   { font-family: 'Noto Serif TC', 'Cormorant Garamond', serif; }
-.en-disp { font-family: 'Cormorant Garamond', serif; }
-
-/* ─── Scroll Reveal ──────────────────────────────── */
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity .7s ease, transform .7s ease;
-}
-[data-reveal].is-visible {
-  opacity: 1;
-  transform: none;
+  --text-muted: var(--stone);
+  --bg-card: var(--paper);
+  --accent-light: #B8564C;
+  --line-g: #06C755;
 }
 
-/* ─── Topbar ─────────────────────────────────────── */
-.topbar {
-  position: fixed;
-  inset: 0 0 auto;
-  z-index: 50;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.96), rgba(0, 0, 0, 0.88));
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: box-shadow .3s;
-}
-.topbar.scrolled { box-shadow: 0 2px 24px rgba(0,0,0,.3); }
-.topbar-inner {
-  min-height: 68px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-}
-.topbar .wrap {
-  width: min(1760px, calc(100vw - 28px));
-  margin: 0 auto;
-}
-.brand {
-  display: inline-flex;
-  align-items: center;
-}
-.brand-logo { height: 46px; width: auto; }
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  margin-left: 10px;
-}
-.brand-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: .04em;
-  line-height: 1.2;
-}
-.brand-tagline {
-  font-size: 11px;
-  color: var(--text-muted);
-  letter-spacing: .02em;
-  line-height: 1.2;
-}
-.nav {
-  display: inline-flex;
-  align-items: center;
-  gap: 26px;
-  margin-right: auto;
-  margin-left: 20px;
-}
-.nav a,
-.tool-button {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: rgba(255,255,255,.92);
-}
-.nav a { opacity: .9; transition: opacity .3s; }
-.nav a:hover { opacity: 1; }
-.topbar-tools {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.tool-button {
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  text-decoration: none;
-  white-space: nowrap;
-}
-.tool-button.is-active { color: #fff; }
+/* 編輯風內容版心較窄；版頭／頁尾維持全站寬度（與首頁一致） */
+.wrap { width: min(1200px, calc(100vw - 48px)); }
+.topbar .wrap,
+.site-footer .wrap { width: min(1760px, calc(100vw - 28px)); }
 
-/* ─── Hero ───────────────────────────────────────── */
-.hero {
-  position: relative;
-  min-height: 100svh;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  overflow: hidden;
-}
-.hero-image-side {
-  position: relative;
-  overflow: hidden;
-}
-.hero-image-side img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 8s ease;
-}
+/* 當前頁 tool-button：紅方點母題（頁面內加點，不動 site.css 規則） */
+.tool-button.is-active { display: inline-flex; align-items: center; gap: 7px; }
+.tool-button.is-active::before { content: ""; width: 7px; height: 7px; background: var(--point); flex: 0 0 auto; }
+
+/* ── Scroll Reveal ── */
+[data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+[data-reveal].is-visible { opacity: 1; transform: none; }
+
+/* ── Hero（雙欄：圖 + 文）── */
+.tea-hero { position: relative; display: grid; grid-template-columns: 1fr 1fr; min-height: 560px; padding-top: 68px; background: var(--salt); overflow: hidden; }
+.hero-image-side { position: relative; overflow: hidden; }
+.hero-image-side img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 8s ease; }
 .hero-image-side:hover img { transform: scale(1.04); }
-.hero-text-side {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 120px 64px 80px 56px;
-  background: var(--bg-deep);
-  position: relative;
-}
-.hero-text-side::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  pointer-events: none;
-  opacity: .6;
-}
-.hero-eyebrow {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 13px;
-  font-style: italic;
-  letter-spacing: .25em;
-  color: var(--accent);
-  text-transform: uppercase;
-  margin-bottom: 20px;
-  position: relative;
-  padding-left: 32px;
-}
-.hero-eyebrow::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 24px;
-  height: 1px;
-  background: var(--accent);
-}
-.hero-h1 {
-  font-family: 'Noto Serif TC', serif;
-  font-size: clamp(3rem, 5vw, 4.5rem);
-  font-weight: 300;
-  line-height: 1.15;
-  color: var(--text);
-  letter-spacing: .04em;
-  margin-bottom: 8px;
-}
-.hero-h1 strong {
-  font-weight: 700;
-  display: block;
-  color: var(--accent);
-}
-.hero-en {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.1rem, 2vw, 1.4rem);
-  font-style: italic;
-  color: var(--text-muted);
-  font-weight: 300;
-  letter-spacing: .06em;
-  margin-bottom: 32px;
-}
-.hero-desc {
-  font-size: 15px;
-  color: var(--text-muted);
-  line-height: 1.9;
-  max-width: 360px;
-  margin-bottom: 12px;
-}
-.hero-collab {
-  font-size: 12px;
-  color: var(--text-muted);
-  letter-spacing: .08em;
-  margin-bottom: 40px;
-  font-family: 'Noto Serif TC', serif;
-}
-.hero-collab span { color: var(--accent); }
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 13px 32px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 4px;
-  letter-spacing: .05em;
-  transition: background .2s, transform .15s;
-}
-.btn-primary:hover { background: var(--accent-light); color: #fff; transform: translateY(-1px); }
-.btn-primary svg { width: 15px; height: 15px; fill: currentColor; }
-.btn-outline {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 13px 28px;
-  border: 1.5px solid var(--accent);
-  color: var(--accent);
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 4px;
-  letter-spacing: .05em;
-  transition: all .2s;
-}
-.btn-outline:hover { background: var(--accent); color: #fff; }
-.hero-scroll-hint {
-  position: absolute;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  font-size: 10px;
-  letter-spacing: .2em;
-  color: var(--text-muted);
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  text-transform: uppercase;
-}
-.scroll-line {
-  width: 1px;
-  height: 40px;
-  background: linear-gradient(to bottom, var(--accent), transparent);
-  animation: scrollLine 2s ease infinite;
-}
-@keyframes scrollLine {
-  0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
-  40%  { opacity: 1; }
-  100% { transform: scaleY(1); transform-origin: top; opacity: 0; }
-}
+.hero-text-side { display: flex; flex-direction: column; justify-content: center; padding: 72px 64px 72px 56px; background: var(--salt); }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--stone); margin-bottom: 22px; }
+.hero-eyebrow::before { content: ""; width: 9px; height: 9px; background: var(--point); flex: 0 0 auto; }
+.hero-h1 { font-size: clamp(2.6rem, 4.6vw, 4rem); font-weight: 800; line-height: 1.12; letter-spacing: -.01em; color: var(--ink); margin-bottom: 14px; }
+.hero-h1 strong { display: block; font-weight: 800; color: var(--point); }
+.hero-en { font-size: clamp(1rem, 1.6vw, 1.2rem); color: var(--stone); letter-spacing: .12em; margin-bottom: 28px; }
+.hero-desc { font-size: 15px; color: var(--stone); line-height: 1.9; max-width: 400px; margin-bottom: 14px; }
+.hero-collab { font-size: 13px; color: var(--stone); letter-spacing: .04em; margin-bottom: 36px; }
+.hero-collab span { color: var(--point); font-weight: 700; }
+.tea-hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 14px 30px; border-radius: 25px; background: var(--line-g); color: #fff; font-size: 14px; font-weight: 700; letter-spacing: .03em; transition: background .2s, transform .15s; }
+.btn-primary:hover { background: #05B34A; transform: translateY(-1px); color: #fff; }
+.btn-primary svg { width: 17px; height: 17px; fill: currentColor; }
+.btn-outline { display: inline-flex; align-items: center; gap: 6px; padding: 14px 28px; border-radius: 2px; border: 1px solid var(--stone); color: var(--ink); font-size: 14px; font-weight: 700; letter-spacing: .03em; transition: border-color .2s, background .2s; }
+.btn-outline:hover { border-color: var(--ink); background: var(--paper); }
+.hero-scroll-hint { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--stone); }
+.scroll-line { width: 1px; height: 38px; background: linear-gradient(to bottom, var(--point), transparent); animation: scrollLine 2s ease infinite; }
+@keyframes scrollLine { 0% { transform: scaleY(0); transform-origin: top; opacity: 0; } 40% { opacity: 1; } 100% { transform: scaleY(1); transform-origin: top; opacity: 0; } }
 
-/* ─── Specs Bar ──────────────────────────────────── */
-.specs-bar {
-  background: var(--bg-deep);
-  color: #fff;
-  padding: 28px 0;
-}
-.specs-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
-}
-.spec-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 16px 20px;
-  position: relative;
-}
-.spec-item + .spec-item::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 20%;
-  height: 60%;
-  width: 1px;
-  background: rgba(255,255,255,.1);
-}
-.spec-num {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.4rem;
-  font-weight: 300;
-  line-height: 1;
-  color: var(--accent-light);
-}
-.spec-unit {
-  font-size: 12px;
-  opacity: .6;
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  margin-bottom: 4px;
-}
-.spec-label {
-  font-size: 12px;
-  letter-spacing: .1em;
-  color: rgba(255,255,255,.7);
-}
+/* ── Specs Bar ── */
+.specs-bar { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 30px 0; }
+.specs-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+.spec-item { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 14px 20px; position: relative; }
+.spec-item + .spec-item::before { content: ""; position: absolute; left: 0; top: 18%; height: 64%; width: 1px; background: var(--line); }
+.spec-num { font-size: 2.4rem; font-weight: 800; line-height: 1; color: var(--point); letter-spacing: -.02em; }
+.spec-unit { font-size: 12px; color: var(--stone); letter-spacing: .04em; margin: 4px 0; text-transform: uppercase; }
+.spec-label { font-size: 12px; letter-spacing: .06em; color: var(--ink); font-weight: 600; }
 
-/* ─── Section Base ───────────────────────────────── */
-.section { padding: 96px 0; }
-.section-alt { background: var(--bg-deep); }
-.sec-eyebrow {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 12px;
-  font-style: italic;
-  letter-spacing: .3em;
-  color: var(--accent);
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-.sec-title {
-  font-family: 'Noto Serif TC', serif;
-  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: .04em;
-  line-height: 1.3;
-  margin-bottom: 16px;
-}
-.sec-lead {
-  font-size: 15px;
-  color: var(--text-muted);
-  line-height: 1.9;
-  max-width: 500px;
-}
+/* ── Section base ── */
+.section { padding: 88px 0; }
+.section-alt { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.sec-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--stone); margin-bottom: 12px; }
+.sec-eyebrow::before { content: ""; width: 8px; height: 8px; background: var(--point); flex: 0 0 auto; }
+.sec-title { font-size: clamp(1.6rem, 3.4vw, 2.3rem); font-weight: 800; color: var(--ink); letter-spacing: -.01em; line-height: 1.3; margin-bottom: 14px; }
+.sec-lead { font-size: 15px; color: var(--stone); line-height: 1.9; max-width: 500px; }
 
-/* ─── Features — Split Layout ────────────────────── */
-.features-list { display: flex; flex-direction: column; gap: 80px; }
-.feature-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 64px;
-  align-items: center;
-}
+/* ── Features（左右分欄）── */
+.features-list { display: flex; flex-direction: column; gap: 72px; }
+.feature-row { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
 .feature-row.reverse { direction: rtl; }
 .feature-row.reverse > * { direction: ltr; }
-.feature-img {
-  position: relative;
-  overflow: hidden;
-  border-radius: 2px;
-}
-.feature-img img {
-  width: 100%;
-  aspect-ratio: 4/3;
-  object-fit: cover;
-  transition: transform .6s ease;
-}
+.feature-img { position: relative; overflow: hidden; border: 1px solid var(--line); }
+.feature-img img { width: 100%; aspect-ratio: 4/3; object-fit: cover; transition: transform .6s ease; }
 .feature-img:hover img { transform: scale(1.04); }
-.feature-img-badge {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(0,0,0,.75);
-  backdrop-filter: blur(8px);
-  color: #fff;
-  font-size: 12px;
-  padding: 6px 14px;
-  border-radius: 2px;
-  letter-spacing: .08em;
-}
+.feature-img-badge { position: absolute; bottom: 16px; left: 16px; background: var(--ink); color: var(--salt); font-size: 12px; padding: 6px 14px; letter-spacing: .06em; }
 .feature-body { padding: 8px 0; }
-.feature-num {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 4rem;
-  font-weight: 300;
-  color: rgba(229,9,20,.15);
-  line-height: 1;
-  margin-bottom: -8px;
-  letter-spacing: -.02em;
-}
-.feature-title {
-  font-family: 'Noto Serif TC', serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 16px;
-  line-height: 1.35;
-}
-.feature-text {
-  font-size: 14.5px;
-  color: var(--text-muted);
-  line-height: 1.9;
-}
+.feature-num { font-size: 3.4rem; font-weight: 800; color: rgba(155,62,53,.18); line-height: 1; letter-spacing: -.03em; margin-bottom: 6px; }
+.feature-title { font-size: 1.5rem; font-weight: 800; color: var(--ink); margin-bottom: 14px; line-height: 1.35; }
+.feature-text { font-size: 14.5px; color: var(--stone); line-height: 1.9; }
 
-/* ─── Flavors ────────────────────────────────────── */
-.flavors-section {
-  background: var(--bg-deep);
-  padding: 96px 0;
-  position: relative;
-  overflow: hidden;
-}
-.flavors-bg-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'Noto Serif TC', serif;
-  font-size: clamp(80px, 15vw, 180px);
-  font-weight: 700;
-  color: rgba(255,255,255,.025);
-  white-space: nowrap;
-  pointer-events: none;
-  user-select: none;
-  letter-spacing: .1em;
-}
-.flavors-head {
-  text-align: center;
-  margin-bottom: 56px;
-  position: relative;
-  z-index: 2;
-}
-.flavors-head .sec-eyebrow { color: var(--accent-light); }
-.flavors-head .sec-title { color: #fff; }
-.flavors-head .sec-lead { color: rgba(255,255,255,.45); margin-inline: auto; text-align: center; }
-.flavors-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
-  position: relative;
-  z-index: 2;
-}
-.flavor-card {
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-  padding: 48px 36px;
-  text-align: center;
-  transition: background .3s, border-color .3s;
-  cursor: default;
-}
-.flavor-card:hover {
-  background: rgba(229,9,20,.15);
-  border-color: rgba(229,9,20,.3);
-}
-.flavor-glyph {
-  font-family: 'Noto Serif TC', serif;
-  font-size: 56px;
-  color: var(--accent-light);
-  line-height: 1;
-  margin-bottom: 20px;
-  display: block;
-  opacity: .7;
-  transition: opacity .3s, transform .3s;
-}
-.flavor-card:hover .flavor-glyph { opacity: 1; transform: scale(1.08); }
-.flavor-name {
-  font-family: 'Noto Serif TC', serif;
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 12px;
-  letter-spacing: .06em;
-}
-.flavor-en {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 13px;
-  font-style: italic;
-  color: var(--accent-light);
-  letter-spacing: .12em;
-  margin-bottom: 20px;
-  display: block;
-}
-.flavor-ingredients {
-  font-size: 13px;
-  color: rgba(255,255,255,.5);
-  line-height: 1.8;
-}
-.flavor-tag {
-  display: inline-block;
-  margin: 0 4px;
-  padding: 2px 10px;
-  border: 1px solid rgba(255,61,71,.3);
-  border-radius: 100px;
-  color: var(--accent-light);
-  font-size: 12px;
-  margin-top: 16px;
-}
+/* ── Flavors（亮色）── */
+.flavors-section { background: var(--salt); padding: 88px 0; position: relative; overflow: hidden; }
+.flavors-bg-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: clamp(80px, 15vw, 180px); font-weight: 800; color: rgba(34,35,34,.04); white-space: nowrap; pointer-events: none; user-select: none; letter-spacing: .1em; }
+.flavors-head { text-align: center; margin-bottom: 52px; position: relative; z-index: 2; }
+.flavors-head .sec-lead { margin-inline: auto; text-align: center; }
+.flavors-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; position: relative; z-index: 2; }
+.flavor-card { background: var(--paper); border: 1px solid var(--line); padding: 40px 32px; text-align: center; transition: border-color .3s, transform .3s; }
+.flavor-card:hover { border-color: var(--point); transform: translateY(-3px); }
+.flavor-img { width: 100%; aspect-ratio: 3/2; object-fit: cover; margin-bottom: 22px; }
+.flavor-glyph { font-size: 52px; color: var(--point); line-height: 1; margin-bottom: 18px; display: block; font-weight: 700; }
+.flavor-name { font-size: 1.4rem; font-weight: 800; color: var(--ink); margin-bottom: 10px; letter-spacing: .04em; }
+.flavor-en { font-size: 12px; color: var(--stone); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 18px; display: block; }
+.flavor-ingredients { font-size: 13px; color: var(--stone); line-height: 1.8; margin-bottom: 8px; }
+.flavor-tag { display: inline-block; margin: 8px 4px 0; padding: 3px 12px; border: 1px solid var(--line); border-radius: 100px; color: var(--point); font-size: 12px; }
 
-/* ─── Scenes (使用情境) ───────────────────────────── */
-.scenes-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-.scene-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 2px;
-  cursor: default;
-}
-.scene-card img {
-  width: 100%;
-  aspect-ratio: 3/4;
-  object-fit: cover;
-  transition: transform .6s ease;
-}
+/* ── Scenes（圖上暗色 overlay 保留白字）── */
+.scenes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.scene-card { position: relative; overflow: hidden; border: 1px solid var(--line); }
+.scene-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; transition: transform .6s ease; }
 .scene-card:hover img { transform: scale(1.05); }
-.scene-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.2) 50%, transparent 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 28px 24px;
-  transition: background .3s;
-}
-.scene-card:hover .scene-overlay {
-  background: linear-gradient(to top, rgba(0,0,0,.9) 0%, rgba(0,0,0,.3) 55%, transparent 100%);
-}
-.scene-tag {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 11px;
-  font-style: italic;
-  letter-spacing: .15em;
-  color: var(--accent-light);
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-.scene-title {
-  font-family: 'Noto Serif TC', serif;
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 8px;
-  line-height: 1.35;
-}
-.scene-desc {
-  font-size: 13px;
-  color: rgba(255,255,255,.65);
-  line-height: 1.7;
-}
+.scene-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,18,16,.85) 0%, rgba(20,18,16,.2) 52%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 26px 22px; }
+.scene-tag { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--point); margin-bottom: 6px; }
+.scene-overlay .scene-tag { color: #fff; opacity: .9; }
+.scene-title { font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.35; }
+.scene-desc { font-size: 13px; color: rgba(255,255,255,.82); line-height: 1.7; }
 
-/* ─── Collab Banner ──────────────────────────────── */
-.collab-banner {
-  position: relative;
-  overflow: hidden;
-}
-.collab-banner img {
-  width: 100%;
-  height: 360px;
-  object-fit: cover;
-  filter: brightness(.45);
-}
-.collab-content {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 40px 20px;
-}
-.collab-quote {
-  font-family: 'Noto Serif TC', serif;
-  font-size: clamp(1.3rem, 3vw, 2rem);
-  font-weight: 600;
-  color: #fff;
-  line-height: 1.5;
-  max-width: 600px;
-  letter-spacing: .04em;
-}
-.collab-credit {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 14px;
-  font-style: italic;
-  color: var(--accent-light);
-  margin-top: 16px;
-  letter-spacing: .15em;
-}
+/* ── Collab Banner（暗色圖 + 白字，保留）── */
+.collab-banner { position: relative; overflow: hidden; }
+.collab-banner img { width: 100%; height: 340px; object-fit: cover; filter: brightness(.5); }
+.collab-content { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; }
+.collab-quote { font-size: clamp(1.3rem, 3vw, 2rem); font-weight: 700; color: #fff; line-height: 1.5; max-width: 620px; letter-spacing: .02em; }
+.collab-credit { font-size: 14px; color: #fff; opacity: .85; margin-top: 16px; letter-spacing: .12em; }
 
-/* ─── Photo Grid ─────────────────────────────────── */
-.integration-section {
-  background: linear-gradient(180deg, var(--bg-deep) 0%, #111 100%);
-}
-.integration-copy {
-  max-width: 760px;
-  margin: 0 auto 40px;
-  color: var(--text-muted);
-  font-size: 15px;
-  line-height: 2;
-  text-align: center;
-}
-.integration-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-}
-.integration-card {
-  min-height: 220px;
-  padding: 30px 26px;
-  background: rgba(255,255,255,.045);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 4px;
-}
-.integration-card .scene-tag {
-  display: block;
-  margin-bottom: 12px;
-}
-.integration-card h3 {
-  color: #fff;
-  font-size: 1.12rem;
-  line-height: 1.45;
-  margin-bottom: 12px;
-}
-.integration-card p {
-  color: rgba(255,255,255,.62);
-  font-size: 13.5px;
-  line-height: 1.8;
-}
+/* ── Wedding Tea Bar 整合 ── */
+.integration-section { background: var(--paper); border-top: 1px solid var(--line); }
+.integration-copy { max-width: 760px; margin: 0 auto 40px; color: var(--stone); font-size: 15px; line-height: 2; text-align: center; }
+.integration-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.integration-card { min-height: 200px; padding: 30px 26px; background: var(--salt); border: 1px solid var(--line); }
+.integration-card .scene-tag { display: block; margin-bottom: 12px; color: var(--point); }
+.integration-card h3 { color: var(--ink); font-size: 1.12rem; font-weight: 700; line-height: 1.45; margin-bottom: 12px; }
+.integration-card p { color: var(--stone); font-size: 13.5px; line-height: 1.8; }
 
+/* ── Photo Grid（純圖）── */
 .photo-section { padding: 0; overflow: hidden; }
-.photo-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 3px;
-}
+.photo-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: auto auto; gap: 3px; }
 .photo-item { overflow: hidden; }
-.photo-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform .6s ease;
-}
+.photo-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
 .photo-item:hover img { transform: scale(1.04); }
 .photo-item.tall { grid-row: span 2; }
-.photo-item.tall img { aspect-ratio: unset; min-height: 480px; max-height: 680px; }
+.photo-item.tall img { aspect-ratio: unset; min-height: 460px; max-height: 660px; }
 .photo-item:not(.tall) img { aspect-ratio: 4/3; }
 
-/* ── Flavor images ─── */
-.flavor-img {
-  width: 100%;
-  aspect-ratio: 3/2;
-  object-fit: cover;
-  border-radius: 2px;
-  margin-bottom: 24px;
-  opacity: .85;
-  transition: opacity .3s;
-}
-.flavor-card:hover .flavor-img { opacity: 1; }
+/* ── Pricing ── */
+.price-img { width: 100%; aspect-ratio: 3/2; object-fit: cover; margin-bottom: 20px; border: 1px solid var(--line); }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.price-card { padding: 36px 30px; background: var(--paper); border: 1px solid var(--line); position: relative; transition: border-color .3s, transform .3s; }
+.price-card:hover { border-color: var(--point); transform: translateY(-3px); }
+.price-card.featured { border-color: var(--point); border-width: 1.5px; }
+.featured-badge { display: inline-block; padding: 3px 12px; background: var(--point); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .08em; margin-bottom: 16px; text-transform: uppercase; }
+.price-title { font-size: 1.2rem; font-weight: 800; color: var(--ink); margin-bottom: 8px; }
+.price-label { font-size: 2.6rem; font-weight: 800; color: var(--point); line-height: 1.1; letter-spacing: -.02em; }
+.price-tag { font-size: 13px; color: var(--stone); margin-bottom: 22px; }
+.price-card ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.price-card li { font-size: 13.5px; color: var(--ink); line-height: 1.6; padding: 0 0 8px 18px; border-bottom: 1px solid var(--line); position: relative; }
+.price-card li:last-child { border-bottom: 0; }
+.price-card li::before { content: "\2726"; position: absolute; left: 0; color: var(--point); font-size: 8px; top: 5px; }
 
-/* ── Pricing images ── */
-.price-img {
-  width: 100%;
-  aspect-ratio: 3/2;
-  object-fit: cover;
-  margin-bottom: 20px;
-}
+/* ── Testimonials ── */
+.testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.testi-card { background: var(--paper); padding: 32px 28px; border: 1px solid var(--line); position: relative; transition: border-color .3s, transform .3s; }
+.testi-card:hover { border-color: var(--point); transform: translateY(-3px); }
+.testi-card::before { content: "\201C"; font-size: 72px; color: rgba(155,62,53,.16); position: absolute; top: 8px; left: 18px; line-height: 1; pointer-events: none; font-weight: 800; }
+.testi-quote { font-size: 14px; line-height: 1.85; color: var(--ink); position: relative; z-index: 1; margin-bottom: 20px; padding-top: 24px; }
+.testi-cite { display: flex; align-items: center; gap: 10px; }
+.testi-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--point); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+.testi-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+.testi-role { font-size: 12px; color: var(--stone); }
 
-/* ─── Pricing ────────────────────────────────────── */
-.pricing-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  border: 1.5px solid rgba(255,255,255,.1);
-  border-radius: 4px;
-  overflow: hidden;
-}
-.price-card {
-  padding: 40px 32px;
-  border-right: 1px solid rgba(255,255,255,.1);
-  position: relative;
-  transition: background .3s;
-}
-.price-card:last-child { border-right: none; }
-.price-card.featured {
-  background: var(--bg-deep);
-  color: #fff;
-}
-.price-card.featured .price-label { color: var(--accent-light); }
-.price-card.featured .price-tag { color: rgba(255,255,255,.45); }
-.price-card.featured li { color: rgba(255,255,255,.6); border-color: rgba(255,255,255,.07); }
-.price-card.featured li::before { color: var(--accent-light); }
-.price-card.featured .price-title { color: #fff; }
-.featured-badge {
-  display: inline-block;
-  padding: 3px 12px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .1em;
-  border-radius: 2px;
-  margin-bottom: 16px;
-  text-transform: uppercase;
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-}
-.price-title {
-  font-family: 'Noto Serif TC', serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 8px;
-}
-.price-label {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3rem;
-  font-weight: 300;
-  color: var(--accent);
-  line-height: 1.1;
-}
-.price-tag {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-bottom: 24px;
-}
-.price-card ul {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.price-card li {
-  font-size: 13.5px;
-  color: var(--text);
-  line-height: 1.6;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255,255,255,.07);
-  padding-left: 18px;
-  position: relative;
-}
-.price-card li::before {
-  content: '✦';
-  position: absolute;
-  left: 0;
-  color: var(--accent);
-  font-size: 8px;
-  top: 5px;
-}
+/* ── CTA ── */
+.cta-section { position: relative; overflow: hidden; background: var(--paper); border-top: 1px solid var(--line); padding: 92px 0; }
+.cta-deco { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(155,62,53,.08) 0%, transparent 70%), radial-gradient(ellipse 40% 60% at 20% 80%, rgba(155,62,53,.05) 0%, transparent 60%); pointer-events: none; }
+.cta-inner { position: relative; text-align: center; max-width: 680px; margin: 0 auto; }
+.cta-tag { display: inline-block; padding: 6px 20px; border: 1px solid var(--line); color: var(--point); font-size: 13px; letter-spacing: .14em; border-radius: 100px; margin-bottom: 26px; }
+.cta-title { font-size: clamp(1.6rem, 3.4vw, 2.5rem); font-weight: 800; color: var(--ink); line-height: 1.4; margin-bottom: 16px; letter-spacing: -.01em; }
+.cta-desc { font-size: 15px; color: var(--stone); line-height: 1.9; margin-bottom: 34px; }
+.cta-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
 
-/* ─── Testimonials ───────────────────────────────── */
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-.testi-card {
-  background: var(--bg-card);
-  border-radius: 2px;
-  padding: 32px 28px;
-  border: 1px solid var(--line);
-  position: relative;
-  transition: box-shadow .3s, transform .3s;
-}
-.testi-card:hover {
-  box-shadow: 0 12px 40px rgba(0,0,0,.3);
-  transform: translateY(-3px);
-}
-.testi-card::before {
-  content: '\201C';
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 80px;
-  color: rgba(229,9,20,.15);
-  position: absolute;
-  top: 10px;
-  left: 20px;
-  line-height: 1;
-  pointer-events: none;
-}
-.testi-quote {
-  font-size: 14px;
-  line-height: 1.85;
-  color: var(--text);
-  position: relative;
-  z-index: 1;
-  margin-bottom: 20px;
-  padding-top: 24px;
-}
-.testi-cite {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.testi-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(229,9,20,.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Noto Serif TC', serif;
-  font-size: 14px;
-  color: var(--accent);
-  font-weight: 600;
-  flex-shrink: 0;
-}
-.testi-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-}
-.testi-role {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-/* ─── CTA Section ────────────────────────────────── */
-.cta-section {
-  position: relative;
-  overflow: hidden;
-  background: var(--bg-deep);
-  padding: 100px 0;
-}
-.cta-deco {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 60% 80% at 80% 50%, rgba(229,9,20,.1) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 60% at 20% 80%, rgba(229,9,20,.06) 0%, transparent 60%);
-  pointer-events: none;
-}
-.cta-inner {
-  position: relative;
-  text-align: center;
-  max-width: 680px;
-  margin: 0 auto;
-}
-.cta-tag {
-  display: inline-block;
-  padding: 6px 20px;
-  border: 1px solid rgba(229,9,20,.3);
-  color: var(--accent);
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: 13px;
-  letter-spacing: .2em;
-  border-radius: 100px;
-  margin-bottom: 28px;
-}
-.cta-title {
-  font-family: 'Noto Serif TC', serif;
-  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.4;
-  margin-bottom: 16px;
-  letter-spacing: .04em;
-}
-.cta-desc {
-  font-size: 15px;
-  color: var(--text-muted);
-  line-height: 1.9;
-  margin-bottom: 36px;
-}
-.cta-actions {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-/* ─── Footer ─────────────────────────────────────── */
-.site-footer {
-  background: var(--bg-deep);
-  padding: 40px 24px;
-  text-align: center;
-}
-.footer-brand {
-  font-family: 'Noto Serif TC', serif;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--accent-light);
-  letter-spacing: .08em;
-  margin-bottom: 6px;
-}
-.footer-copy {
-  font-size: 12px;
-  color: rgba(255,255,255,.3);
-}
-
-/* ─── FAB ────────────────────────────────────────── */
-.fab {
-  position: fixed;
-  bottom: 28px;
-  right: 28px;
-  z-index: 99;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--line-g);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 20px rgba(6,199,85,.35);
-  transition: transform .2s, box-shadow .2s;
-}
-.fab:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(6,199,85,.45); }
-.fab svg { width: 26px; height: 26px; fill: #fff; }
-
-/* ─── Responsive ─────────────────────────────────── */
+/* ── Responsive ── */
 @media (max-width: 960px) {
-  .hero { grid-template-columns: 1fr; }
-  .hero-image-side { height: 55vw; min-height: 260px; max-height: 400px; }
-  .hero-image-side img { position: static; width: 100%; height: 100%; }
-  .hero-text-side { padding: 60px 32px 56px; }
-  .feature-row,
-  .feature-row.reverse { grid-template-columns: 1fr; direction: ltr; gap: 28px; }
+  .tea-hero { grid-template-columns: 1fr; }
+  .hero-image-side { order: 2; height: 62vw; min-height: 260px; max-height: 420px; }
+  .hero-image-side img { position: static; }
+  .hero-text-side { order: 1; padding: 96px 28px 40px; }
+  .hero-scroll-hint { display: none; }
+  .feature-row, .feature-row.reverse { grid-template-columns: 1fr; direction: ltr; gap: 24px; }
   .feature-row.reverse .feature-img { order: -1; }
   .flavors-grid { grid-template-columns: 1fr; }
   .pricing-grid { grid-template-columns: 1fr; }
-  .price-card { border-right: none; border-bottom: 1px solid rgba(255,255,255,.1); }
-  .price-card:last-child { border-bottom: none; }
   .price-card.featured { order: -1; }
   .testimonials-grid { grid-template-columns: 1fr 1fr; }
   .photo-grid { grid-template-columns: 1fr 1fr; }
@@ -969,16 +221,10 @@ a { color: var(--accent); text-decoration: none; }
   .integration-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
-  .topbar .wrap { width: min(100vw - 16px, 1760px); }
-  .nav { display: none; }
-  .brand-tagline { display: none; }
-  .topbar-tools { gap: 10px; }
-  .tool-button { font-size: 0.84rem; }
-  .hero-text-side { padding: 48px 24px 48px; }
-  .section { padding: 64px 0; }
+  .section { padding: 60px 0; }
   .testimonials-grid { grid-template-columns: 1fr; }
-  .photo-grid { grid-template-columns: 1fr 1fr; }
   .scenes-grid { grid-template-columns: 1fr; }
+  .hero-h1 { font-size: clamp(2.2rem, 9vw, 3rem); }
 }
 </style>
 <script type="application/ld+json">
@@ -1076,13 +322,16 @@ a { color: var(--accent); text-decoration: none; }
 </head>
 <body>
 <!-- Topbar -->
-<header class="topbar" id="topbar">
+<header class="topbar">
   <div class="wrap topbar-inner">
-    <a class="brand" href="./index.html" aria-label="村山良作首頁">
-      <img class="brand-logo" src="./assets/murayama-logo-white.png" alt="村山良作">
+    <a class="brand" href="./index.html" aria-label="村山良作 GOODJOB DESIGN 首頁">
+      <svg class="brand-emblem" viewBox="0 0 1000 1000" role="img" aria-label="村山良作">
+          <path fill="#222322" d="M80 100 340 260v350H80zm0 535h260v205H80zM370 270l130 100 130-100v340H370zm0 365h260v205H370zM660 260l260-160v510H660zm0 375h260v205H660z"/>
+          <rect x="468" y="604" width="64" height="64" fill="#9B3E35" stroke="#F2F0EB" stroke-width="14"/>
+        </svg>
       <div class="brand-text">
         <span class="brand-name">村山良作</span>
-        <span class="brand-tagline">品牌活動・主題場景・展場空間</span>
+        <span class="brand-tagline">商業設計・場景製作</span>
       </div>
     </a>
     <nav class="nav">
@@ -1098,10 +347,19 @@ a { color: var(--accent); text-decoration: none; }
       <a class="tool-button" href="./workflow.html" aria-label="合作流程">合作流程</a>
     </div>
   </div>
+  <nav class="mobile-quick-links" aria-label="手機版主要入口">
+    <a href="/services/business-event/">主題活動</a>
+    <a href="/services/party-spring-banquet/">春酒尾牙</a>
+    <a href="/services/magic-academy/">魔法學院</a>
+    <a href="/services/civil-makeover/">戶政改造</a>
+    <a href="/teabar.html">迎賓花果茶</a>
+    <a href="./sort-hat/">分類帽</a>
+    <a href="./workflow.html">合作流程</a>
+  </nav>
 </header>
 
 <!-- Hero: Split Layout -->
-<section class="hero" aria-label="村花囍茶 主視覺">
+<section class="tea-hero" aria-label="村花囍茶 主視覺">
   <div class="hero-image-side">
     <img
       src="./assets/images/teabar/dsc06116.webp"
@@ -1121,7 +379,7 @@ a { color: var(--accent); text-decoration: none; }
     <p class="hero-collab" data-reveal>
       <span>村花弄囍</span> × 太保制餅 聯名出品
     </p>
-    <div class="hero-actions" data-reveal>
+    <div class="tea-hero-actions" data-reveal>
       <a class="btn-primary" href="https://lin.ee/P2HRySj" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
         立即詢問
@@ -1525,24 +783,22 @@ a { color: var(--accent); text-decoration: none; }
 
 <!-- Footer -->
 <footer class="site-footer">
-  <p class="footer-brand">村花囍茶｜村花弄囍 × 太保制餅</p>
-  <p class="footer-copy">&copy; 2025 村山良作 MURAYAMA GOODJOB. All rights reserved.</p>
+  <div class="wrap footer-inner">
+    <a class="button button-line footer-cta" href="https://lin.ee/P2HRySj" target="_blank" rel="noopener">
+      <svg class="line-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+      聯絡我們
+    </a>
+    <p class="footer-tagline">村花囍茶｜村花弄囍 × 太保制餅・迎賓有禮，始於一瓶。</p>
+    <p class="footer-copy">&copy; 2026 村山良作 GOODJOB DESIGN. All rights reserved.</p>
+  </div>
 </footer>
 
 <!-- Floating LINE FAB -->
-<a class="fab" href="https://lin.ee/P2HRySj" target="_blank" rel="noopener" aria-label="LINE 聯絡我們">
-  <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+<a class="fab-line" href="https://lin.ee/P2HRySj" target="_blank" rel="noopener" aria-label="LINE 聯絡我們">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
 </a>
 
 <script>
-// Topbar scroll shadow
-(function () {
-  var bar = document.getElementById('topbar');
-  window.addEventListener('scroll', function () {
-    bar.classList.toggle('scrolled', window.scrollY > 20);
-  }, { passive: true });
-})();
-
 // Scroll Reveal via IntersectionObserver
 (function () {
   var items = document.querySelectorAll('[data-reveal]');

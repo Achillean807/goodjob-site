@@ -84,6 +84,8 @@ admin UI ──POST /api/upload/{id}──→ server.py ──→ 存檔 assets/
 | 2026-03 | JSON 檔案作為資料庫 | 27 篇文章規模不需 SQL，JSON 檔直接版控 | 不支援併發寫入，但單一管理員場景足夠（2026-05 已切換至 PostgreSQL，正式源共 64 篇） |
 | 2026-04 | 移除 `WWW-Authenticate` header | 避免瀏覽器彈出原生登入視窗，改由前端 CMS 自行處理 401 | 前端需自行管理 auth 狀態 |
 | 2026-04 | 圖片上傳改為扁平目錄 | 原本存到 `images/{id}/` 子目錄，前端讀取路徑不一致 | 所有圖片統一存放 `assets/images/` |
+| 2026-07-24 | 視覺基調 Netflix 暗色 → 鹽白編輯風 studio（新 CI GOODJOB DESIGN） | 新 CI 把品牌重定位為「商業設計事務所」；作品多為主題場景，適合鹽白編輯風＋沉浸章節而非深色縮圖牆 | 首頁+teabar+workflow 已改並驗收；wedding-packages/admin/SSR 進行中，**未部署**（詳見 CLAUDE.md changelog 2026-07-24） |
+| 2026-07-24 | 首頁作品區改「章節式相簿」 | 村長要「有創意的相簿」；每個分類是一個被打造的世界，縮圖牆糟蹋作品 | 4 分類=4 章節，沉浸開場+masonry；`site.js` renderChapter，沿用 detail modal |
 
 ### 技術選型
 
