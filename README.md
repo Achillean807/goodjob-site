@@ -1,119 +1,123 @@
-# 村山良作 MURAYAMA GOODJOB
+# 村山良作 GOODJOB DESIGN
 
-> 2026-05-05 最新部署狀態：正式站 runtime 資料已改由 PostgreSQL `goodjob_site` 管理。作品文案、相簿圖片 URL/順序、帳號、權限與設定都在 PostgreSQL；圖片檔本體在 Cloudflare R2/CDN。`data/articles.json`、`data/accounts.json`、`data/config.json` 只作為舊資料/備份材料，不再是正式資料源，也不可用部署覆蓋。詳見 `docs/村山良作-部署資訊清單.md`。
+[正式官網](https://goodjob.weddingwishlove.com/) · 品牌活動、主題場景與展場空間作品集
 
-品牌活動・主題場景・展場空間 — 作品集展示網站。
+村山良作是「村花弄囍」旗下的活動設計品牌。網站以鹽白編輯風 CI 呈現作品，前端不需要建置流程；Python 服務負責靜態檔案、作品 API、管理後台與 SEO 作品頁。
 
-## 概述
+## 目前狀態
 
-村山良作是「村花弄囍」旗下的活動佈置品牌官網。以 Netflix 深色主題風格呈現，採用純 HTML/CSS/JS 靜態站架構，搭配 Python stdlib HTTP server 提供 REST API，實現零框架、零依賴的輕量部署。
+- 正式站：`https://goodjob.weddingwishlove.com/`
+- 正式資料：PostgreSQL `goodjob_site`（64 篇作品）
+- 作品圖片：Cloudflare R2／`goodjob-img.weddingwishlove.com`
+- 正式服務：`murayama-goodjob.service`，監聽 `127.0.0.1:10814`
+- 視覺系統：SALT `#F2F0EB`、INK `#222322`、STONE `#817C74`、POINT `#9B3E35`
 
-## 特性
+> `data/articles.json`、`data/accounts.json`、`data/config.json` 只供舊資料或本機 fallback 使用，不是正式資料源，部署時不可覆蓋 production runtime。
 
-- **Netflix 風格介面**：深色主題（`#141414`）搭配金色強調（`#c4a44a`），作品以橫向捲軸展示
-- **四大分類**：主題活動、春酒尾牙、魔法學院、戶政改造
-- **SPA 架構**：Hash-based routing，作品詳情以 modal 呈現，含 YouTube 影片嵌入與 Lightbox 圖庫
-- **CMS 後台**：`/controlcenter/` 單頁管理介面，支援拖曳排序、圖片上傳、即時預覽
-- **零依賴部署**：Python 3 stdlib 即可運行，無需 pip install
+## 功能
 
-## 快速開始
+- 章節式作品相簿、hover 預覽、詳情 modal、Lightbox 與 YouTube 播放
+- 主題活動、春酒尾牙、魔法學院、戶政改造四類作品
+- `/works/{id}` 動態 SSR 作品頁與 JSON-LD `CreativeWork`
+- `/sitemap.xml` 動態站點地圖
+- `/controlcenter/` CMS：作品、相簿、帳號、權限與報價單管理
+- 圖片上傳自動轉 WebP 並寫入 Cloudflare R2
 
-```bash
-# 本地開發
-cd src
-python3 server.py --port 8000
-# 瀏覽 http://localhost:8000
+## 架構
 
-# 正式環境
-python3 server.py --port 10814
+```text
+Cloudflare Tunnel
+        │
+        ▼
+server.py :10814
+├── HTML / CSS / Vanilla JS
+├── REST API /api/*
+├── SSR /works/{id}
+└── sitemap.xml
+        │
+        ├── PostgreSQL goodjob_site（內容、排序、帳號與設定）
+        └── Cloudflare R2（作品圖片本體）
 ```
 
-## 頁面總覽
+| 元件 | 用途 |
+|---|---|
+| `index.html` | 首頁與 SPA 外殼 |
+| `assets/site.js` | 作品資料、章節相簿、詳情 modal 與 hash routing |
+| `assets/site.css` | 全站 CI tokens 與響應式樣式 |
+| `server.py` | 靜態服務、REST API、PostgreSQL、R2 上傳與 SSR |
+| `admin/` | `/controlcenter/` 管理介面 |
+| `services/` | 四類服務落地頁 |
+| `wedding-packages/` | 室內與戶外婚禮套組頁 |
+| `docs/` | 部署、R2、作品新增與災難復原手冊 |
+
+## 頁面
 
 | 路徑 | 說明 |
-|------|------|
-| `/` | 首頁 — Hero 輪播 + 精選作品 + 四大分類作品列 |
-| `/teabar.html` | 村花囍茶 — 迎賓花果茶方案展示 |
-| `/workflow.html` | 合作流程 — 四步合作說明 + FAQ |
-| `/controlcenter/` | CMS 後台 — 文章 CRUD、圖片管理 |
-| `/sort-hat/` | 分類帽 — 婚禮座位查詢互動系統（銷售頁） |
-| `/wedding-packages/` | 婚禮套組 — 室內/戶外佈置方案展示 |
+|---|---|
+| `/` | 首頁、精選作品與四類章節式相簿 |
+| `/services/business-event/` | 主題活動 |
+| `/services/party-spring-banquet/` | 春酒尾牙 |
+| `/services/magic-academy/` | 魔法學院 |
+| `/services/civil-makeover/` | 戶政改造 |
+| `/teabar.html` | 迎賓花果茶 |
+| `/workflow.html` | 合作流程 |
+| `/wedding-packages/` | 婚禮套組 |
+| `/sort-hat/` | 分類帽互動工具 |
+| `/controlcenter/` | CMS 後台 |
 
-## REST API
+## 本機開發
 
-| 方法 | 端點 | 驗證 | 說明 |
-|------|------|------|------|
-| GET | `/api/articles` | 否 | 取得全部作品 |
-| GET | `/api/images/{id}` | 否 | 特定作品圖片清單 |
-| POST | `/api/articles` | Basic | 新增作品 |
-| PUT | `/api/articles/{id}` | Basic | 更新作品 |
-| DELETE | `/api/articles/{id}` | Basic | 刪除作品 |
-| POST | `/api/upload/{id}` | Basic | 上傳圖片 |
-
-驗證方式：HTTP Basic Auth，密碼以 salted SHA-256 hash 儲存於 `data/config.json`。
-
-## 目錄結構
-
-```
-src/
-├── index.html              # 首頁（SPA 入口）
-├── teabar.html             # 村花囍茶
-├── workflow.html           # 合作流程
-├── server.py               # Python HTTP server + REST API（~550 行）
-├── robots.txt              # 爬蟲規則
-├── sitemap.xml             # 站點地圖
-├── llms.txt                # LLM 可讀品牌摘要（AEO）
-├── assets/
-│   ├── site.css            # 全站樣式（~1260 行）
-│   ├── site.js             # SPA 前端邏輯（~1030 行）
-│   ├── images/             # 作品圖片
-│   └── *.png               # Logo 與 favicon
-├── data/
-│   ├── articles.json       # 舊資料備份（正式源 = PostgreSQL `goodjob_site.articles`，64 篇）
-│   ├── config.json         # 管理員帳密設定
-│   └── wp_texts.json       # WordPress 原始文案備份
-├── admin/
-│   └── index.html          # CMS 後台（單檔）
-├── sort-hat/
-│   ├── index.html          # 分類帽銷售頁（單檔）
-│   └── images/             # 銷售頁用圖
-└── wedding-packages/
-    ├── index.html           # 室內婚禮套組
-    ├── outdoor.html         # 戶外婚禮套組
-    └── images/              # 套組展示圖
-```
-
-## 資料模型
-
-每篇作品（`articles.json`）包含以下欄位：
-
-| 欄位 | 類型 | 說明 |
-|------|------|------|
-| `id` | string | 唯一識別（kebab-case） |
-| `title` | string | 顯示標題 |
-| `description` | string | 純文字（空行分段，前端 pre-wrap 渲染，禁 HTML 標籤）|
-| `category` | enum | `business` / `party` / `magic` / `civil` |
-| `featured` | boolean | 是否為精選作品 |
-| `featuredOrder` | number | 精選排序 |
-| `heroImage` | string | 主視覺圖片路徑 |
-| `images` | string[] | 圖庫圖片路徑陣列 |
-| `videoId` | string? | YouTube 影片 ID |
-| `videoVertical` | boolean | 是否為直式影片 |
-| `sortOrder` | number | 分類內排序 |
-
-## 部署
+正式環境要求 PostgreSQL。單純做本機前端 smoke test 時，請明確允許獨立 SQLite，避免碰到 production 資料：
 
 ```bash
-# SCP 部署到正式主機
-scp -r src/* achilean@100.102.51.64:/srv/weddingwish/murayama-goodjob-site/
+GOODJOB_ALLOW_SQLITE=1 \
+GOODJOB_DB_PATH=/tmp/goodjob-local.sqlite3 \
+python3 server.py --port 8000
+```
 
-# 若修改 server.py，需重啟服務
+開啟 `http://localhost:8000/`。如需把舊 JSON 備份 seed 到這個暫存 DB，另加 `GOODJOB_ALLOW_JSON_SEED=1`；正式主機不可設定這個值。
+
+## 測試
+
+```bash
+python3 -m unittest discover -s tests -p 'test_*.py'
+```
+
+前端變更仍需做瀏覽器視覺驗收；CSS／JS 更新後要同步提升所有 HTML 引用的 `?v=YYYYMMDD[a-z]` cache-bust 版本。
+
+## REST API 摘要
+
+| 方法 | 端點 | 權限 |
+|---|---|---|
+| `GET` | `/api/articles`、`/api/images/{id}` | 公開 |
+| `POST/PUT/DELETE` | `/api/articles...` | 作品寫入／刪除權限 |
+| `POST` | `/api/upload/{id}` | 上傳權限 |
+| `GET` | `/api/session` | 已驗證 |
+| `GET/POST/PUT/DELETE` | `/api/accounts...` | 帳號管理權限 |
+| `GET/PUT/DELETE` | `/api/quotes...` | 報價單管理權限 |
+
+## 安全部署
+
+正式路徑是 `/srv/weddingwish/goodjob-sit/`。每次只傳送本次明確變更的檔案，先備份遠端同名檔，再重啟服務並核對 PostgreSQL 筆數。
+
+```bash
+# 範例：只部署一個已確認的靜態檔
+scp assets/site.css achilean@100.102.51.64:/srv/weddingwish/goodjob-sit/assets/site.css
 ssh achilean@100.102.51.64 "sudo systemctl restart murayama-goodjob.service"
 ```
 
-**快取注意**：修改 `site.css` 或 `site.js` 後，須更新所有 HTML 中的 `?v=YYYYMMDD` 查詢字串以清除 Cloudflare 快取。
+禁止使用 `scp -r *`、整站 `rsync --delete` 或在 production 目錄直接 `git pull`。這些作法可能覆蓋 runtime 或主機保留資產。
 
-## 線上網址
+完整流程請依序閱讀：
 
-- 官網：https://goodjob.weddingwishlove.com/
-- 分類帽 Demo：https://g-skyview.weddingwishlove.com/
+1. [`docs/村山良作-部署資訊清單.md`](docs/村山良作-部署資訊清單.md)
+2. [`docs/村山良作-部署護欄與復原-20260506.md`](docs/村山良作-部署護欄與復原-20260506.md)
+3. [`docs/村山良作-R2-CDN-維運手冊-20260417.md`](docs/村山良作-R2-CDN-維運手冊-20260417.md)
+4. [`docs/村山良作-新增作品SOP.md`](docs/村山良作-新增作品SOP.md)
+
+## 專案規範與交接
+
+- [`AGENTS.md`](AGENTS.md)：專案架構、資料邊界與操作規則
+- [`DESIGN.md`](DESIGN.md)：品牌視覺與技術設計決策
+- [`.planning/.continue-here.md`](.planning/.continue-here.md)：最近一次完成狀態
+- [`.planning/HANDOFF.json`](.planning/HANDOFF.json)：結構化交接狀態

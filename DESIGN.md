@@ -1,143 +1,99 @@
-# 村山良作 設計文件
+# 村山良作設計與架構決策
 
-## 設計概述
+最後更新：2026-07-26
 
-### 目標
+## 品牌方向
 
-以最低複雜度建構一個視覺精緻的作品集網站，讓業主（非技術人員）能自行管理內容，同時確保部署與維護的簡易性。
+網站定位是活動與場景設計事務所的作品集，不是一般活動公司型錄。畫面以留白、編輯感排版與大幅作品攝影建立專業感，紅色只作定位訊號。
 
-### 非目標
+### CI 色票
 
-- 不做 SSR / SSG 框架整合
-- 不做使用者帳號系統（僅單一管理員）
-- 不做即時通訊或預約系統
-- 不做多語系支援
+| Token | 色碼 | 用途 |
+|---|---|---|
+| SALT | `#F2F0EB` | 頁面主底、topbar |
+| PAPER | `#FBFAF8` | 卡片與浮起表面 |
+| INK | `#222322` | 主文字、深色線條 |
+| STONE | `#817C74` | 次要文字、分隔線 |
+| POINT | `#9B3E35` | 方形定位點與少量強調 |
 
-## 架構設計
+全站白底疊加低對比 32px 方格。POINT 不作大面積底色，主要出現在選單 active 狀態、編號、細線與方點。作品影片與大圖舞台可保留黑底，以維持影像對比。
 
-### 整體架構
+### 排版與圖像
 
-```
-┌──────────────────────────────────────────────────┐
-│                  Cloudflare Tunnel                │
-│         goodjob.weddingwishlove.com               │
-└────────────────────┬─────────────────────────────┘
-                     │
-          ┌──────────▼──────────┐
-          │   server.py :10814  │
-          │  (Python stdlib)    │
-          ├─────────┬───────────┤
-          │ Static  │ REST API  │
-          │ Files   │ /api/*    │
-          └────┬────┴─────┬─────┘
-               │          │
-    ┌──────────▼──┐  ┌────▼────────┐
-    │  HTML/CSS   │  │ articles.   │
-    │  /JS 靜態頁 │  │ json        │
-    └─────────────┘  └─────────────┘
+- 中文：`Noto Sans TC`；英文與數字：`Archivo`
+- Topbar 使用 `assets/images/logo-topbar-ci.png` 完整品牌字標，不用一般字型重排品牌名稱
+- 首頁 Hero 採左文字、右橫式圖片；品牌敘述固定兩行
+- 四類作品使用章節式相簿與 masonry 拼貼，不回到等尺寸縮圖牆
+- 作品詳情 modal 延續 SALT／INK／STONE／POINT，媒體 stage 保持沉浸式深色
+- 分類帽頁保留哈利波特主題，只共用品牌版頭，不強制改成鹽白內容頁
 
-    瀏覽器端：
-    ┌─────────────────────────────────────┐
-    │  site.js (SPA)                      │
-    │  ┌──────────┐  ┌────────────────┐   │
-    │  │ fetch    │→ │ DOM render     │   │
-    │  │ /api/    │  │ hash routing   │   │
-    │  │ articles │  │ #detail/{id}   │   │
-    │  └──────────┘  └────────────────┘   │
-    └─────────────────────────────────────┘
+## 系統架構
+
+```text
+瀏覽器
+├── index.html + assets/site.js + assets/site.css
+├── services / teabar / workflow / wedding-packages
+├── /controlcenter/ 管理後台
+└── /works/{id} SSR 作品頁
+          │
+          ▼
+Python server.py（127.0.0.1:10814）
+├── 靜態檔案與路由
+├── /api/* REST API
+├── /works/{id} + JSON-LD
+├── /sitemap.xml
+├── PostgreSQL goodjob_site
+└── rclone → Cloudflare R2
 ```
 
 ### 核心元件
 
 | 元件 | 職責 |
-|------|------|
-| **server.py** | HTTP 靜態檔案伺服 + REST API（CRUD + 圖片上傳）。使用 `SimpleHTTPRequestHandler` 擴展，JSON 以 atomic write（temp file + `os.replace`）確保資料安全 |
-| **site.js** | SPA 前端：fetch API 資料 → 動態渲染精選列、分類列、詳情 modal、Lightbox、YouTube 播放器。IIFE 封裝，ES5 語法 |
-| **site.css** | 全站樣式，使用 CSS Custom Properties 管理主題色。Netflix 深色風格，響應式設計 |
-| **admin/index.html** | 單檔 CMS：登入驗證 → 文章列表 → 表單編輯 → 拖曳排序 → 圖片上傳。sessionStorage 存 auth token |
+|---|---|
+| `server.py` | 靜態服務、文章／相簿／帳號／報價單 API、權限、SSR、sitemap 與 R2 上傳 |
+| `assets/site.js` | 取得作品資料、渲染章節相簿、hash routing、預覽、詳情 modal 與 Lightbox |
+| `assets/site.css` | CI tokens、共用元件、作品章節與響應式版面 |
+| `admin/index.html` + `admin/app.js` | `/controlcenter/` 管理介面 |
+| PostgreSQL `goodjob_site` | 正式作品、圖片 URL／順序、帳號、權限與設定 |
+| Cloudflare R2 | 作品圖片本體；透過 custom domain 對外提供 |
 
-### 資料流
+## 資料流
 
-```
-articles.json ──GET /api/articles──→ site.js ──DOM render──→ 瀏覽器畫面
-                                                              │
-                                                   使用者點擊卡片
-                                                              │
-                                                   hash 變更 #detail/{id}
-                                                              │
-                                                   渲染 modal + Lightbox
-```
-
-```
-admin UI ──PUT /api/articles/{id}──→ server.py ──→ atomic write ──→ articles.json
-admin UI ──POST /api/upload/{id}──→ server.py ──→ 存檔 assets/images/ ──→ 更新 articles.json
+```text
+PostgreSQL ── /api/articles ──> site.js ──> 首頁／分類相簿／詳情 modal
+PostgreSQL ── /works/{id} ───> server.py SSR ──> SEO 作品頁
+CMS ── 權限 API ─────────────> PostgreSQL
+CMS ── 圖片上傳 ─────────────> WebP 轉換 ──> R2 ──> PostgreSQL URL
 ```
 
-## 設計決策
+`data/articles.json`、`data/accounts.json`、`data/config.json` 不是 production runtime。正式資料只能透過 PostgreSQL 與既定維運流程處理。
 
-| 日期 | 決策 | 理由 | 影響 |
-|------|------|------|------|
-| 2026-03 | 採用純 HTML/CSS/JS，不用框架 | 業主非技術人員，維護門檻須最低；主機資源有限 | 無 build step，SCP 即部署 |
-| 2026-03 | Python stdlib HTTP server | 零依賴，主機不需 pip install | 功能受限於 stdlib，但對靜態站足夠 |
-| 2026-03 | Netflix 深色主題 | 作品以攝影為主，深色背景凸顯圖片質感 | 所有頁面統一暗色調 |
-| 2026-03 | Hash-based SPA routing | 單一 index.html 即可處理所有作品頁，無需產生靜態頁 | SEO 不可見，需另行產生 `/works/*.html` 靜態頁（待辦） |
-| 2026-03 | JSON 檔案作為資料庫 | 27 篇文章規模不需 SQL，JSON 檔直接版控 | 不支援併發寫入，但單一管理員場景足夠（2026-05 已切換至 PostgreSQL，正式源共 64 篇） |
-| 2026-04 | 移除 `WWW-Authenticate` header | 避免瀏覽器彈出原生登入視窗，改由前端 CMS 自行處理 401 | 前端需自行管理 auth 狀態 |
-| 2026-04 | 圖片上傳改為扁平目錄 | 原本存到 `images/{id}/` 子目錄，前端讀取路徑不一致 | 所有圖片統一存放 `assets/images/` |
-| 2026-07-24 | 視覺基調 Netflix 暗色 → 鹽白編輯風 studio（新 CI GOODJOB DESIGN） | 新 CI 把品牌重定位為「商業設計事務所」；作品多為主題場景，適合鹽白編輯風＋沉浸章節而非深色縮圖牆 | 首頁+teabar+workflow 已改並驗收；wedding-packages/admin/SSR 進行中，**未部署**（詳見 CLAUDE.md changelog 2026-07-24） |
-| 2026-07-24 | 首頁作品區改「章節式相簿」 | 村長要「有創意的相簿」；每個分類是一個被打造的世界，縮圖牆糟蹋作品 | 4 分類=4 章節，沉浸開場+masonry；`site.js` renderChapter，沿用 detail modal |
+## 關鍵決策
 
-### 技術選型
+| 日期 | 決策 | 原因 |
+|---|---|---|
+| 2026-03 | Vanilla HTML／CSS／JS，不設前端 build step | 降低單人長期維護與部署複雜度 |
+| 2026-04 | 新增 `/works/{id}` SSR 與動態 sitemap | 讓 hash-based SPA 之外也有可索引的作品網址 |
+| 2026-04 | 作品圖遷到 Cloudflare R2 | 降低站台體積並集中圖片交付 |
+| 2026-05 | production runtime 切到 PostgreSQL | 支援正式內容、圖片排序、多帳號與權限，隔離舊 JSON 備份 |
+| 2026-07 | Netflix 暗色改為鹽白編輯風 CI | 品牌重定位為活動與場景設計事務所 |
+| 2026-07 | 首頁改用章節式相簿 | 讓每類作品形成完整世界觀，避免一般縮圖牆感 |
+| 2026-07 | 首頁 Hero 改左文右橫圖 | 配合橫式原圖，消除中央空排並讓首屏更緊湊 |
 
-| 層級 | 選擇 | 替代方案 | 選擇理由 |
-|------|------|----------|----------|
-| 伺服器 | Python 3 stdlib | Node.js, Nginx | 零安裝、零依賴、業主主機已有 Python |
-| 前端 | Vanilla JS (ES5 IIFE) | React, Vue | 無 build step、檔案即部署、長期維護無框架升級壓力 |
-| 樣式 | 單檔 CSS + Custom Properties | Tailwind, SCSS | 單一檔案易維護，Custom Properties 提供足夠的主題管理能力 |
-| 資料 | JSON 檔案 | SQLite, PostgreSQL | 資料量小（<30 篇），JSON 可直接編輯和版控 |
-| 部署 | SCP + systemd | Docker, CI/CD | 最低複雜度，適合單人維護 |
-| CDN | Cloudflare Tunnel | 自架 Nginx + Let's Encrypt | 免費 SSL、DDoS 防護、零設定 |
+## 維護原則
 
-## 權衡取捨
+- 前端維持無打包、無框架；共用視覺先落在 CSS Custom Properties 與既有元件
+- `site.js` 維持 IIFE 與既有程式風格，避免為單一功能引入工具鏈
+- CSS／JS 變更後更新 HTML 的 `?v=` cache-bust
+- 作品 description 存純文字，以空行分段；不可塞 HTML 標籤
+- 新增作品遵循 `docs/村山良作-新增作品SOP.md`
 
-### 已知限制
+## 部署不變條件
 
-| 限制 | 原因 | 緩解措施 |
-|------|------|----------|
-| **Hash routing 不利 SEO** | SPA 的 `#detail/{id}` 路由對搜尋引擎不可見 | 計畫產生 `/works/*.html` 靜態頁（見 HANDOVER_PLAN.md） |
-| **無併發寫入保護** | JSON 檔案不支援多人同時寫入 | 僅單一管理員使用，實務上無問題 |
-| **Cloudflare 快取** | CSS/JS 修改後需手動更新 `?v=` 查詢字串 | 文件已記錄，列入部署 checklist |
-| **無自動化測試** | 靜態作品集網站，投入測試的 ROI 低 | 手動測試 + 部署後目視確認 |
+1. 禁止整站覆蓋 production，也不可從主機站台目錄直接 `git pull`。
+2. 只傳本次明確變更的檔案，先備份遠端同名檔。
+3. 部署禁止包含 `data/`；`wedding-packages/images/` 等主機保留資產不可刪除。
+4. 部署前後核對 PostgreSQL 的 `articles`、`article_images`、`accounts` 筆數。
+5. 重啟 `murayama-goodjob.service` 後，驗證公開 URL、CSS／JS 版本與 service 狀態。
 
-### 技術債務
-
-| 債務 | 原因 | 計畫處理時間 |
-|------|------|-------------|
-| ES5 語法（無模組化） | 初期快速開發，避免 build step | 當 site.js 超過 1500 行時考慮重構 |
-| 單檔 CSS 1260 行 | 單一作者維護，尚在可管理範圍 | 當多人協作時拆分為模組 |
-| admin 前端內嵌在 HTML | 避免額外建構流程 | 維持現狀，功能穩定 |
-
-## 安全考量
-
-### 認證機制
-
-- HTTP Basic Auth，密碼以 `salt + password` 的 SHA-256 hash 儲存
-- `data/config.json` 排除在 git 追蹤之外（`.gitignore`）
-- 401 回應不帶 `WWW-Authenticate` header，避免瀏覽器原生彈窗干擾前端認證流程
-- admin 前端以 `sessionStorage` 暫存 auth header，關閉分頁即失效
-
-### 已處理風險
-
-| 風險 | 處理方式 |
-|------|----------|
-| API 未授權存取 | POST/PUT/DELETE/UPLOAD 皆需 Basic Auth |
-| JSON 寫入中斷 | Atomic write（temp file + `os.replace`） |
-| 圖片上傳惡意檔名 | `re.sub(r"[^\w.\-]", "_", filename)` 過濾 |
-| Admin 頁面曝光 | `robots.txt` 禁止爬蟲存取 `/admin` |
-
-### 待改善
-
-- 密碼強度未檢查（目前為簡單密碼）
-- 無 HTTPS 層級的 token（依賴 Cloudflare Tunnel 提供 TLS）
-- 無上傳檔案大小限制
-- 無 rate limiting
+詳見 `docs/村山良作-部署護欄與復原-20260506.md`。

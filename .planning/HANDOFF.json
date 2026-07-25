@@ -1,13 +1,13 @@
 {
   "version": "1.0",
-  "timestamp": "2026-07-26T01:27:31+08:00",
+  "timestamp": "2026-07-26T01:50:14+08:00",
   "phase": "default",
-  "phase_name": "正式站 CI 品牌系統與內容收尾",
+  "phase_name": "正式站 CI 品牌系統與 GitHub 收尾",
   "phase_dir": ".planning",
   "plan": 0,
-  "task": 7,
-  "total_tasks": 7,
-  "status": "paused",
+  "task": 8,
+  "total_tasks": 8,
+  "status": "complete",
   "completed_tasks": [
     {
       "id": 1,
@@ -29,7 +29,7 @@
     },
     {
       "id": 4,
-      "name": "topbar 改用使用者指定的完整品牌字標",
+      "name": "Topbar 改用使用者指定的完整品牌字標",
       "status": "done",
       "commit": "8fb6aab"
     },
@@ -47,79 +47,35 @@
     },
     {
       "id": 7,
-      "name": "建立本次收工交接",
+      "name": "建立正式站 CI 收工交接並同步 GitHub master",
       "status": "done",
-      "commit": "handoff-commit"
-    }
-  ],
-  "remaining_tasks": [
+      "commit": "4459dfd"
+    },
     {
       "id": 8,
-      "name": "取得使用者明確授權後將本機 master fast-forward 推送到 origin/master",
-      "status": "not_started",
-      "optional": true
-    },
-    {
-      "id": 9,
-      "name": "使用者如要求，再把 production CI 變更同步到 staging",
-      "status": "not_started",
-      "optional": true
+      "name": "整理 GitHub 首頁、設計文件、專案規範與最終交接狀態",
+      "status": "done",
+      "commit": "本次收工提交"
     }
   ],
-  "blockers": [
-    {
-      "description": "production 已部署 af0aa41 對應內容，但 origin/master 仍在 1041913；本機 master 領先 8 commits。",
-      "type": "human_action",
-      "workaround": "production 可正常運作；下次先確認 fast-forward 狀態，取得使用者明確授權後再 push。"
-    }
-  ],
-  "human_actions_pending": [
-    {
-      "action": "如需 GitHub source 同步，授權 push 目前 master 到 origin/master",
-      "context": "production 已包含 8 個尚未在 GitHub 的本機 commits；網站運作不受影響。",
-      "blocking": false
-    },
-    {
-      "action": "決定是否需要 staging 與 production 完全一致",
-      "context": "本 session 只更新 production，未動 staging。",
-      "blocking": false
-    }
-  ],
+  "remaining_tasks": [],
+  "blockers": [],
+  "human_actions_pending": [],
   "decisions": [
     {
       "decision": "官方四色使用 SALT #F2F0EB、INK #222322、STONE #817C74、POINT #9B3E35。",
-      "rationale": "對齊使用者提供的 CI 參考圖與現有 CSS 變數。",
-      "phase": "default"
+      "rationale": "對齊正式 CI 並建立一致的網站視覺語言。"
     },
     {
-      "decision": "相簿與詳細視窗改為鹽白 CI 畫布，影片和大圖 stage 保留黑底。",
-      "rationale": "統一品牌語言，同時維持影像觀賞對比。",
-      "phase": "default"
+      "decision": "Production 只部署明確檔案，runtime 資料固定留在 PostgreSQL 與 R2。",
+      "rationale": "避免部署覆蓋正式作品、相簿與帳號紀錄。"
     },
     {
-      "decision": "四個服務頁各使用四個現有作品作代表案例，不修改 PostgreSQL。",
-      "rationale": "滿足展示數量並避免改動正式作品紀錄。",
-      "phase": "default"
-    },
-    {
-      "decision": "topbar 使用使用者指定 PNG 的原始像素，背景同步 SALT。",
-      "rationale": "保留品牌專屬中文字型與完整鎖定組合，避免背景色塊。",
-      "phase": "default"
-    },
-    {
-      "decision": "首頁品牌敘述用兩個 nowrap block spans 固定兩行，手機以 clamp 縮字。",
-      "rationale": "依使用者要求避免桌機與手機被擠成三行。",
-      "phase": "default"
-    },
-    {
-      "decision": "production 部署只傳明確靜態檔並先建立可回復備份。",
-      "rationale": "隔離 PostgreSQL、R2 與主機保留資產，避免歷史部署災難。",
-      "phase": "default"
+      "decision": "AGENTS.md 納入 GitHub，README 與 DESIGN 以目前 production 架構為準。",
+      "rationale": "讓 GitHub tree、首頁說明與維護規範保持一致。"
     }
   ],
-  "uncommitted_files": [
-    "AGENTS.md（session 開始前即存在的未追蹤檔；不得擅自加入或刪除）"
-  ],
-  "next_action": "先讀 .planning/.continue-here.md，執行 git fetch origin、git status --short --branch 與 git log --oneline origin/master..HEAD。保留未追蹤 AGENTS.md；只有在使用者明確要求時才 push GitHub 或同步 staging。",
-  "context_notes": "Production https://goodjob.weddingwishlove.com 已部署 af0aa41 對應內容，CSS query 20260726d，murayama-goodjob.service active。PostgreSQL 為 accounts=3、articles=64、article_images=632。相簿預覽、詳細 modal、四頁代表案例、完整 topbar Logo 與首頁兩行文案均已外網驗證。無本機背景程序。"
+  "uncommitted_files": [],
+  "next_action": "目前無待辦。下次先讀交接與 AGENTS.md，fetch origin 確認 clean，再依新需求精準修改。",
+  "context_notes": "Production 已完成 CI 收尾並驗證 HTTP 200、service active、PostgreSQL articles=64、article_images=632、accounts=3。GitHub master 已同步；最終文件整理不需再次部署 production。"
 }

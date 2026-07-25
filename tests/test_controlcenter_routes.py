@@ -105,7 +105,7 @@ class ControlCenterRouteTest(unittest.TestCase):
     def test_controlcenter_serves_admin_shell_and_app_js(self):
         status, headers, body = self.request("/controlcenter/")
         self.assertEqual(status, 200)
-        self.assertIn("村山良作 CMS", body)
+        self.assertIn("村山良作 GOODJOB DESIGN · 後台", body)
         self.assertIn("/controlcenter/app.js", body)
         self.assertNotIn("/admin/app.js", body)
         self.assertIn("noindex", headers.get("X-Robots-Tag", ""))
@@ -118,7 +118,7 @@ class ControlCenterRouteTest(unittest.TestCase):
     def test_legacy_admin_url_is_not_served(self):
         status, headers, body = self.request("/admin/")
         self.assertIn(status, (404, 410))
-        self.assertNotIn("村山良作 CMS", body)
+        self.assertNotIn("村山良作 GOODJOB DESIGN · 後台", body)
         self.assertIn("noindex", headers.get("X-Robots-Tag", ""))
 
 

@@ -1,4 +1,4 @@
-> **2026-07-26 01:27 最新交接：** 本檔以下內容保留為 PostgreSQL 災難護欄歷史紀錄；目前 production 已完成官方 CI 色票／方格紋、相簿與詳情 CI、四類服務頁各 4 案例、完整設計字標 topbar 與首頁兩行文案。最新狀態請先讀 [`.planning/.continue-here.md`](.planning/.continue-here.md) 與 [`.planning/HANDOFF.json`](.planning/HANDOFF.json)。
+> **2026-07-26 01:50 最新交接：** Production 已完成官方 CI 色票／方格紋、相簿與詳情 CI、四類服務頁各 4 案例、完整設計字標 topbar 與首頁兩行文案；GitHub README、設計文件、專案規範與交接狀態也已整理並同步。以下內容保留為 PostgreSQL 災難護欄歷史紀錄，最新狀態請先讀 [`.planning/.continue-here.md`](.planning/.continue-here.md) 與 [`.planning/HANDOFF.json`](.planning/HANDOFF.json)。
 
 # 部署清空 PostgreSQL 災難護欄 — Handoff
 
