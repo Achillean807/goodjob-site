@@ -1,0 +1,96 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-07-25T16:37:44.319Z",
+  "phase": "default",
+  "phase_name": "正式站鹽白改版部署與首頁 Hero 收尾",
+  "phase_dir": ".planning",
+  "plan": 0,
+  "task": 6,
+  "total_tasks": 6,
+  "status": "paused",
+  "completed_tasks": [
+    {
+      "id": 1,
+      "name": "讀取舊交接並同步本機 master",
+      "status": "done",
+      "commit": "1041913"
+    },
+    {
+      "id": 2,
+      "name": "將 staging 驗收版精準部署到 production",
+      "status": "done",
+      "commit": "1041913"
+    },
+    {
+      "id": 3,
+      "name": "首頁 Hero 改為左文右圖的 3:2 橫式構圖",
+      "status": "done",
+      "commit": "b58ff82"
+    },
+    {
+      "id": 4,
+      "name": "部署橫式 Hero 到 production 並驗收",
+      "status": "done",
+      "commit": "b58ff82"
+    },
+    {
+      "id": 5,
+      "name": "建立 production 與 PostgreSQL 回復點",
+      "status": "done",
+      "commit": "b58ff82"
+    }
+  ],
+  "remaining_tasks": [
+    {
+      "id": 6,
+      "name": "取得使用者授權後將本機 master 推送到 origin/master；視需要同步 staging Hero",
+      "status": "not_started"
+    }
+  ],
+  "blockers": [
+    {
+      "description": "production 已部署 b58ff82，但 origin/master 仍停在 1041913；本機 master 領先，尚未獲得 push 授權。",
+      "type": "human_action",
+      "workaround": "production 可正常運作；下一 session 先確認 git status 與 origin/master，再取得明確授權後推送目前 master。"
+    }
+  ],
+  "human_actions_pending": [
+    {
+      "action": "授權把目前 master 推送到 GitHub origin/master",
+      "context": "避免 production b58ff82 長期領先 GitHub；推送時也會包含本交接 commit。",
+      "blocking": true
+    },
+    {
+      "action": "決定是否把 staging 同步到 b58ff82",
+      "context": "production 已是橫式 Hero；staging 尚停留在前一版直式 Hero。",
+      "blocking": false
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "首頁 Hero 採左文右圖、圖片 3:2 landscape、內容版心最大 1320px、圖片最大 760px。",
+      "rationale": "原始圖片是橫式；舊 4:5 框造成過度裁切與中央留白。",
+      "phase": "default"
+    },
+    {
+      "decision": "CSS 快取版本統一升為 20260725b。",
+      "rationale": "確保 Cloudflare 與瀏覽器載入新版 Hero CSS，並符合專案所有 HTML 同步升版規範。",
+      "phase": "default"
+    },
+    {
+      "decision": "Hero 部署只打包 11 個 CSS/HTML 檔，不碰 data/ 與主機保留圖片。",
+      "rationale": "隔離 PostgreSQL runtime 與 wedding-packages/sort-hat 主機資產，避免歷史部署災難重演。",
+      "phase": "default"
+    },
+    {
+      "decision": "未取得明確授權前不推送 GitHub。",
+      "rationale": "使用者只授權正式站部署，未授權遠端分支寫入。",
+      "phase": "default"
+    }
+  ],
+  "uncommitted_files": [
+    "AGENTS.md（本 session 開始前即存在的未追蹤檔；不得擅自加入或刪除）"
+  ],
+  "next_action": "先讀 .planning/.continue-here.md，執行 git fetch origin 與 git status；確認 production 仍為 64 articles / 632 images。取得使用者明確授權後 push 目前 master，之後視需要同步 staging。",
+  "context_notes": "production https://goodjob.weddingwishlove.com 已部署 b58ff82，murayama-goodjob.service active，公開首頁/CSS/API HTTP 200，部署後 0 個 404、0 個 runtime error。PostgreSQL 部署前後均為 accounts=3、articles=64、article_images=632。兩個回復點位於 /srv/raid1/backups/goodjob-prod-pre-1041913-20260725_231817 與 /srv/raid1/backups/goodjob-hero-pre-b58ff82-20260725_234444。staging service active 但未同步 b58ff82。"
+}
