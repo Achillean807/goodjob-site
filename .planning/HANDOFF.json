@@ -1,96 +1,125 @@
 {
   "version": "1.0",
-  "timestamp": "2026-07-25T16:37:44.319Z",
+  "timestamp": "2026-07-26T01:27:31+08:00",
   "phase": "default",
-  "phase_name": "正式站鹽白改版部署與首頁 Hero 收尾",
+  "phase_name": "正式站 CI 品牌系統與內容收尾",
   "phase_dir": ".planning",
   "plan": 0,
-  "task": 6,
-  "total_tasks": 6,
+  "task": 7,
+  "total_tasks": 7,
   "status": "paused",
   "completed_tasks": [
     {
       "id": 1,
-      "name": "讀取舊交接並同步本機 master",
+      "name": "首頁加入官方 CI 色票、紅色方點與淡方格背景",
       "status": "done",
-      "commit": "1041913"
+      "commit": "17b7ac5"
     },
     {
       "id": 2,
-      "name": "將 staging 驗收版精準部署到 production",
+      "name": "相簿預覽與作品詳細視窗統一品牌介面",
       "status": "done",
-      "commit": "1041913"
+      "commit": "85697a4"
     },
     {
       "id": 3,
-      "name": "首頁 Hero 改為左文右圖的 3:2 橫式構圖",
+      "name": "四類服務頁代表案例各補齊為四個並同步 JSON-LD",
       "status": "done",
-      "commit": "b58ff82"
+      "commit": "be058e3"
     },
     {
       "id": 4,
-      "name": "部署橫式 Hero 到 production 並驗收",
+      "name": "topbar 改用使用者指定的完整品牌字標",
       "status": "done",
-      "commit": "b58ff82"
+      "commit": "8fb6aab"
     },
     {
       "id": 5,
-      "name": "建立 production 與 PostgreSQL 回復點",
+      "name": "首頁品牌敘述固定為兩行",
       "status": "done",
-      "commit": "b58ff82"
+      "commit": "af0aa41"
+    },
+    {
+      "id": 6,
+      "name": "五輪 production 精準部署、靜態備份與資料完整性驗證",
+      "status": "done",
+      "commit": "af0aa41"
+    },
+    {
+      "id": 7,
+      "name": "建立本次收工交接",
+      "status": "done",
+      "commit": "handoff-commit"
     }
   ],
   "remaining_tasks": [
     {
-      "id": 6,
-      "name": "取得使用者授權後將本機 master 推送到 origin/master；視需要同步 staging Hero",
-      "status": "not_started"
+      "id": 8,
+      "name": "取得使用者明確授權後將本機 master fast-forward 推送到 origin/master",
+      "status": "not_started",
+      "optional": true
+    },
+    {
+      "id": 9,
+      "name": "使用者如要求，再把 production CI 變更同步到 staging",
+      "status": "not_started",
+      "optional": true
     }
   ],
   "blockers": [
     {
-      "description": "production 已部署 b58ff82，但 origin/master 仍停在 1041913；本機 master 領先，尚未獲得 push 授權。",
+      "description": "production 已部署 af0aa41 對應內容，但 origin/master 仍在 1041913；本機 master 領先 8 commits。",
       "type": "human_action",
-      "workaround": "production 可正常運作；下一 session 先確認 git status 與 origin/master，再取得明確授權後推送目前 master。"
+      "workaround": "production 可正常運作；下次先確認 fast-forward 狀態，取得使用者明確授權後再 push。"
     }
   ],
   "human_actions_pending": [
     {
-      "action": "授權把目前 master 推送到 GitHub origin/master",
-      "context": "避免 production b58ff82 長期領先 GitHub；推送時也會包含本交接 commit。",
-      "blocking": true
+      "action": "如需 GitHub source 同步，授權 push 目前 master 到 origin/master",
+      "context": "production 已包含 8 個尚未在 GitHub 的本機 commits；網站運作不受影響。",
+      "blocking": false
     },
     {
-      "action": "決定是否把 staging 同步到 b58ff82",
-      "context": "production 已是橫式 Hero；staging 尚停留在前一版直式 Hero。",
+      "action": "決定是否需要 staging 與 production 完全一致",
+      "context": "本 session 只更新 production，未動 staging。",
       "blocking": false
     }
   ],
   "decisions": [
     {
-      "decision": "首頁 Hero 採左文右圖、圖片 3:2 landscape、內容版心最大 1320px、圖片最大 760px。",
-      "rationale": "原始圖片是橫式；舊 4:5 框造成過度裁切與中央留白。",
+      "decision": "官方四色使用 SALT #F2F0EB、INK #222322、STONE #817C74、POINT #9B3E35。",
+      "rationale": "對齊使用者提供的 CI 參考圖與現有 CSS 變數。",
       "phase": "default"
     },
     {
-      "decision": "CSS 快取版本統一升為 20260725b。",
-      "rationale": "確保 Cloudflare 與瀏覽器載入新版 Hero CSS，並符合專案所有 HTML 同步升版規範。",
+      "decision": "相簿與詳細視窗改為鹽白 CI 畫布，影片和大圖 stage 保留黑底。",
+      "rationale": "統一品牌語言，同時維持影像觀賞對比。",
       "phase": "default"
     },
     {
-      "decision": "Hero 部署只打包 11 個 CSS/HTML 檔，不碰 data/ 與主機保留圖片。",
-      "rationale": "隔離 PostgreSQL runtime 與 wedding-packages/sort-hat 主機資產，避免歷史部署災難重演。",
+      "decision": "四個服務頁各使用四個現有作品作代表案例，不修改 PostgreSQL。",
+      "rationale": "滿足展示數量並避免改動正式作品紀錄。",
       "phase": "default"
     },
     {
-      "decision": "未取得明確授權前不推送 GitHub。",
-      "rationale": "使用者只授權正式站部署，未授權遠端分支寫入。",
+      "decision": "topbar 使用使用者指定 PNG 的原始像素，背景同步 SALT。",
+      "rationale": "保留品牌專屬中文字型與完整鎖定組合，避免背景色塊。",
+      "phase": "default"
+    },
+    {
+      "decision": "首頁品牌敘述用兩個 nowrap block spans 固定兩行，手機以 clamp 縮字。",
+      "rationale": "依使用者要求避免桌機與手機被擠成三行。",
+      "phase": "default"
+    },
+    {
+      "decision": "production 部署只傳明確靜態檔並先建立可回復備份。",
+      "rationale": "隔離 PostgreSQL、R2 與主機保留資產，避免歷史部署災難。",
       "phase": "default"
     }
   ],
   "uncommitted_files": [
-    "AGENTS.md（本 session 開始前即存在的未追蹤檔；不得擅自加入或刪除）"
+    "AGENTS.md（session 開始前即存在的未追蹤檔；不得擅自加入或刪除）"
   ],
-  "next_action": "先讀 .planning/.continue-here.md，執行 git fetch origin 與 git status；確認 production 仍為 64 articles / 632 images。取得使用者明確授權後 push 目前 master，之後視需要同步 staging。",
-  "context_notes": "production https://goodjob.weddingwishlove.com 已部署 b58ff82，murayama-goodjob.service active，公開首頁/CSS/API HTTP 200，部署後 0 個 404、0 個 runtime error。PostgreSQL 部署前後均為 accounts=3、articles=64、article_images=632。兩個回復點位於 /srv/raid1/backups/goodjob-prod-pre-1041913-20260725_231817 與 /srv/raid1/backups/goodjob-hero-pre-b58ff82-20260725_234444。staging service active 但未同步 b58ff82。"
+  "next_action": "先讀 .planning/.continue-here.md，執行 git fetch origin、git status --short --branch 與 git log --oneline origin/master..HEAD。保留未追蹤 AGENTS.md；只有在使用者明確要求時才 push GitHub 或同步 staging。",
+  "context_notes": "Production https://goodjob.weddingwishlove.com 已部署 af0aa41 對應內容，CSS query 20260726d，murayama-goodjob.service active。PostgreSQL 為 accounts=3、articles=64、article_images=632。相簿預覽、詳細 modal、四頁代表案例、完整 topbar Logo 與首頁兩行文案均已外網驗證。無本機背景程序。"
 }
