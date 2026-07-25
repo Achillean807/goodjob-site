@@ -63,7 +63,7 @@ img {
   position: fixed;
   inset: 0 0 auto;
   z-index: 40;
-  background: rgba(251, 250, 248, 0.92);
+  background: var(--salt);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -80,36 +80,16 @@ img {
 .brand {
   display: inline-flex;
   align-items: center;
+  line-height: 0;
 }
 
-/* 內嵌山形 emblem（CI：小尺寸只用獨立山形圖標） */
-.brand-emblem {
-  height: 38px;
-  width: 38px;
+/* 完整 CI 字標：保留品牌專屬中文字型與 GOOD JOB DESIGN 鎖定組合 */
+.brand-logo {
+  width: auto;
+  height: 62px;
   display: block;
   flex: 0 0 auto;
-}
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-left: 11px;
-}
-
-.brand-name {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  line-height: 1.15;
-  color: var(--ink);
-}
-
-.brand-tagline {
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 0.08em;
-  line-height: 1.2;
+  object-fit: contain;
 }
 
 .nav {
@@ -1593,9 +1573,8 @@ body.js-ready .ssr-featured {
     min-height: 60px;
   }
 
-  .brand-emblem {
-    height: 32px;
-    width: 32px;
+  .brand-logo {
+    height: 54px;
   }
 
   .tool-button {
