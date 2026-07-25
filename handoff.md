@@ -1,3 +1,5 @@
+> **2026-07-26 最新交接：** 本檔以下內容保留為 PostgreSQL 災難護欄歷史紀錄；目前 production 鹽白改版與首頁橫式 Hero 的最新狀態，請先讀 [`.planning/.continue-here.md`](.planning/.continue-here.md) 與 [`.planning/HANDOFF.json`](.planning/HANDOFF.json)。
+
 # 部署清空 PostgreSQL 災難護欄 — Handoff
 
 **日期：** 2026-05-06
