@@ -232,19 +232,20 @@ body.js-ready .ssr-featured {
   overflow: hidden;
 }
 
-/* 編輯風雙欄：左文右框圖，克制留白 */
+/* 編輯風雙欄：左文右橫圖，收斂版心避免中段空白 */
 .hero-content {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
-  gap: clamp(32px, 5vw, 84px);
+  width: min(1320px, calc(100vw - 48px));
+  grid-template-columns: minmax(390px, 0.82fr) minmax(0, 1.18fr);
+  gap: clamp(28px, 4vw, 56px);
   align-items: center;
-  padding: 128px 0 84px;
+  padding: 112px 0 56px;
 }
 
 .hero-copy {
-  max-width: 620px;
+  max-width: 520px;
 }
 
 /* eyebrow：紅方點 + 英文品牌 */
@@ -270,7 +271,7 @@ body.js-ready .ssr-featured {
 .hero-copy h1 {
   margin: 22px 0 0;
   max-width: 9ch;
-  font-size: clamp(3rem, 6vw, 5rem);
+  font-size: clamp(3rem, 5.2vw, 4.7rem);
   line-height: 1.12;
   letter-spacing: -0.01em;
   color: var(--ink);
@@ -304,14 +305,17 @@ body.js-ready .ssr-featured {
   gap: 14px;
 }
 
-/* 右欄：框圖（暗調照片全出血於框內），JS 於此換圖/播預覽 */
+/* 右欄：橫式框圖，保留場景的 landscape 構圖 */
 .hero-media {
   position: relative;
+  width: 100%;
+  max-width: 760px;
+  justify-self: end;
 }
 
 .hero-frame {
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 3 / 2;
   overflow: hidden;
   background: var(--ink);
   box-shadow: var(--shadow);
@@ -1376,9 +1380,14 @@ body.js-ready .ssr-featured {
 
   /* 行動裝置：圖文緊貼堆疊（文先、框圖後） */
   .hero-content {
+    width: var(--wrap);
     grid-template-columns: 1fr;
-    gap: 28px;
-    padding: 104px 0 56px;
+    gap: 24px;
+    padding: 96px 0 44px;
+  }
+
+  .hero-media {
+    max-width: none;
   }
 
   .hero-copy h1 {
