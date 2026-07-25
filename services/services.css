@@ -1,198 +1,37 @@
-/* services/services.css — Pillar 共用樣式（Phase 2） */
-/* 為 5 個 /services/{slug}/ pillar 頁面提供統一視覺基礎 */
+/* services/services.css — Pillar 共用樣式 · 鹽白編輯風 studio */
+/* 4 個 /services/{slug}/ pillar 頁共用。                                 */
+/* Shell（版頭／頁尾／導覽／CI 色票 tokens）一律由 assets/site.css 提供， */
+/* 本檔只負責 pillar 內容區塊（hero / intro / 案例卡 / FAQ / CTA）。      */
+/* 各頁 <head> 需先引 site.css 再引本檔。                                  */
 
 :root {
-  --pillar-bg: #0a0a0a;
-  --pillar-text: #f5f5f5;
-  --pillar-accent: #d4af37;
-  --pillar-muted: #888;
-  --pillar-card-bg: rgba(255, 255, 255, 0.04);
-  --pillar-card-hover: rgba(255, 255, 255, 0.08);
-  --pillar-section-pad: 60px 20px;
-  --pillar-hero-pad: 80px 20px 60px;
-  --pillar-radius: 8px;
+  /* 舊 --pillar-* 別名續用，值改指向 site.css 的鹽白 CI tokens */
+  /* → 一次改、所有走 var(--pillar-*) 的內容自動翻成鹽白編輯風       */
+  --pillar-bg: var(--salt);          /* 鹽白 #F2F0EB */
+  --pillar-text: var(--ink);         /* 墨黑 #222322 */
+  --pillar-accent: var(--point);     /* 定位紅（汰除舊金色強調）*/
+  --pillar-muted: var(--stone);      /* 石灰 #817C74 */
+  --pillar-card-bg: var(--paper);    /* 紙白 #FBFAF8 */
+  --pillar-card-hover: var(--paper);
+  --pillar-section-pad: 72px 20px;
+  --pillar-hero-pad: 64px 20px 56px;
+  --pillar-radius: 2px;
 }
 
-/* === 全站導覽列 === */
-.wrap { width: min(1760px, calc(100vw - 28px)); margin: 0 auto; }
-
-.topbar a { color: inherit; text-decoration: none; }
-
-.topbar {
-  position: fixed;
-  inset: 0 0 auto;
-  z-index: 40;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.96), rgba(0, 0, 0, 0.88));
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.topbar-inner {
-  min-height: 68px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-}
-
-.brand-logo {
-  height: 46px;
-  width: auto;
-}
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  margin-left: 10px;
-}
-
-.brand-name {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1.2;
-}
-
-.brand-tagline {
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 0.02em;
-  line-height: 1.2;
-}
-
-.nav {
-  display: inline-flex;
-  align-items: center;
-  gap: 26px;
-  margin-right: auto;
-  margin-left: 20px;
-}
-
-.nav a,
-.tool-button {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
-}
-
-.nav a.is-active {
-  color: #fff;
-  padding-bottom: 3px;
-  border-bottom: 2px solid #e50914;
-}
-
-.topbar-tools {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.mobile-quick-links {
-  display: none;
-}
-
-.tool-button {
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.tool-button.is-active {
-  color: #fff;
-}
+/* === 麵包屑回鏈（site.css 版頭為 fixed，需留出高度） === */
+.pillar-page { min-height: 100svh; }
 
 .pillar-breadcrumb {
   margin-top: 68px;
-}
-
-@media (max-width: 980px) {
-  .nav {
-    display: none;
-  }
-
-  .topbar-tools {
-    display: none;
-  }
-
-  .mobile-quick-links {
-    width: var(--wrap);
-    margin: 0 auto;
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 0 0 10px;
-    scrollbar-width: none;
-  }
-
-  .mobile-quick-links::-webkit-scrollbar {
-    display: none;
-  }
-
-  .mobile-quick-links a {
-    flex: 0 0 auto;
-    padding: 7px 10px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 999px;
-    background: rgba(20, 20, 20, 0.66);
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.82rem;
-    font-weight: 700;
-    line-height: 1;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-}
-
-@media (max-width: 760px) {
-  .topbar-inner {
-    min-height: 60px;
-  }
-
-  .brand-logo {
-    height: 38px;
-  }
-
-  .tool-button {
-    font-size: 0.84rem;
-  }
-
-  .pillar-breadcrumb {
-    margin-top: 60px;
-  }
-}
-
-html {
-  background: var(--pillar-bg);
-}
-
-body {
-  margin: 0;
-  background: var(--pillar-bg);
-  color: var(--pillar-text);
-  font-family: 'Sora', 'Noto Sans TC', system-ui, sans-serif;
-}
-
-main {
-  background: var(--pillar-bg);
-}
-
-/* === 麵包屑回鏈 === */
-.pillar-breadcrumb {
-  padding: 12px 20px;
-  background: rgba(255, 255, 255, 0.04);
+  padding: 16px 20px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
   font-size: 0.9rem;
-  color: var(--pillar-muted);
+  color: var(--stone);
 }
 
 .pillar-breadcrumb a {
-  color: var(--pillar-accent);
+  color: var(--point);
   text-decoration: none;
 }
 
@@ -202,181 +41,264 @@ main {
 
 .pillar-breadcrumb .sep {
   margin: 0 8px;
-  color: var(--pillar-muted);
+  color: var(--stone);
+}
+
+/* === 區塊標題前小紅方點母題（CI） === */
+.pillar-intro h2::before,
+.pillar-featured h2::before,
+.pillar-related h2::before,
+.pillar-faq h2::before,
+.pillar-cta h2::before {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 11px;
+  background: var(--point);
+  vertical-align: middle;
 }
 
 /* === Hero 區 === */
 .pillar-hero {
   padding: var(--pillar-hero-pad);
   text-align: center;
-  background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+  background: var(--salt);
+  border-bottom: 1px solid var(--line);
+}
+
+.pillar-hero::before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin: 0 auto 22px;
+  background: var(--point);
 }
 
 .pillar-hero h1 {
-  font-size: 2.4rem;
+  font-size: clamp(2rem, 4vw, 2.9rem);
+  font-weight: 800;
   margin: 0 0 16px;
-  color: var(--pillar-text);
-  letter-spacing: 0.02em;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1.28;
 }
 
 .hero-tagline {
-  font-size: 1.1rem;
-  color: var(--pillar-muted);
-  max-width: 700px;
+  font-size: 1.05rem;
+  color: var(--stone);
+  max-width: 720px;
   margin: 0 auto;
-  line-height: 1.6;
+  line-height: 1.8;
 }
 
 /* === 服務介紹 === */
 .pillar-intro {
-  max-width: 800px;
+  max-width: 820px;
   margin: 0 auto;
-  padding: 60px 20px;
+  padding: 64px 20px;
 }
 
 .pillar-intro h2 {
-  font-size: 1.6rem;
-  color: var(--pillar-text);
-  margin: 0 0 24px;
+  font-size: 1.5rem;
+  color: var(--ink);
+  margin: 0 0 22px;
 }
 
 .pillar-intro p {
-  line-height: 1.8;
-  color: var(--pillar-muted);
+  line-height: 1.9;
+  color: var(--stone);
   margin: 0 0 16px;
+  font-size: 0.98rem;
+}
+
+.pillar-intro strong {
+  color: var(--point);
+  font-weight: 700;
 }
 
 /* === 代表案例 + 相關作品 區塊 === */
 .pillar-featured,
 .pillar-related {
   padding: var(--pillar-section-pad);
+  border-top: 1px solid var(--line);
 }
 
 .pillar-featured h2,
-.pillar-related h2 {
-  font-size: 1.6rem;
-  color: var(--pillar-text);
+.pillar-related h2,
+.pillar-faq h2 {
+  font-size: clamp(1.4rem, 2.6vw, 1.7rem);
+  color: var(--ink);
   margin: 0 0 32px;
   text-align: center;
 }
 
+/* === 案例卡片（紙白 + 細線，hover 紅框） === */
 .featured-grid,
 .related-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
+  gap: 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* === 案例卡片 === */
 .case-card {
   display: block;
-  background: var(--pillar-card-bg);
+  background: var(--paper);
+  border: 1px solid var(--line);
   border-radius: var(--pillar-radius);
   overflow: hidden;
   text-decoration: none;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .case-card:hover {
   transform: translateY(-4px);
-  background: var(--pillar-card-hover);
+  border-color: var(--point);
 }
 
 .case-card img {
   width: 100%;
-  height: 200px;
+  height: 210px;
   object-fit: cover;
   display: block;
 }
 
 .case-card h3 {
-  padding: 16px;
-  color: var(--pillar-text);
+  padding: 16px 16px 4px;
+  color: var(--ink);
   font-size: 1rem;
   margin: 0;
-  font-weight: 500;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .case-card .case-meta {
-  padding: 0 16px 16px;
-  color: var(--pillar-muted);
+  padding: 6px 16px 18px;
+  color: var(--stone);
   font-size: 0.85rem;
+  line-height: 1.55;
 }
 
-/* === FAQ 區（Phase 2 為 placeholder，Phase 3 補 FAQPage schema） === */
+.related-grid:empty::after {
+  content: "相關作品載入中";
+  color: var(--stone);
+  display: block;
+  padding: 20px;
+  text-align: center;
+}
+
+.related-empty {
+  max-width: 720px;
+  margin: 0 auto;
+  color: var(--stone);
+  text-align: center;
+}
+
+/* === FAQ 區 === */
 .pillar-faq {
-  padding: 60px 20px;
-  max-width: 800px;
+  padding: var(--pillar-section-pad);
+  max-width: 860px;
   margin: 0 auto;
 }
 
-.pillar-faq h2 {
-  font-size: 1.6rem;
-  color: var(--pillar-text);
-  margin: 0 0 24px;
+.faq-list {
+  display: grid;
+  gap: 12px;
 }
 
-.pillar-faq details {
-  background: var(--pillar-card-bg);
+.faq-item {
+  background: var(--paper);
+  border: 1px solid var(--line);
   border-radius: var(--pillar-radius);
-  padding: 16px 20px;
-  margin-bottom: 12px;
+  padding: 18px 22px;
 }
 
-.pillar-faq summary {
-  color: var(--pillar-text);
+.faq-item summary {
+  color: var(--ink);
   cursor: pointer;
-  font-size: 1.05rem;
-  font-weight: 500;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.5;
+  list-style: none;
+  position: relative;
+  padding-right: 30px;
 }
 
-.pillar-faq details[open] summary {
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: "+";
+  position: absolute;
+  right: 0;
+  top: -2px;
+  color: var(--point);
+  font-size: 1.4rem;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.faq-item[open] summary::after {
+  content: "\2013"; /* – */
+}
+
+.faq-item[open] summary {
   margin-bottom: 12px;
 }
 
-.pillar-faq details p {
-  color: var(--pillar-muted);
-  line-height: 1.7;
+.faq-item p {
+  color: var(--stone);
+  line-height: 1.8;
   margin: 0;
+  font-size: 0.95rem;
 }
 
 /* === CTA 區 === */
 .pillar-cta {
   padding: var(--pillar-section-pad);
   text-align: center;
-  background: rgba(212, 175, 55, 0.05);
+  background: var(--salt);
+  border-top: 1px solid var(--line);
 }
 
 .pillar-cta h2 {
-  font-size: 1.6rem;
-  color: var(--pillar-text);
-  margin: 0 0 24px;
-}
-
-.pillar-cta a {
-  display: inline-block;
-  margin: 8px 12px;
-  padding: 12px 24px;
-  border: 1px solid var(--pillar-accent);
-  color: var(--pillar-accent);
-  text-decoration: none;
-  border-radius: 4px;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.pillar-cta a:hover {
-  background: var(--pillar-accent);
-  color: #0a0a0a;
+  font-size: clamp(1.4rem, 2.6vw, 1.7rem);
+  color: var(--ink);
+  margin: 0 0 22px;
 }
 
 .pillar-cta p {
-  color: var(--pillar-muted);
+  color: var(--stone);
   line-height: 1.7;
-  margin: 0 0 20px;
+  margin: 0 0 22px;
+  font-size: 0.98rem;
 }
 
+/* 文字型 CTA 連結（下一步）——描邊按鈕，hover 反白墨底 */
+.pillar-cta a:not(.line-cta-btn) {
+  display: inline-block;
+  margin: 8px 10px;
+  padding: 12px 26px;
+  border: 1px solid var(--stone);
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: var(--pillar-radius);
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.pillar-cta a:not(.line-cta-btn):hover {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--salt);
+}
+
+/* LINE 綠按鈕（品牌色，保留綠） */
 .line-cta-btn {
   display: inline-flex;
   align-items: center;
@@ -396,6 +318,7 @@ main {
 .line-cta-btn:hover {
   background: #05b34a;
   transform: scale(1.04);
+  color: #fff;
 }
 
 .line-cta-btn .line-icon {
@@ -404,185 +327,44 @@ main {
   fill: currentColor;
 }
 
-.cta-link {
-  display: inline-block;
-  margin-top: 16px;
-  color: var(--pillar-accent);
-  text-decoration: underline;
+/* === RWD === */
+@media (max-width: 980px) {
+  /* 手機版 fixed 版頭多一列 mobile-quick-links，內容區需留更高 */
+  .pillar-breadcrumb {
+    margin-top: 104px;
+  }
 }
 
-/* === wedding-tea-flower hub 專用（雙 OfferCatalog） === */
-.pillar-offers {
-  padding: var(--pillar-section-pad);
-}
-
-.pillar-offers h2 {
-  font-size: 1.6rem;
-  color: var(--pillar-text);
-  margin: 0 0 32px;
-  text-align: center;
-}
-
-.offers-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.offer-card {
-  display: block;
-  background: var(--pillar-card-bg);
-  border-radius: var(--pillar-radius);
-  overflow: hidden;
-  text-decoration: none;
-  transition: transform 0.2s ease;
-}
-
-.offer-card:hover {
-  transform: translateY(-4px);
-}
-
-.offer-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  display: block;
-}
-
-.offer-card h3 {
-  padding: 14px 16px 4px;
-  color: var(--pillar-text);
-  font-size: 1rem;
-  margin: 0;
-}
-
-.offer-card .offer-desc {
-  padding: 0 16px 14px;
-  color: var(--pillar-muted);
-  font-size: 0.85rem;
-  line-height: 1.5;
-}
-
-.teabar-gallery {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: var(--pillar-section-pad);
-}
-
-.section-heading {
-  text-align: center;
-  margin: 0 0 28px;
-}
-
-.section-heading p {
-  margin: 0 0 8px;
-  color: var(--pillar-accent);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-.section-heading h2 {
-  margin: 0;
-  color: var(--pillar-text);
-  font-size: 1.6rem;
-}
-
-.teabar-gallery-grid {
-  display: grid;
-  grid-template-columns: 1.25fr 1fr 1fr;
-  gap: 16px;
-}
-
-.teabar-gallery-item {
-  position: relative;
-  min-height: 260px;
-  margin: 0;
-  overflow: hidden;
-  border-radius: var(--pillar-radius);
-  background: var(--pillar-card-bg);
-}
-
-.teabar-gallery-item.feature {
-  grid-row: span 2;
-  min-height: 536px;
-}
-
-.teabar-gallery-item img {
-  width: 100%;
-  height: 100%;
-  min-height: inherit;
-  display: block;
-  object-fit: cover;
-}
-
-.teabar-gallery-item::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.74) 100%);
-  pointer-events: none;
-}
-
-.teabar-gallery-item figcaption {
-  position: absolute;
-  right: 16px;
-  bottom: 14px;
-  left: 16px;
-  z-index: 1;
-  color: var(--pillar-text);
-  font-size: 0.88rem;
-  line-height: 1.5;
-}
-
-/* === RWD === Mobile 採 A 案：2 欄精簡卡（密度先決） */
 @media (max-width: 640px) {
   .pillar-hero h1 {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
   }
 
   .hero-tagline {
-    font-size: 1rem;
+    font-size: 0.98rem;
   }
 
   .pillar-intro,
   .pillar-featured,
   .pillar-related,
   .pillar-faq,
-  .pillar-cta,
-  .pillar-offers,
-  .teabar-gallery {
-    padding: 28px 12px;
+  .pillar-cta {
+    padding: 34px 14px;
   }
 
   .featured-grid,
-  .related-grid,
-  .offers-grid {
+  .related-grid {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
 
-  .case-card,
-  .offer-card {
-    padding: 0;
-    border-radius: 8px;
-    overflow: hidden;
+  .case-card img {
+    height: 128px;
   }
 
-  .case-card img,
-  .offer-card img {
-    height: 120px;
-    border-radius: 0;
-  }
-
-  .case-card h3,
-  .offer-card h3 {
-    font-size: 0.88rem;
+  .case-card h3 {
+    font-size: 0.86rem;
     padding: 8px 8px 2px;
-    margin: 0;
     line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -590,45 +372,12 @@ main {
     overflow: hidden;
   }
 
-  .case-card .case-meta,
-  .offer-card p {
+  .case-card .case-meta {
     font-size: 0.72rem;
     padding: 0 8px 8px;
+    color: var(--stone);
     display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    color: rgba(245, 245, 245, 0.55);
-  }
-
-  .section-heading {
-    margin-bottom: 18px;
-  }
-
-  .section-heading h2 {
-    font-size: 1.25rem;
-  }
-
-  .teabar-gallery-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .teabar-gallery-item,
-  .teabar-gallery-item.feature {
-    min-height: 190px;
-    grid-row: auto;
-    border-radius: 8px;
-  }
-
-  .teabar-gallery-item figcaption {
-    right: 10px;
-    bottom: 9px;
-    left: 10px;
-    font-size: 0.72rem;
-    line-height: 1.35;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
