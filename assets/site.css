@@ -271,10 +271,15 @@ body.js-ready .ssr-featured {
 
 .hero-copy p {
   margin: 20px 0 0;
-  max-width: 32ch;
+  max-width: none;
   color: var(--stone);
   font-size: 1.05rem;
   line-height: 1.8;
+}
+
+.hero-copy-line {
+  display: block;
+  white-space: nowrap;
 }
 
 .hero-meta {
@@ -1587,7 +1592,8 @@ body.js-ready .ssr-featured {
   }
 
   .hero-copy p {
-    max-width: 26ch;
+    max-width: none;
+    font-size: clamp(0.72rem, 3.9vw, 1.05rem);
   }
 
   .ci-palette-swatches {
