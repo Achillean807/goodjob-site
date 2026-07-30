@@ -282,6 +282,15 @@ def _init_db():
             conn.execute(
                 "ALTER TABLE articles ADD COLUMN case_blocks TEXT NOT NULL DEFAULT '{}'"
             )
+        # slug：語意化 URL（可空，NULL 代表沿用 id 當網址）。
+        # SQLite 的 ALTER TABLE 沒有 ADD COLUMN IF NOT EXISTS，沿用上面
+        # case_blocks 的 PRAGMA 探測寫法；唯一性改由具名索引保證，
+        # 這樣「先跑 migration」或「先上程式」兩種部署順序都收斂到同一結果。
+        if "slug" not in article_columns:
+            conn.execute("ALTER TABLE articles ADD COLUMN slug TEXT")
+        conn.execute(
+            "CREATE UNIQUE INDEX IF NOT EXISTS articles_slug_key ON articles (slug)"
+        )
         _backfill_sqlite_admin_quote_manage(conn)
 
         # 修補 C：SQLite 從 JSON seed 預設禁用 — 避免「SQLite 為空 + 舊版
@@ -336,6 +345,15 @@ def _init_pg_db():
             cur.execute("""
             ALTER TABLE articles
             ADD COLUMN IF NOT EXISTS case_blocks JSONB NOT NULL DEFAULT '{}'::jsonb
+            """)
+            # slug：語意化 URL（可空，NULL 代表沿用 id 當網址）。
+            # 唯一性用「具名索引」而非 ADD COLUMN ... UNIQUE，索引名必須與
+            # scripts/add-slug-20260730.sql 一致，才能讓「先跑 migration」與
+            # 「先上程式」兩種部署順序都得到同一個唯一約束（PG 對 UNIQUE 欄位
+            # 自動產生的索引名正好就是 articles_slug_key）。
+            cur.execute("ALTER TABLE articles ADD COLUMN IF NOT EXISTS slug TEXT")
+            cur.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS articles_slug_key ON articles (slug)
             """)
             cur.execute("""
             CREATE TABLE IF NOT EXISTS article_images (
@@ -410,6 +428,24 @@ def _read_accounts_json():
     return []
 
 
+def _row_slug(row):
+    """讀出資料列的 slug，欄位不存在時回 None。
+
+    容錯是刻意的：部署時序可能是「先上程式、後跑 migration」，此時 DB 還沒有
+    slug 欄位。sqlite3.Row 缺鍵拋 IndexError、psycopg2 RealDictRow 拋 KeyError，
+    兩種都吞掉當作沒有 slug（沿用 id 當網址），沿用 case_blocks 既有寫法。
+    """
+    try:
+        return row["slug"] or None
+    except (KeyError, IndexError):
+        return None
+
+
+def _article_url_key(article):
+    """回傳這篇作品對外網址要用的字串：有 slug 用 slug，沒有就沿用 id。"""
+    return (article.get("slug") or article.get("id") or "")
+
+
 def _replace_articles(conn, articles):
     conn.execute("DELETE FROM article_awards")
     conn.execute("DELETE FROM article_images")
@@ -422,8 +458,8 @@ def _replace_articles(conn, articles):
             INSERT INTO articles (
                 id, title, description, category, featured, featured_order,
                 hero_image, link_url, video_id, video_vertical, sort_order,
-                created_at, updated_at, row_index, case_blocks
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                created_at, updated_at, row_index, case_blocks, slug
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             article_id,
             article.get("title") or "",
@@ -440,6 +476,8 @@ def _replace_articles(conn, articles):
             article.get("updatedAt"),
             row_index,
             json.dumps(article.get("caseBlocks") or {}, ensure_ascii=False),
+            # 空字串正規化成 NULL，否則多篇無 slug 會撞 articles_slug_key 唯一索引
+            article.get("slug") or None,
         ))
         for position, url in enumerate(article.get("images") or []):
             if url:
@@ -510,6 +548,7 @@ def _article_from_row(conn, row):
         "videoVertical": bool(row["video_vertical"]),
         "sortOrder": row["sort_order"],
     }
+    article["slug"] = _row_slug(row)
     if row["created_at"]:
         article["createdAt"] = row["created_at"]
     if row["updated_at"]:
@@ -604,8 +643,8 @@ def _pg_replace_articles(conn, articles):
                 INSERT INTO articles (
                     id, title, description, category, featured, featured_order,
                     hero_image, link_url, video_id, video_vertical, sort_order,
-                    created_at, updated_at, row_index, case_blocks
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    created_at, updated_at, row_index, case_blocks, slug
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 article_id,
                 article.get("title") or "",
@@ -622,6 +661,8 @@ def _pg_replace_articles(conn, articles):
                 article.get("updatedAt"),
                 row_index,
                 psycopg2.extras.Json(article.get("caseBlocks") or {}),
+                # 空字串正規化成 NULL，否則多篇無 slug 會撞 articles_slug_key 唯一索引
+                article.get("slug") or None,
             ))
             for position, url in enumerate(article.get("images") or []):
                 if url:
@@ -695,6 +736,7 @@ def _pg_article_from_row(conn, row):
         "videoVertical": bool(row["video_vertical"]),
         "sortOrder": row["sort_order"],
     }
+    article["slug"] = _row_slug(row)
     if row["created_at"]:
         article["createdAt"] = row["created_at"]
     if row["updated_at"]:
@@ -1654,7 +1696,11 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self._send_error_json(404, "Article not found")
             return
         images = article.get("images", [])
-        self._send_json({"id": article_id, "images": images})
+        self._send_json({
+            "id": article_id,
+            "slug": article.get("slug"),
+            "images": images,
+        })
 
     def _api_create_article(self):
         """POST /api/articles — create a new article (auth required)."""
@@ -2287,6 +2333,19 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         return True
 
+    def _redirect_to_slug(self, slug):
+        """把舊的 /works/{id} 301 到語意化的 /works/{slug}。
+
+        原始 query string 要帶著走，否則舊連結上的 utm_* 參數會在轉址時被吃掉，
+        GA4／Clarity 就追不到來源。
+        """
+        query = self.path.split("?", 1)[1].split("#")[0] if "?" in self.path else ""
+        location = f"/works/{slug}" + (f"?{query}" if query else "")
+        self.send_response(301)
+        self.send_header("Location", location)
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
     def do_GET(self):
         if self._is_api():
             if not self._route_api("GET"):
@@ -2356,7 +2415,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if featured:
             parts = []
             for a in featured:
-                aid = _html.escape(a.get("id") or "")
+                # slug 優先，首頁 SSR 卡片直接指 canonical 網址，省掉一次 301
+                aid = _html.escape(_article_url_key(a))
                 title = _html.escape(a.get("title") or "")
                 hero = _html.escape(a.get("heroImage") or "")
                 parts.append(
@@ -2378,10 +2438,27 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if not head_only:
             self.wfile.write(body)
 
-    def _serve_works_page(self, article_id, head_only=False):
-        """Dynamically generate an SEO-friendly HTML page for a work."""
+    def _serve_works_page(self, url_key, head_only=False):
+        """Dynamically generate an SEO-friendly HTML page for a work.
+
+        *url_key* 可以是 slug 或 id：
+          - 命中某篇的 slug → 正常 200
+          - 命中某篇的 id 且該篇有 slug → 301 轉到 /works/{slug}（避免兩個網址
+            同時可索引；id 仍是 R2 圖片路徑與前端 hash routing 的 key，不改）
+          - 命中某篇的 id 但該篇沒有 slug → 照舊 200
+        """
         articles = _load_articles()
-        article = next((a for a in articles if a.get("id") == article_id), None)
+        # slug 先比對：撞名時 slug 優先，且能確保有 slug 的篇目不會走進 301 分支
+        article = next((a for a in articles if a.get("slug") == url_key), None)
+        if not article:
+            article = next((a for a in articles if a.get("id") == url_key), None)
+            if article:
+                slug = article.get("slug")
+                # slug != url_key 是自我轉址的保險絲：萬一日後有人把 slug 設成和
+                # id 一樣，這裡不加判斷就會變成無限轉址迴圈
+                if slug and slug != url_key:
+                    self._redirect_to_slug(slug)
+                    return
         if not article:
             self.send_response(404)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -2399,7 +2476,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         pillar_info = CLUSTER_PILLAR_MAP.get(article.get("category", ""))
 
         site_url = "https://goodjob.weddingwishlove.com"
-        page_url = f"{site_url}/works/{article_id}"
+        # canonical / og:url / JSON-LD 一律用對外網址（slug 優先，無 slug 才用 id）
+        page_url = f"{site_url}/works/{_article_url_key(article)}"
         title = article.get("title", "")
         description = article.get("description", "")
         case_blocks = article.get("caseBlocks") or {}
@@ -2708,9 +2786,10 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             lines.append(f"  <url><loc>{site_url}{loc}</loc></url>")
         # Dynamic works pages
         for a in articles:
-            aid = a.get("id", "")
-            if aid:
-                lines.append(f"  <url><loc>{site_url}/works/{aid}</loc></url>")
+            # slug 優先：sitemap 只列 canonical 網址，不列會 301 的舊 id 網址
+            key = _article_url_key(a)
+            if key:
+                lines.append(f"  <url><loc>{site_url}/works/{key}</loc></url>")
         lines.append("</urlset>")
 
         body = "\n".join(lines).encode("utf-8")

@@ -94,8 +94,9 @@
 
   function getArticleUrl(article) {
     if (!article) return window.location.href;
-    // Always prefer /works/{id} for SEO-friendly URL
-    if (article.id) return '/works/' + article.id;
+    // 對外網址一律走語意化 slug（沒有 slug 才 fallback 回 id）。
+    // 注意：站內 hash routing 的 #detail/{id} 仍然用 id，不受這裡影響。
+    if (article.slug || article.id) return '/works/' + (article.slug || article.id);
     if (!article.linkUrl || article.linkUrl === '#') return window.location.href;
     if (/^https?:\/\//i.test(article.linkUrl)) return article.linkUrl;
     return window.location.origin + article.linkUrl;
