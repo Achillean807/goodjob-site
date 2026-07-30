@@ -92,7 +92,7 @@ CMS ── 圖片上傳 ─────────────> WebP 轉換 ─
 
 1. 禁止整站覆蓋 production，也不可從主機站台目錄直接 `git pull`。
 2. 只傳本次明確變更的檔案，先備份遠端同名檔。
-3. 部署禁止包含 `data/`；`wedding-packages/images/` 等主機保留資產不可刪除（頁面已於 2026-07-30 下架，images 目錄仍在主機保留、部署仍不可刪）。
+3. 部署禁止包含 `data/`；主機保留資產不可刪除（`wedding-packages/` 含 images 已於 2026-07-30 下架並經村長確認刪除，不再屬於保留清單）。
 4. 部署前後核對 PostgreSQL 的 `articles`、`article_images`、`accounts` 筆數。
 5. 重啟 `murayama-goodjob.service` 後，驗證公開 URL、CSS／JS 版本與 service 狀態。
 
