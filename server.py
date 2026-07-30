@@ -2270,6 +2270,23 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         self._send_cors_headers()
         self.end_headers()
 
+    def _redirect_wedding_packages(self, clean_path):
+        """婚禮套組已下架，301 至村花主站（2026-07-30，村長裁示套組商品歸村花販售）。
+
+        回傳 True 代表已處理（呼叫端應直接 return），False 代表非婚禮套組路徑。
+        """
+        if not clean_path.startswith("/wedding-packages"):
+            return False
+        if "outdoor" in clean_path:
+            location = "https://www.weddingwishlove.com/services/packages/outdoor"
+        else:
+            location = "https://www.weddingwishlove.com/services/packages"
+        self.send_response(301)
+        self.send_header("Location", location)
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+        return True
+
     def do_GET(self):
         if self._is_api():
             if not self._route_api("GET"):
@@ -2291,6 +2308,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             if self._rewrite_controlcenter_asset_path():
                 return
         clean_path = self.path.split("?")[0].split("#")[0]
+        # 婚禮套組已下架，301 至村花主站（2026-07-30）
+        if self._redirect_wedding_packages(clean_path):
+            return
         # Serve homepage with featured-cases SSR injection (Phase 1.5)
         if clean_path in ("/", "/index.html"):
             self._serve_homepage_ssr()
@@ -2678,8 +2698,6 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             "",
             "/teabar.html",
             "/workflow.html",
-            "/wedding-packages/",
-            "/wedding-packages/outdoor.html",
             "/sort-hat/",
             "/muse-2026.html",
             "/services/business-event/",
@@ -2723,6 +2741,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             if self._rewrite_controlcenter_asset_path():
                 return
         clean_path = self.path.split("?")[0].split("#")[0]
+        # 婚禮套組已下架，301 至村花主站（2026-07-30）
+        if self._redirect_wedding_packages(clean_path):
+            return
         if clean_path in ("/", "/index.html"):
             self._serve_homepage_ssr(head_only=True)
             return

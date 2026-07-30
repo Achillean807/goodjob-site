@@ -97,7 +97,7 @@ python3 server.py --port 8000
 - **Admin 上傳**：走 rclone subprocess，圖片 Pillow 轉 WebP q90 後直接上 R2
 - **維運手冊**：`docs/村山良作-R2-CDN-維運手冊-20260417.md`
 
-保留本機的項目：favicon、logo、og-default、teabar/、wedding-packages/images/（見手冊 §八）。
+保留本機的項目：favicon、logo、og-default、teabar/、wedding-packages/images/（見手冊 §八；頁面已於 2026-07-30 下架，images 目錄仍在主機保留、部署仍不可刪）。
 
 ## 關鍵依賴
 
@@ -152,8 +152,6 @@ Environment="HOME=/home/achilean"
 | 合作流程 | `workflow.html` | 四步合作流程說明 |
 | 分類帽 | `sort-hat/index.html` | 婚禮座位查詢工具（Harry Potter 主題，自包含） |
 | CMS 後台 | `admin/index.html` + `admin/app.js` | 文章 CRUD + 帳號管理 |
-| 婚禮套組（室內） | `wedding-packages/index.html` | 送客背景・舞台走道套組 |
-| 婚禮套組（戶外） | `wedding-packages/outdoor.html` | 戶外證婚・送客套組 |
 
 ## 部署
 
@@ -222,7 +220,7 @@ A: `articles.json` 有 URL 但 R2 沒檔。`rclone ls r2:goodjob-images/works/{s
 A: `site.js` hash-based SPA routing（`#detail/{id}`）前端互動 + server.py 動態 SSR `/works/{id}` 供 SEO/AEO 索引。
 
 **Q: wedding-packages 的圖片在哪？**
-A: `wedding-packages/images/` 下的 `classic/`、`deluxe/`、`carousel/`（暫未遷 R2，保留本機）。
+A: 頁面已於 2026-07-30 下架（301 至村花主站 /services/packages），主機 `wedding-packages/images/`（195M）暫保留原地未刪。
 
 ## 核心檔案清單
 

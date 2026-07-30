@@ -47,7 +47,6 @@ server.py :10814
 | `server.py` | 靜態服務、REST API、PostgreSQL、R2 上傳與 SSR |
 | `admin/` | `/controlcenter/` 管理介面 |
 | `services/` | 四類服務落地頁 |
-| `wedding-packages/` | 室內與戶外婚禮套組頁 |
 | `docs/` | 部署、R2、作品新增與災難復原手冊 |
 
 ## 頁面
@@ -61,7 +60,6 @@ server.py :10814
 | `/services/civil-makeover/` | 戶政改造 |
 | `/teabar.html` | 迎賓花果茶 |
 | `/workflow.html` | 合作流程 |
-| `/wedding-packages/` | 婚禮套組 |
 | `/sort-hat/` | 分類帽互動工具 |
 | `/controlcenter/` | CMS 後台 |
 
