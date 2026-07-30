@@ -57,10 +57,10 @@ UPDATE articles SET slug='love-and-deepspace-shinkong-tour' WHERE id='ee7a6a84';
 UPDATE articles SET slug='taichung-baby-expo-booth'         WHERE id='3d9f4fed';
 UPDATE articles SET slug='double-happiness-film-set'        WHERE id='42103369';
 UPDATE articles SET slug='parenting-brand-expo-booth'       WHERE id='2c7a16f6';
-UPDATE articles SET slug='haoding-hotel-2025-brand-day'     WHERE id='59483d61';
-UPDATE articles SET slug='haoding-hotel-2024-brand-day'     WHERE id='172eeceb';
-UPDATE articles SET slug='haoding-hotel-2023-brand-day'     WHERE id='6d34499b';
-UPDATE articles SET slug='haoding-hotel-2022-brand-day'     WHERE id='33def7c7';
+UPDATE articles SET slug='how-dine-hotel-2025-brand-day'     WHERE id='59483d61';
+UPDATE articles SET slug='how-dine-hotel-2024-brand-day'     WHERE id='172eeceb';
+UPDATE articles SET slug='how-dine-hotel-2023-brand-day'     WHERE id='6d34499b';
+UPDATE articles SET slug='how-dine-hotel-2022-brand-day'     WHERE id='33def7c7';
 UPDATE articles SET slug='christmas-series-decor'           WHERE id='2c4af1fc';
 UPDATE articles SET slug='small-banquet-celebration-party'  WHERE id='5a1e1bc3';
 UPDATE articles SET slug='songshan-park-zhiling-popup-store' WHERE id='0e8bdfac';
@@ -68,7 +68,7 @@ UPDATE articles SET slug='taroko-market-outdoor-booth'      WHERE id='956cfb73';
 UPDATE articles SET slug='nangang-ling-orm-fanmeeting'      WHERE id='56571f26';
 UPDATE articles SET slug='auto-brand-new-year-showroom'     WHERE id='81bf85d4';
 UPDATE articles SET slug='school-graduation-photo-zone'     WHERE id='f9146762';
-UPDATE articles SET slug='xuexiting-counter-display'        WHERE id='d0e7d8c4';
+UPDATE articles SET slug='yukinonamadonut-counter-display'        WHERE id='d0e7d8c4';
 
 COMMIT;
 
