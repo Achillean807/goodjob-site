@@ -18,7 +18,7 @@
 
 ## 專案職責
 
-品牌活動、主題場景、展場空間的作品集展示站，搭配輕量 REST API 做文章管理。Netflix 深色主題設計風格。
+品牌活動、主題場景、展場空間的作品集展示站，搭配輕量 REST API 做文章管理。鹽白編輯風 studio 設計（GOODJOB DESIGN CI，2026-07 起；前身為 Netflix 深色主題）。
 
 - **Live**: https://goodjob.weddingwishlove.com/
 - **Origin (source)**: https://github.com/Achillean807/goodjob-site
@@ -26,13 +26,13 @@
 
 ## 入口與啟動
 
-- **伺服器:** `server.py`（1099 行）— Python 3 stdlib HTTP server
+- **伺服器:** `server.py`（2984 行）— Python 3 stdlib HTTP server
   - 預設 port: 10814（正式環境），可透過 `--port` 設定
   - 提供靜態檔案服務 + JSON API + 動態 SSR（`/works/{id}` + `/sitemap.xml`）
   - R2 上傳走 rclone subprocess，Pillow 為可選依賴
 - **前端入口:** `index.html` — SPA，hash-based routing
-- **SPA 邏輯:** `assets/site.js`（1054 行）— fetch `/api/articles`、渲染作品方格、詳情 modal
-- **樣式:** `assets/site.css`（1254 行）
+- **SPA 邏輯:** `assets/site.js`（1173 行）— fetch `/api/articles`、渲染作品方格、詳情 modal
+- **樣式:** `assets/site.css`（1964 行）
 
 ### 本機開發
 
@@ -228,9 +228,9 @@ A: 頁面已於 2026-07-30 下架（301 至村花主站 /services/packages）；
 
 | 檔案 | 行數 | 用途 |
 |------|------|------|
-| `server.py` | 1099 | HTTP 伺服器 + REST API + R2 upload + accounts + SSR |
-| `assets/site.js` | 1054 | SPA 前端邏輯 |
-| `assets/site.css` | 1254 | 所有樣式 |
+| `server.py` | 2984 | HTTP 伺服器 + REST API + R2 upload + accounts + SSR |
+| `assets/site.js` | 1173 | SPA 前端邏輯 |
+| `assets/site.css` | 1964 | 所有樣式 |
 | `admin/index.html` + `admin/app.js` | — | CMS 後台（文章 + 帳號管理）|
 | `index.html` | — | 首頁模板 |
 | `data/articles.json` | — | 舊資料備份（正式資料源已切至 PostgreSQL `goodjob_site.articles` 共 64 篇） |
