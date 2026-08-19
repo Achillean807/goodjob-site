@@ -67,6 +67,9 @@ QUOTE_MANIFEST_PATH = os.environ.get(
 )
 QUOTE_DELETED_DIRNAME = "_deleted"
 QUOTE_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
+# 工作清單共用進度：每個 quote 一個 JSON 檔，存放於 data/task-state/
+TASK_STATE_DIR = os.path.join(DATA_DIR, "task-state")
+MAX_TASK_STATE_BYTES = 64 * 1024
 QUOTE_PASSWORD_MIN_LENGTH = 8
 QUOTE_COOKIE_MAX_AGE = 7 * 24 * 60 * 60
 QUOTE_COOKIE_SECURE = os.environ.get("GOODJOB_QUOTE_COOKIE_SECURE", "").lower() in (
@@ -97,6 +100,10 @@ PRIVATE_DATA_FILENAMES = {
 }
 PRIVATE_DATA_PREFIXES = (
     "goodjob.sqlite3",
+)
+# 整個目錄不得由靜態路徑取得（task-state 內含有閘門 quote 的進度）
+PRIVATE_DATA_DIRS = (
+    "/data/task-state/",
 )
 
 VALID_ROLES = {"admin", "editor", "viewer", "custom"}
@@ -1022,6 +1029,11 @@ def _is_safe_quote_id(quote_id):
     return bool(quote_id and QUOTE_ID_RE.fullmatch(quote_id))
 
 
+def _task_state_path(quote_id):
+    """共用進度存檔路徑；quote_id 必須先通過 _is_safe_quote_id 檢查。"""
+    return os.path.join(TASK_STATE_DIR, quote_id + ".json")
+
+
 def _is_reserved_quote_id(quote_id):
     return bool(quote_id and quote_id.lower() == QUOTE_DELETED_DIRNAME.lower())
 
@@ -1205,6 +1217,8 @@ def _is_private_data_path(path):
     normalized_lower = normalized.lower()
     if not normalized_lower.startswith("/data/"):
         return False
+    if any(normalized_lower.startswith(d) for d in PRIVATE_DATA_DIRS):
+        return True
     filename = posixpath.basename(normalized_lower)
     base_filename = filename[:-4] if filename.endswith(".tmp") else filename
     return (
@@ -1457,15 +1471,24 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         )
 
     def _send_quote_login(self, quote_id, error="", head_only=False, status=200):
+        import html as _html
         error_text = "嘗試次數過多，請稍後再試。" if error == "rate" else "密碼錯誤，請再試一次。"
         error_html = (
             f"<p style=\"color:#fca5a5;margin:0 0 12px\">{error_text}</p>"
             if error else ""
         )
+        manifest = _load_quote_manifest()
+        record = _quote_record(manifest, quote_id)
+        raw_title = (record or {}).get("title") or ""
+        page_title = raw_title if raw_title and raw_title != quote_id else "村花弄囍 提案"
+        safe_title = _html.escape(page_title)
         html = (
             "<!doctype html><html lang=\"zh-Hant\"><head><meta charset=\"utf-8\">"
             "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
-            f"<title>提案密碼｜{quote_id}</title></head><body>"
+            f"<title>{safe_title}</title>"
+            f"<meta property=\"og:title\" content=\"{safe_title}\">"
+            "<meta property=\"og:description\" content=\"村花弄囍 婚禮佈置提案\">"
+            "</head><body>"
             "<main style=\"min-height:100vh;display:grid;place-items:center;"
             "font-family:system-ui,'Noto Sans TC',sans-serif;background:#141414;color:#fff\">"
             f"<form method=\"post\" action=\"/quote/{quote_id}/auth\" style=\"width:min(360px,calc(100vw - 40px));"
@@ -1507,6 +1530,27 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if not head_only:
             self.wfile.write(body)
 
+    def _serve_quote_state_get(self, quote_id, head_only=False):
+        """GET /quote/<id>/state — 回傳共用進度 JSON；尚未建立時回空物件。"""
+        state = _read_json(_task_state_path(quote_id))
+        if not isinstance(state, dict):
+            state = {}
+        body = json.dumps(state, ensure_ascii=False).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        if not head_only:
+            self.wfile.write(body)
+
+    def _serve_quote_allowed(self, quote_id, rel_path, head_only=False):
+        """通過閘門檢查後的分派：state 走共用進度端點，其餘走靜態檔。"""
+        if rel_path == "state":
+            self._serve_quote_state_get(quote_id, head_only=head_only)
+            return
+        self._serve_quote_static(quote_id, rel_path, head_only=head_only)
+
     def _serve_quote_request(self, head_only=False):
         quote_id, rel_path = self._quote_parts()
         if quote_id is None:
@@ -1521,15 +1565,66 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self.send_error(404, "Not found")
             return True
         if record and record.get("status") == "active" and record.get("public") is True:
-            self._serve_quote_static(quote_id, rel_path, head_only=head_only)
+            self._serve_quote_allowed(quote_id, rel_path, head_only=head_only)
             return True
         if not record or record.get("status") != "active" or not _quote_has_password(record):
             self._send_quote_paused(head_only=head_only)
             return True
         if _valid_quote_cookie(quote_id, record, self.headers.get("Cookie", "")):
-            self._serve_quote_static(quote_id, rel_path, head_only=head_only)
+            self._serve_quote_allowed(quote_id, rel_path, head_only=head_only)
             return True
         self._send_quote_login(quote_id, head_only=head_only)
+        return True
+
+    def _handle_quote_state_post(self):
+        """POST /quote/<id>/state — 覆寫共用進度（last-write-wins）。
+
+        閘門標準與頁面本身相同：public 頁免驗，有密碼的沿用同一組 cookie 檢查。
+        """
+        quote_id, rel_path = self._quote_parts()
+        if quote_id is None or rel_path != "state":
+            return False
+        if not _is_manageable_quote_id(quote_id):
+            self.send_error(404, "Not found")
+            return True
+
+        manifest = _load_quote_manifest()
+        record = _quote_record(manifest, quote_id)
+        if not record or record.get("status") != "active":
+            self._send_error_json(404, "Not found")
+            return True
+        if record.get("public") is not True:
+            if not _quote_has_password(record) or not _valid_quote_cookie(
+                    quote_id, record, self.headers.get("Cookie", "")):
+                self._send_error_json(403, "Forbidden")
+                return True
+
+        # 先看 Content-Length 再讀，避免無上限讀入記憶體
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+        except (TypeError, ValueError):
+            self._send_error_json(400, "Invalid Content-Length")
+            return True
+        if length <= 0 or length > MAX_TASK_STATE_BYTES:
+            self._send_error_json(400, "Invalid body size")
+            return True
+        try:
+            payload = json.loads(self.rfile.read(length).decode("utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            self._send_error_json(400, "Invalid JSON")
+            return True
+        if not isinstance(payload, dict):
+            self._send_error_json(400, "Body must be a JSON object")
+            return True
+
+        try:
+            os.makedirs(TASK_STATE_DIR, exist_ok=True)
+            _write_json_atomic(_task_state_path(quote_id), payload)
+        except OSError:
+            self._send_error_json(500, "Failed to save state")
+            return True
+
+        self._send_json({"ok": True})
         return True
 
     def _handle_quote_auth_post(self):
@@ -2851,6 +2946,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             return
         if self._is_quote_path():
             if self._handle_quote_auth_post():
+                return
+            if self._handle_quote_state_post():
                 return
         self._send_error_json(405, "Method not allowed")
 
