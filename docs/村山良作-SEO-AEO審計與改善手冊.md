@@ -173,8 +173,8 @@ Sitemap: https://goodjob.weddingwishlove.com/sitemap.xml
     "url": "https://www.weddingwishlove.com"
   },
   "sameAs": [
-    "https://www.facebook.com/weddingwishlove/",
-    "https://www.instagram.com/weddingwishlove/"
+    "https://www.facebook.com/365988056600874",
+    "https://www.instagram.com/murayama.goodjob/"
   ]
 }
 </script>

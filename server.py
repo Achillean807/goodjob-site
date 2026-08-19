@@ -2606,7 +2606,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         }
         breadcrumb_jsonld_str = _json.dumps(breadcrumb_jsonld, ensure_ascii=False)
 
-        css_v = "20260724a"
+        css_v = "20260819a"
         html = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -2746,6 +2746,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         聯絡我們
       </a>
       <p class="footer-tagline">品牌活動・主題場景・展場空間——把每一個現場做成真的現場。</p>
+      <p class="footer-social"><a href="https://www.facebook.com/365988056600874" target="_blank" rel="noopener" aria-label="村山良作 GOODJOB DESIGN Facebook">Facebook</a> · <a href="https://www.instagram.com/murayama.goodjob/" target="_blank" rel="noopener" aria-label="村山良作 GOODJOB DESIGN Instagram">Instagram</a></p>
       <p class="footer-copy">&copy; 2026 村山良作 GOODJOB DESIGN. All rights reserved.</p>
     </div>
   </footer>

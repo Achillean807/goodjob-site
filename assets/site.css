@@ -1414,6 +1414,23 @@ body.js-ready .ssr-featured {
   fill: currentColor;
 }
 
+.footer-social {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.footer-social a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 200ms;
+}
+
+.footer-social a:hover {
+  color: var(--accent);
+}
+
 .footer-copy {
   margin: 12px 0 0;
   font-size: 0.78rem;
