@@ -453,6 +453,17 @@ def _article_url_key(article):
     return (article.get("slug") or article.get("id") or "")
 
 
+def _absolute_image_url(site_url, url):
+    """把圖片網址補成絕對網址：sitemap 的 <image:loc> 與 JSON-LD 都不吃相對路徑。
+
+    多數作品圖已是 R2 CDN 絕對網址，站內相對路徑（favicon／og-default 之類）才需補。
+    """
+    url = (url or "").strip()
+    if not url or url.startswith("http"):
+        return url
+    return f"{site_url}/{url.lstrip('/')}"
+
+
 def _replace_articles(conn, articles):
     conn.execute("DELETE FROM article_awards")
     conn.execute("DELETE FROM article_images")
@@ -2687,14 +2698,52 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             alt = f"{title} {img_alt_suffix} {i}"
             gallery_html += f'<img src="{escaped}" alt="{alt}" loading="lazy">\n'
 
+        # 同分類其他作品：內部連結區塊，最多 6 篇。排序沿用首頁精選慣例——
+        # sortOrder 升冪、None 排最後，同值則保留 _load_articles() 的 row_index 順序。
+        related = [a for a in articles
+                   if a.get("category") == article.get("category")
+                   and a.get("id") != article.get("id")]
+        related.sort(key=lambda a: (a.get("sortOrder") is None,
+                                    a.get("sortOrder") or 0))
+        related_html = ""
+        if related:  # 單篇成軍的分類不渲染空殼區塊
+            cards = []
+            for a in related[:6]:
+                a_hero = _absolute_image_url(site_url, a.get("heroImage")) or \
+                    f"{site_url}/assets/images/og-goodjob.png"
+                a_title = _esc(a.get("title") or "")
+                # ponytail: width/height 是 4:3 版位比例提示（防 CLS），非原圖真實尺寸
+                cards.append(
+                    f'<a class="works-related-card" href="/works/{_esc(_article_url_key(a))}">'
+                    f'<img src="{_esc(a_hero)}" alt="{a_title} {cat_label}活動佈置 村山良作"'
+                    f' loading="lazy" width="400" height="300">'
+                    f'<span>{a_title}</span></a>'
+                )
+            related_html = (
+                '<section class="works-related">'
+                f'<h2 class="works-section-title">更多{cat_label}作品</h2>'
+                f'<div class="works-related-grid">{"".join(cards)}</div>'
+                '</section>'
+            )
+
         # JSON-LD structured data
         jsonld = {
             "@context": "https://schema.org",
             "@type": "CreativeWork",
             "name": title,
             "description": meta_desc,
-            "image": og_image,
+            # ImageObject（非純字串）：帶作者／版權／授權，供 Google 圖片搜尋顯示授權資訊。
+            # 註：og:image meta 仍維持純 URL 字串，兩者不共用。
+            "image": {
+                "@type": "ImageObject",
+                "url": og_image,
+                "caption": title,
+                "creator": {"@type": "Organization", "name": "村山良作 GOODJOB DESIGN"},
+                "copyrightHolder": {"@type": "Organization", "name": "村山良作 GOODJOB DESIGN"},
+                "license": f"{site_url}/",
+            },
             "url": page_url,
+            "about": {"@type": "Thing", "name": cat_label},
             "author": {
                 "@type": "Organization",
                 "name": "村山良作 GOODJOB DESIGN",
@@ -2818,6 +2867,13 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     .case-blocks dt {{ font-size: .85rem; font-weight: 700; color: var(--point); letter-spacing: .08em; margin-bottom: 8px; }}
     .case-blocks dd {{ margin: 0; font-size: .95rem; line-height: 1.8; color: var(--ink); white-space: pre-wrap; }}
     @media (max-width: 600px) {{ .case-blocks {{ grid-template-columns: 1fr; gap: 20px; }} }}
+    /* 同分類作品：圖文緊貼（圖下 8px 接標題），不留大片空白 */
+    .works-related {{ margin: 48px 0 0; }}
+    .works-related-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px 12px; }}
+    .works-related-card {{ display: block; text-decoration: none; color: var(--ink); }}
+    .works-related-card img {{ width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; display: block; background: var(--salt); }}
+    .works-related-card span {{ display: block; margin-top: 8px; font-size: .9rem; line-height: 1.5; font-weight: 700; }}
+    .works-related-card:hover span {{ color: var(--point); }}
   </style>
 </head>
 <body>
@@ -2876,6 +2932,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         {gallery_html}
       </div>
     </section>
+    {related_html}
   </main>
   <footer class="site-footer">
     <div class="wrap footer-inner">
@@ -2904,12 +2961,13 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
 
     def _serve_sitemap(self, head_only=False):
         """Dynamically generate sitemap.xml with all works pages."""
-        import xml.etree.ElementTree as ET
+        from xml.sax.saxutils import escape as _xesc
         articles = _load_articles()
         site_url = "https://goodjob.weddingwishlove.com"
 
         lines = ['<?xml version="1.0" encoding="UTF-8"?>',
-                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
+                 ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">']
         # Static pages
         for loc in [
             "",
@@ -2927,8 +2985,23 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         for a in articles:
             # slug 優先：sitemap 只列 canonical 網址，不列會 301 的舊 id 網址
             key = _article_url_key(a)
-            if key:
-                lines.append(f"  <url><loc>{site_url}/works/{key}</loc></url>")
+            if not key:
+                continue
+            # Google Image Sitemap：hero ＋ 相簿前 3 張（不全列，避免 sitemap 爆量）
+            img_urls = []
+            for raw in [a.get("heroImage")] + list(a.get("images") or [])[:3]:
+                img = _absolute_image_url(site_url, raw)
+                if img and img not in img_urls:
+                    img_urls.append(img)
+            img_title = _xesc(a.get("title") or "")
+            img_xml = "".join(
+                f"<image:image><image:loc>{_xesc(u)}</image:loc>"
+                f"<image:title>{img_title}</image:title></image:image>"
+                for u in img_urls
+            )
+            lines.append(
+                f"  <url><loc>{site_url}/works/{_xesc(key)}</loc>{img_xml}</url>"
+            )
         lines.append("</urlset>")
 
         body = "\n".join(lines).encode("utf-8")
