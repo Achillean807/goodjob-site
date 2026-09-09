@@ -464,6 +464,12 @@ def _absolute_image_url(site_url, url):
     return f"{site_url}/{url.lstrip('/')}"
 
 
+def _iso_day(value):
+    """從 ISO datetime 取 YYYY-MM-DD；取不到回 None（不造假日期）。"""
+    s = str(value or "").strip()
+    return s[:10] if len(s) >= 10 else None
+
+
 def _replace_articles(conn, articles):
     conn.execute("DELETE FROM article_awards")
     conn.execute("DELETE FROM article_images")
@@ -2769,12 +2775,60 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 '</section>'
             )
 
+        # 機構資訊：author 與 VideoObject.publisher 共用同一份，避免兩處各寫一次。
+        author_org = {
+            "@type": "Organization",
+            "name": "村山良作 GOODJOB DESIGN",
+            "url": site_url,
+            "sameAs": [
+                "https://www.facebook.com/365988056600874",
+                "https://www.instagram.com/murayama.goodjob/",
+            ]
+        }
+
+        # 影片區塊（YouTube embed + VideoObject）：videoId 需先過白名單才輸出，
+        # 沒有影片的作品完全不出殼；uploadDate 沒有可信日期就不輸出，不造假。
+        video_id_raw = article.get("videoId") or ""
+        video_id_ok = bool(re.fullmatch(r"[A-Za-z0-9_-]{6,20}", video_id_raw))
+        video_html = ""
+        video_jsonld = None
+        og_video_html = ""
+        if video_id_ok:
+            vid = _esc(video_id_raw)
+            vertical_class = " works-video--vertical" if article.get("videoVertical") else ""
+            video_html = (
+                f'<section class="works-video{vertical_class}">'
+                f'<h2 class="works-section-title">活動影片</h2>'
+                f'<div class="works-video-frame">'
+                f'<iframe src="https://www.youtube-nocookie.com/embed/{vid}" title="{_esc(title)} 活動影片" '
+                f'loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" '
+                f'allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'
+                f'</div></section>'
+            )
+            video_jsonld = {
+                "@type": "VideoObject",
+                "name": f"{title} 活動影片",
+                "description": meta_desc,
+                "thumbnailUrl": f"https://i.ytimg.com/vi/{video_id_raw}/hqdefault.jpg",
+                "embedUrl": f"https://www.youtube-nocookie.com/embed/{video_id_raw}",
+                "publisher": author_org,
+            }
+            upload_date = _iso_day(article.get("createdAt")) or _iso_day(article.get("updatedAt"))
+            if upload_date:
+                video_jsonld["uploadDate"] = upload_date
+            og_video_html = (
+                f'\n  <meta property="og:video" content="https://www.youtube.com/embed/{video_id_raw}">'
+                f'\n  <meta property="og:video:type" content="text/html">'
+            )
+
         # JSON-LD structured data
         jsonld = {
             "@context": "https://schema.org",
             "@type": "CreativeWork",
             "name": title,
+            "headline": title,
             "description": meta_desc,
+            "inLanguage": "zh-Hant-TW",
             # ImageObject（非純字串）：帶作者／版權／授權，供 Google 圖片搜尋顯示授權資訊。
             # 註：og:image meta 仍維持純 URL 字串，兩者不共用。
             "image": {
@@ -2787,22 +2841,20 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             },
             "url": page_url,
             "about": {"@type": "Thing", "name": cat_label},
-            "author": {
-                "@type": "Organization",
-                "name": "村山良作 GOODJOB DESIGN",
-                "url": site_url,
-                "sameAs": [
-                    "https://www.facebook.com/365988056600874",
-                    "https://www.instagram.com/murayama.goodjob/",
-                ]
-            },
+            "author": author_org,
             "genre": cat_label,
-            "keywords": cat_label,
+            "keywords": f"{cat_label}, {title}, 活動佈置, 主題場景, 村山良作",
             "isPartOf": {
                 "@type": "WebSite",
-                "url": f"{site_url}/"
+                "url": site_url,
+                "name": "村山良作 GOODJOB DESIGN"
             }
         }
+        if video_jsonld:
+            jsonld["video"] = video_jsonld
+        published_at = _iso_day(article.get("createdAt"))
+        if published_at:
+            jsonld["datePublished"] = published_at
         updated_at = article.get("updatedAt")
         if updated_at:
             jsonld["dateModified"] = updated_at
@@ -2840,7 +2892,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         }
         breadcrumb_jsonld_str = _json.dumps(breadcrumb_jsonld, ensure_ascii=False)
 
-        css_v = "20260819a"
+        css_v = "20260909d"
         html = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -2853,7 +2905,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   <meta property="og:description" content="{meta_desc}">
   <meta property="og:image" content="{og_image}">
   <meta property="og:url" content="{page_url}">
-  <meta property="og:site_name" content="村山良作 GOODJOB DESIGN">
+  <meta property="og:site_name" content="村山良作 GOODJOB DESIGN">{og_video_html}
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{title}｜村山良作">
   <meta name="twitter:description" content="{meta_desc}">
@@ -2973,6 +3025,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     <h1 class="works-title">{title}</h1>
     {works_desc_html}
     {case_blocks_html}
+    {video_html}
     <section>
       <h2 class="works-section-title">精彩花絮</h2>
       <div class="works-gallery">
@@ -3011,11 +3064,6 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         from xml.sax.saxutils import escape as _xesc
         articles = _load_articles()
         site_url = "https://goodjob.weddingwishlove.com"
-
-        def _iso_day(value):
-            """從 ISO datetime 取 YYYY-MM-DD；取不到回 None（不造假日期）。"""
-            s = str(value or "").strip()
-            return s[:10] if len(s) >= 10 else None
 
         def _static_day(loc):
             """靜態頁用實體檔案 mtime；檔案不存在回 None。"""
