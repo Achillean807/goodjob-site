@@ -1211,6 +1211,46 @@ def _json_bytes(obj, status_hint=200):
     return json.dumps(obj, ensure_ascii=False, indent=2).encode("utf-8")
 
 
+# 敏感路徑封鎖：原始碼／備份／設定／DB 一律當作不存在。
+# 回 404 而非 403，避免洩漏檔案存在與否。
+# ponytail: 純字串比對，不碰檔案系統；日後要細分權限再換成正式 ACL。
+_BLOCKED_DIR_SEGMENTS = {"backups", "__pycache__"}
+# 目錄／檔名帶備份時間戳的命名（quote/260709.bak.20260528-012116 這種整個目錄）
+_BLOCKED_SEGMENT_PATTERNS = (".bak.", ".predeploy.", ".pre_deploy", ".before_")
+_BLOCKED_NAME_PATTERNS = (".py", ".bak", ".orig", ".sh", ".env", ".md", ".sql", ".sqlite")
+# 精確比對：只擋根目錄那一份，未來 /assets/path-map.json 之類不受影響
+_BLOCKED_EXACT_PATHS = {"/path-map.json"}
+
+
+def _is_blocked_path(path):
+    """True = 該路徑不得對外提供。
+
+    規則：
+      1) 任一路徑片段以 "." 開頭（.git／.env／.deploy-backups／.planning …）
+      2) 任一路徑片段是 backups／__pycache__
+      3) 任一片段含 .bak./.predeploy./.pre_deploy/.before_（整個備份目錄，
+         例如 quote/260709.bak.20260528-012116）
+      4) 檔名含 .py/.bak/.orig/.sh/.env/.md/.sql/.sqlite（含 server.py.bak-20260819
+         這種「副檔名後面還有東西」的備份命名）
+      5) 精確命中 _BLOCKED_EXACT_PATHS（/path-map.json）
+    刻意不擋：/data/articles.json（server.py 明確對外提供的舊版公開網址）、
+    /admin/index.html（/controlcenter 內部改寫後的目標；/admin 直接存取另由
+    _is_legacy_admin_path 擋掉）。
+    """
+    clean = unquote(path.split("?", 1)[0].split("#", 1)[0]).replace("\\", "/")
+    normalized = posixpath.normpath(clean).lower()
+    if normalized in _BLOCKED_EXACT_PATHS:
+        return True
+    segments = [s for s in normalized.split("/") if s]
+    for seg in segments:
+        if seg.startswith(".") or seg in _BLOCKED_DIR_SEGMENTS:
+            return True
+        if any(pat in seg for pat in _BLOCKED_SEGMENT_PATTERNS):
+            return True
+    name = segments[-1] if segments else ""
+    return any(pat in name for pat in _BLOCKED_NAME_PATTERNS)
+
+
 def _is_private_data_path(path):
     clean = unquote(path.split("?", 1)[0].split("#", 1)[0]).replace("\\", "/")
     normalized = posixpath.normpath(clean)
@@ -2452,6 +2492,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if _is_private_data_path(self.path):
             self.send_error(404, "Not found")
             return
+        if _is_blocked_path(self.path):
+            self.send_error(404, "Not found")
+            return
         if self._is_quote_path():
             if self._serve_quote_request(head_only=False):
                 return
@@ -2663,7 +2706,11 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             "author": {
                 "@type": "Organization",
                 "name": "村山良作 GOODJOB DESIGN",
-                "url": site_url
+                "url": site_url,
+                "sameAs": [
+                    "https://www.facebook.com/365988056600874",
+                    "https://www.instagram.com/murayama.goodjob/",
+                ]
             },
             "genre": cat_label
         }
@@ -2700,6 +2747,35 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             "itemListElement": breadcrumb_items,
         }
         breadcrumb_jsonld_str = _json.dumps(breadcrumb_jsonld, ensure_ascii=False)
+
+        # 相關案例：同分類，依既有排序「環狀」取接續 4 篇。
+        # ponytail: 環狀而非固定取前 4，是為了讓 64 篇的內鏈平均散開，
+        # 不會所有同類頁都指向同樣 4 篇；要人工指定關聯再加欄位即可。
+        _same_cat = [a for a in articles
+                     if a.get("category") == article.get("category")
+                     and _article_url_key(a)]
+        related_html = ""
+        if len(_same_cat) > 1:
+            _self_key = _article_url_key(article)
+            _i = next((n for n, a in enumerate(_same_cat)
+                       if _article_url_key(a) == _self_key), 0)
+            _related = [_same_cat[(_i + n) % len(_same_cat)]
+                        for n in range(1, min(5, len(_same_cat)))]
+            _cards = "".join(
+                '<a class="works-related-card" href="/works/{k}">'
+                '<img src="{img}" alt="{t} {c}活動佈置 村山良作" loading="lazy">'
+                '<span class="works-related-title">{t}</span></a>'.format(
+                    k=_esc(_article_url_key(a)),
+                    img=_esc(a.get("heroImage") or ""),
+                    t=_esc(a.get("title")),
+                    c=_esc(cat_label))
+                for a in _related)
+            related_html = (
+                '<section class="works-related" aria-label="相關案例">'
+                '<h2 class="works-section-title">更多{c}案例</h2>'
+                '<div class="works-gallery">{cards}</div>'
+                '</section>'
+            ).format(c=_esc(cat_label), cards=_cards)
 
         css_v = "20260819a"
         html = f"""<!DOCTYPE html>
@@ -2775,6 +2851,10 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     .case-blocks dt {{ font-size: .85rem; font-weight: 700; color: var(--point); letter-spacing: .08em; margin-bottom: 8px; }}
     .case-blocks dd {{ margin: 0; font-size: .95rem; line-height: 1.8; color: var(--ink); white-space: pre-wrap; }}
     @media (max-width: 600px) {{ .case-blocks {{ grid-template-columns: 1fr; gap: 20px; }} }}
+    .works-related {{ margin: 48px 0 0; }}
+    .works-related-card {{ display: block; text-decoration: none; color: var(--ink); }}
+    .works-related-title {{ display: block; margin-top: 8px; font-size: .9rem; font-weight: 600; line-height: 1.5; }}
+    .works-related-card:hover .works-related-title {{ color: var(--point); }}
   </style>
 </head>
 <body>
@@ -2833,6 +2913,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         {gallery_html}
       </div>
     </section>
+    {related_html}
   </main>
   <footer class="site-footer">
     <div class="wrap footer-inner">
@@ -2865,6 +2946,25 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         articles = _load_articles()
         site_url = "https://goodjob.weddingwishlove.com"
 
+        def _iso_day(value):
+            """從 ISO datetime 取 YYYY-MM-DD；取不到回 None（不造假日期）。"""
+            s = str(value or "").strip()
+            return s[:10] if len(s) >= 10 else None
+
+        def _static_day(loc):
+            """靜態頁用實體檔案 mtime；檔案不存在回 None。"""
+            rel = loc.lstrip("/")
+            if not rel or rel.endswith("/"):
+                rel += "index.html"
+            path = os.path.join(BASE_DIR, rel)
+            if not os.path.isfile(path):
+                return None
+            return time.strftime("%Y-%m-%d", time.localtime(os.path.getmtime(path)))
+
+        def _url_xml(loc, day):
+            lm = "<lastmod>%s</lastmod>" % day if day else ""
+            return "  <url><loc>%s</loc>%s</url>" % (loc, lm)
+
         lines = ['<?xml version="1.0" encoding="UTF-8"?>',
                  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
         # Static pages
@@ -2879,13 +2979,14 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             "/services/magic-academy/",
             "/services/civil-makeover/",
         ]:
-            lines.append(f"  <url><loc>{site_url}{loc}</loc></url>")
+            lines.append(_url_xml(f"{site_url}{loc}", _static_day(loc)))
         # Dynamic works pages
         for a in articles:
             # slug 優先：sitemap 只列 canonical 網址，不列會 301 的舊 id 網址
             key = _article_url_key(a)
             if key:
-                lines.append(f"  <url><loc>{site_url}/works/{key}</loc></url>")
+                day = _iso_day(a.get("updatedAt")) or _iso_day(a.get("createdAt"))
+                lines.append(_url_xml(f"{site_url}/works/{key}", day))
         lines.append("</urlset>")
 
         body = "\n".join(lines).encode("utf-8")
@@ -2905,6 +3006,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self.send_error(404, "Not found")
             return
         if _is_private_data_path(self.path):
+            self.send_error(404, "Not found")
+            return
+        if _is_blocked_path(self.path):
             self.send_error(404, "Not found")
             return
         if self._is_quote_path():
