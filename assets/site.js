@@ -53,6 +53,7 @@
   var lightbox, lightboxImg, lightboxVideo, lightboxCounter;
   var lightboxImages = [];
   var lightboxIndex = 0;
+  var lightboxTitle = '';
   var currentPopupArticle = null;
   var currentDetailArticle = null;
   var currentDetailMode = 'image';
@@ -453,6 +454,7 @@
 
     // Image
     popupImg.src = article.heroImage;
+    popupImg.alt = article.title;
     popupImg.classList.remove('is-hidden');
     popupImgNext.classList.add('is-hidden');
 
@@ -500,7 +502,7 @@
         img.src = src;
         img.alt = article.title + ' ' + (i + 1);
         img.loading = 'lazy';
-        img.onclick = function () { openLightbox(article.images, i); };
+        img.onclick = function () { openLightbox(article.images, i, article.title); };
         popupGallery.appendChild(img);
       });
     }
@@ -590,13 +592,16 @@
   }
 
   function crossfadeImage(src, idx) {
+    var altText = currentPopupArticle ? currentPopupArticle.title : '';
     popupImgNext.src = src;
+    popupImgNext.alt = altText;
     popupImgNext.classList.remove('is-hidden');
     popupImg.classList.add('is-hidden');
 
     // After transition, swap roles
     setTimeout(function () {
       popupImg.src = src;
+      popupImg.alt = altText;
       popupImg.classList.remove('is-hidden');
       popupImgNext.classList.add('is-hidden');
     }, 650);
@@ -743,13 +748,15 @@
   //  LIGHTBOX
   // ══════════════════════════════════════════
 
-  function openLightbox(images, startIndex) {
+  function openLightbox(images, startIndex, title) {
     lightboxImages = images;
     lightboxIndex = startIndex || 0;
+    lightboxTitle = title || '';
     lightboxVideo.hidden = true;
     lightboxVideo.src = '';
     lightboxImg.hidden = false;
     lightboxImg.src = lightboxImages[lightboxIndex];
+    lightboxImg.alt = lightboxTitle + ' ' + (lightboxIndex + 1);
     updateLightboxCounter();
     lightbox.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -776,6 +783,7 @@
     if (lightboxImages.length === 0) return;
     lightboxIndex = (lightboxIndex - 1 + lightboxImages.length) % lightboxImages.length;
     lightboxImg.src = lightboxImages[lightboxIndex];
+    lightboxImg.alt = lightboxTitle + ' ' + (lightboxIndex + 1);
     updateLightboxCounter();
   }
 
@@ -783,6 +791,7 @@
     if (lightboxImages.length === 0) return;
     lightboxIndex = (lightboxIndex + 1) % lightboxImages.length;
     lightboxImg.src = lightboxImages[lightboxIndex];
+    lightboxImg.alt = lightboxTitle + ' ' + (lightboxIndex + 1);
     updateLightboxCounter();
   }
 

@@ -1345,6 +1345,22 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         stripped = unquote(self.path.split("?")[0].split("#")[0]).lower()
         return stripped == "/robots.txt"
 
+    def _is_cacheable_static_path(self):
+        """靜態 .html／無副檔名目錄頁才給 public cache；動態 SSR（首頁／works）、
+        API、JSON 各自已有自己的 Cache-Control（或刻意不設），不套用這條。
+        """
+        if self._is_api():
+            return False
+        stripped = unquote(self.path.split("?")[0].split("#")[0])
+        if stripped in ("/", "/index.html", "/sitemap.xml", "/data/articles.json"):
+            return False
+        if stripped.startswith("/works/"):
+            return False
+        if stripped.endswith(".html"):
+            return True
+        last_segment = stripped.rsplit("/", 1)[-1]
+        return stripped.endswith("/") or "." not in last_segment
+
     # ------------------------------------------------------------------
     # Response helpers
     # ------------------------------------------------------------------
@@ -1367,6 +1383,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self.send_header("Cache-Control", "private, no-store, max-age=0")
             self.send_header("Pragma", "no-cache")
             self.send_header("Expires", "0")
+        elif self._is_cacheable_static_path():
+            self.send_header("Cache-Control", "public, max-age=300")
         super().end_headers()
 
     def _send_json(self, data, status=200):
@@ -2428,6 +2446,20 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         return True
 
+    def _redirect_services_index(self, clean_path):
+        """/services 與 /services/ 底下沒有 index，會外洩目錄列表（services.css 等檔名），
+        301 回首頁；子路徑如 /services/business-event/ 是正常服務頁，不受影響。
+
+        回傳 True 代表已處理（呼叫端應直接 return），False 代表非此路徑。
+        """
+        if clean_path not in ("/services", "/services/"):
+            return False
+        self.send_response(301)
+        self.send_header("Location", "/")
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+        return True
+
     def _redirect_to_slug(self, slug):
         """把舊的 /works/{id} 301 到語意化的 /works/{slug}。
 
@@ -2464,6 +2496,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         clean_path = self.path.split("?")[0].split("#")[0]
         # 婚禮套組已下架，301 至村花主站（2026-07-30）
         if self._redirect_wedding_packages(clean_path):
+            return
+        # /services 與 /services/ 沒有 index，會洩露目錄列表，301 回首頁
+        if self._redirect_services_index(clean_path):
             return
         # Serve homepage with featured-cases SSR injection (Phase 1.5)
         if clean_path in ("/", "/index.html"):
@@ -2665,8 +2700,16 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 "name": "村山良作 GOODJOB DESIGN",
                 "url": site_url
             },
-            "genre": cat_label
+            "genre": cat_label,
+            "keywords": cat_label,
+            "isPartOf": {
+                "@type": "WebSite",
+                "url": f"{site_url}/"
+            }
         }
+        updated_at = article.get("updatedAt")
+        if updated_at:
+            jsonld["dateModified"] = updated_at
         import json as _json
         jsonld_str = _json.dumps(jsonld, ensure_ascii=False)
         breadcrumb_items = [
@@ -2709,7 +2752,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title}｜村山良作 GOODJOB DESIGN</title>
   <meta name="description" content="{meta_desc}">
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="article">
   <meta property="og:title" content="{title}｜村山良作">
   <meta property="og:description" content="{meta_desc}">
   <meta property="og:image" content="{og_image}">
@@ -2918,6 +2961,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         clean_path = self.path.split("?")[0].split("#")[0]
         # 婚禮套組已下架，301 至村花主站（2026-07-30）
         if self._redirect_wedding_packages(clean_path):
+            return
+        # /services 與 /services/ 沒有 index，會洩露目錄列表，301 回首頁
+        if self._redirect_services_index(clean_path):
             return
         if clean_path in ("/", "/index.html"):
             self._serve_homepage_ssr(head_only=True)
