@@ -2740,7 +2740,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         images = article.get("images") or ([hero] if hero else [])
 
         # Gallery HTML — alt = 標題 + 分類 + 關鍵字，幫助 Google Image Search
-        img_alt_suffix = f"{cat_label}活動佈置 村山良作"
+        img_alt_suffix = f"{cat_label} 活動佈置 村山良作"
         gallery_html = ""
         for i, img in enumerate(images[:20], 1):
             escaped = img.replace('"', '&quot;')
@@ -2764,7 +2764,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 # ponytail: width/height 是 4:3 版位比例提示（防 CLS），非原圖真實尺寸
                 cards.append(
                     f'<a class="works-related-card" href="/works/{_esc(_article_url_key(a))}">'
-                    f'<img src="{_esc(a_hero)}" alt="{a_title} {cat_label}活動佈置 村山良作"'
+                    f'<img src="{_esc(a_hero)}" alt="{a_title} {cat_label} 活動佈置 村山良作"'
                     f' loading="lazy" width="400" height="300">'
                     f'<span>{a_title}</span></a>'
                 )
@@ -3018,7 +3018,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
 
   <main class="works-page">
     <a href="/#works" class="works-back">← 所有作品</a>
-    <img class="works-hero" src="{hero}" alt="{title} {cat_label}活動佈置 村山良作">
+    <img class="works-hero" src="{hero}" alt="{title} {cat_label} 活動佈置 村山良作">
     <div class="works-meta">
       <span class="works-tag">{cat_label}</span>
     </div>
