@@ -2775,6 +2775,54 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 '</section>'
             )
 
+        # FAQPage：常見問題區塊，三組問答皆由既有資料程式化生成，無新增人工文案。
+        # Q1 取 description 第一段，Q2 為固定引導文案，Q3 沿用上方 related（無同分類作品則省略）。
+        def _faq_first_para(desc):
+            """description 第一段（以空行切段）；超過 200 字截到最近句號。"""
+            first = re.split(r"\n\s*\n", (desc or "").strip())[0].strip()
+            if len(first) > 200:
+                cut = first[:200]
+                idx = cut.rfind("。")
+                first = cut[:idx + 1] if idx != -1 else cut
+            return first
+
+        faq_items = [
+            (f"「{title}」這場做了哪些佈置？", _faq_first_para(description)),
+            (
+                f"想委託類似的{cat_label}佈置，怎麼開始？",
+                "透過 LINE 傳來活動日期、場地與大致預算區間，村山良作會在對齊需求後提出提案；"
+                "同一種風格可奢華可簡約，差別在預算。",
+            ),
+        ]
+        if related:
+            faq_items.append((
+                f"還有哪些{cat_label}作品可以參考？",
+                "、".join(a.get("title") or "" for a in related[:3]),
+            ))
+        faq_html = "".join(
+            f'<details><summary>{_esc(q)}</summary><p>{_esc(a)}</p></details>'
+            for q, a in faq_items
+        )
+        faq_html = (
+            '<section class="works-faq" aria-label="常見問題">'
+            '<h2 class="works-section-title">常見問題</h2>'
+            f'{faq_html}'
+            '</section>'
+        )
+        faq_jsonld = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "@id": f"{page_url}#faq",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": q,
+                    "acceptedAnswer": {"@type": "Answer", "text": a},
+                }
+                for q, a in faq_items
+            ],
+        }
+
         # 機構資訊：author 與 VideoObject.publisher 共用同一份，避免兩處各寫一次。
         author_org = {
             "@type": "Organization",
@@ -2891,8 +2939,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             "itemListElement": breadcrumb_items,
         }
         breadcrumb_jsonld_str = _json.dumps(breadcrumb_jsonld, ensure_ascii=False)
+        faq_jsonld_str = _json.dumps(faq_jsonld, ensure_ascii=False)
 
-        css_v = "20260909d"
+        css_v = "20260909e"
         html = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -2923,6 +2972,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   <link rel="stylesheet" href="/assets/site.css?v={css_v}">
   <script type="application/ld+json">{jsonld_str}</script>
   <script type="application/ld+json">{breadcrumb_jsonld_str}</script>
+  <script type="application/ld+json">{faq_jsonld_str}</script>
   <!-- Google Analytics 4 (村山良作 Property) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RCWT3M1FWX"></script>
   <script>
@@ -3033,6 +3083,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
       </div>
     </section>
     {related_html}
+    {faq_html}
   </main>
   <footer class="site-footer">
     <div class="wrap footer-inner">
