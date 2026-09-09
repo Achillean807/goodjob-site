@@ -120,6 +120,10 @@ ACCOUNT_PUBLIC_FIELDS = ("username", "name", "role", "enabled", "permissions",
 
 # R2 / CDN config — admin uploads go directly to R2 object storage.
 # Override via env vars for dev / alternative deployments.
+# 對外正式網址。canonical / og:url / sitemap / JSON-LD 全部共用這一份，
+# 避免同一個 host 在檔案裡散落多份字面值。
+SITE_URL = "https://goodjob.weddingwishlove.com"
+
 R2_REMOTE = os.environ.get("GOODJOB_R2_REMOTE", "r2:goodjob-images")
 CDN_DOMAIN = os.environ.get("GOODJOB_CDN_DOMAIN", "https://goodjob-img.weddingwishlove.com")
 RCLONE_BIN = os.environ.get("GOODJOB_RCLONE_BIN", "rclone")
@@ -987,21 +991,100 @@ def _save_articles(articles):
         _replace_articles(conn, articles)
 
 
-def _load_featured_articles(limit=6):
+def _load_featured_articles(limit=6, articles=None):
     """Return featured articles for homepage SSR injection.
 
     Reuses _load_articles() which already maps schema -> camelCase dict and
     coerces INTEGER featured -> bool. Sorting: featuredOrder asc (None last),
     then existing row_index order preserved from _load_articles().
+
+    呼叫端已經載過作品時可用 *articles* 傳進來，省掉同一次請求打第二次 DB。
     """
-    try:
-        articles = _load_articles()
-    except Exception:
-        return []
+    if articles is None:
+        try:
+            articles = _load_articles()
+        except Exception:
+            return []
     featured = [a for a in articles if a.get("featured")]
     featured.sort(key=lambda a: (a.get("featuredOrder") is None,
                                  a.get("featuredOrder") or 0))
     return featured[:limit]
+
+
+# 首頁 noscript 索引與 ItemList JSON-LD 的分類順序與中文名。
+# ponytail: 四類是全站封閉集合（server.py 的 CLUSTER_PILLAR_MAP、前端 chapter
+# 區塊都寫死同一組），分類若哪天擴充，這裡要一起補，否則新分類不會進索引。
+WORKS_INDEX_CATEGORIES = (
+    ("business", "主題活動"),
+    ("party", "春酒尾牙"),
+    ("civil", "戶政改造"),
+    ("magic", "魔法學院"),
+)
+
+
+def _works_index_sort_key(article):
+    """同分類內排序：精選優先（依 featuredOrder），其餘依 sortOrder，None 排最後。"""
+    featured = bool(article.get("featured"))
+    order = article.get("featuredOrder") if featured else article.get("sortOrder")
+    return (0 if featured else 1, order if order is not None else 10 ** 9)
+
+
+def _grouped_works(articles):
+    """回傳 [(分類中文名, [作品...])]，首頁索引與 ItemList 共用同一份順序。"""
+    return [
+        (name, sorted((a for a in articles if a.get("category") == key),
+                      key=_works_index_sort_key))
+        for key, name in WORKS_INDEX_CATEGORIES
+    ]
+
+
+def _render_works_index_html(articles):
+    """產出首頁 noscript 的全作品索引 HTML（取代會隨新增作品過時的靜態清單）。"""
+    import html as _html
+    groups = []
+    for name, items in _grouped_works(articles):
+        if not items:
+            continue
+        lis = "".join(
+            '<li><a href="/works/{}">{}</a></li>'.format(
+                _html.escape(_article_url_key(a)),
+                _html.escape(a.get("title") or ""))
+            for a in items
+        )
+        groups.append(
+            '<div class="seo-fallback-group"><h3>{}（{}）</h3><ul>{}</ul></div>'.format(
+                _html.escape(name), len(items), lis)
+        )
+    return "\n".join(groups)
+
+
+def _render_works_itemlist_jsonld(articles):
+    """產出首頁 ItemList JSON-LD，項目順序與 noscript 索引完全一致。"""
+    items = []
+    for _name, group in _grouped_works(articles):
+        for a in group:
+            item = {
+                "@type": "ListItem",
+                "position": len(items) + 1,
+                "url": "{}/works/{}".format(SITE_URL, _article_url_key(a)),
+                "name": a.get("title") or "",
+            }
+            hero = a.get("heroImage")
+            if hero:
+                item["image"] = hero
+            items.append(item)
+    data = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "@id": SITE_URL + "/#works",
+        "name": "村山良作 GOODJOB DESIGN 作品集",
+        "numberOfItems": len(items),
+        "itemListOrder": "https://schema.org/ItemListOrderAscending",
+        "itemListElement": items,
+    }
+    # 標題含 "</" 會讓瀏覽器提早關掉 <script>；\/ 是合法 JSON escape，解析端無感。
+    payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
+    return '<script type="application/ld+json">{}</script>\n'.format(payload)
 
 
 def _load_accounts():
@@ -2601,7 +2684,14 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 self.wfile.write(b"index.html not found")
             return
 
-        featured = _load_featured_articles(limit=6)
+        # 一次載完，精選卡片／全作品索引／ItemList 共用，避免同一次請求打三次 DB。
+        # DB 出事時首頁仍要出得來（沿用 _load_featured_articles 原本的容錯意圖），
+        # 只是少掉作品區塊。
+        try:
+            articles = _load_articles()
+        except Exception:
+            articles = []
+        featured = _load_featured_articles(limit=6, articles=articles)
         if featured:
             parts = []
             for a in featured:
@@ -2619,7 +2709,13 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         else:
             cases_html = "<!-- no featured articles -->"
 
-        body = template.replace("<!--{{SSR_FEATURED_CASES}}-->", cases_html).encode("utf-8")
+        body = template.replace("<!--{{SSR_FEATURED_CASES}}-->", cases_html)
+        body = body.replace("<!--{{SSR_WORKS_INDEX}}-->",
+                            _render_works_index_html(articles))
+        if articles:
+            body = body.replace(
+                "</head>", _render_works_itemlist_jsonld(articles) + "</head>", 1)
+        body = body.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
@@ -2665,7 +2761,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         }
         pillar_info = CLUSTER_PILLAR_MAP.get(article.get("category", ""))
 
-        site_url = "https://goodjob.weddingwishlove.com"
+        site_url = SITE_URL
         # canonical / og:url / JSON-LD 一律用對外網址（slug 優先，無 slug 才用 id）
         page_url = f"{site_url}/works/{_article_url_key(article)}"
         title = article.get("title", "")
@@ -3114,7 +3210,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         """Dynamically generate sitemap.xml with all works pages."""
         from xml.sax.saxutils import escape as _xesc
         articles = _load_articles()
-        site_url = "https://goodjob.weddingwishlove.com"
+        site_url = SITE_URL
 
         def _static_day(loc):
             """靜態頁用實體檔案 mtime；檔案不存在回 None。"""
