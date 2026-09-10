@@ -2871,6 +2871,18 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 '</section>'
             )
 
+        # 服務入口內鏈：本文區塊推回四大服務頁，文案只承諾 LINE，不明寫價錢（村長裁定）。
+        pillar_cta_html = ""
+        if pillar_info:
+            pillar_cta_html = (
+                '<section class="works-pillar" aria-label="服務入口">'
+                f'<p>這是一件{_esc(cat_label)}作品。想了解我們在'
+                f'<a href="{pillar_url}">{_esc(pillar_label)}</a>'
+                '的服務內容與更多案例，'
+                '或直接以 LINE 告知預算區間與檔期，讓提案更精準。</p>'
+                '</section>'
+            )
+
         # FAQPage：常見問題區塊，三組問答皆由既有資料程式化生成，無新增人工文案。
         # Q1 取 description 第一段，Q2 為固定引導文案，Q3 沿用上方 related（無同分類作品則省略）。
         def _faq_first_para(desc):
@@ -3119,6 +3131,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     .works-related-card img {{ width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; display: block; background: var(--salt); }}
     .works-related-card span {{ display: block; margin-top: 8px; font-size: .9rem; line-height: 1.5; font-weight: 700; }}
     .works-related-card:hover span {{ color: var(--point); }}
+    .works-pillar {{ margin: 40px 0 0; padding: 20px 24px; border-left: 3px solid var(--point); background: var(--salt); }}
+    .works-pillar p {{ margin: 0; line-height: 1.8; color: var(--ink); }}
+    .works-pillar a {{ color: var(--point); text-decoration: underline; text-underline-offset: 3px; }}
   </style>
 </head>
 <body>
@@ -3179,6 +3194,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
       </div>
     </section>
     {related_html}
+    {pillar_cta_html}
     {faq_html}
   </main>
   <footer class="site-footer">
