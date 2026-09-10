@@ -119,6 +119,10 @@ curl -s $B/api/articles | grep -o $ID | head -1
 curl -s -o /dev/null -w '%{http_code}\n' $B/works/$ID          # 200
 curl -s $B/sitemap.xml | grep -o $ID | head -1
 
+# ⑤ IndexNow 主動通知搜尋引擎（Bing／Yandex 等，Google 不吃但無害）
+#   讀 sitemap 全量提交，期望印出 HTTP 200 或 202；金鑰檔在站根，2026-09-10 上線
+PYTHONIOENCODING=utf-8 python scripts/indexnow_submit.py
+
 # 收尾
 ssh $H "rm -rf /tmp/$ID"
 ```
