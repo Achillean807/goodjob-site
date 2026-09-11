@@ -3076,7 +3076,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon-256.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=optional" rel="stylesheet">
   <link rel="stylesheet" href="/assets/site.css?v={css_v}">
   <script type="application/ld+json">{jsonld_str}</script>
   <script type="application/ld+json">{breadcrumb_jsonld_str}</script>
@@ -3091,11 +3091,21 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   </script>
   <!-- Microsoft Clarity -->
   <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){{
-        c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    }})(window, document, "clarity", "script", "wqkwwcp7kt");
+    (function(){{
+      var loaded=false;
+      function loadClarity(){{
+        if(loaded){{return;}}loaded=true;
+        (function(c,l,a,r,i,t,y){{
+            c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        }})(window, document, "clarity", "script", "wqkwwcp7kt");
+      }}
+      ['scroll','pointerdown','keydown','touchstart'].forEach(function(e){{
+        window.addEventListener(e,loadClarity,{{once:true,passive:true}});
+      }});
+      window.addEventListener('load',function(){{setTimeout(loadClarity,3000);}});
+    }})();
   </script>
   <style>
     /* 鹽白編輯風：作品頁專屬版面（顏色沿用 site.css 的四色 token） */
