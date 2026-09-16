@@ -1444,25 +1444,57 @@ body.js-ready .ssr-featured {
   bottom: 28px;
   right: 28px;
   z-index: 50;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
+  min-width: 56px;
+  min-height: 56px;
+  padding: 0 22px 0 16px;
+  border-radius: 999px;
   background: #06c755;
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   transition: background 200ms, transform 150ms;
 }
 
 .fab-line:hover {
   background: #05b34a;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .fab-line svg {
   width: 30px;
   height: 30px;
   fill: #fff;
+  flex: none;
+}
+
+/* 按鈕文字：沿用全站字體，白字對 #06c755 綠底（對比 3.6:1，粗體大字級） */
+.fab-line-label {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .fab-line {
+    bottom: 16px;
+    right: 16px;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 0 18px 0 14px;
+    gap: 8px;
+  }
+
+  .fab-line svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .fab-line-label {
+    font-size: 0.9rem;
+  }
 }
 
 /* ── Responsive ── */
