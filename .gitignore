@@ -49,3 +49,7 @@ cf-tokens-*.png
 
 # GSC raw exports — ZIP 是分析中間檔，CSV 已解壓且納入 repo 作為 baseline
 .planning/intel/gsc-export/*.zip
+
+# 未入庫功能的 runtime 資料（投票／詢問單含個資），只存主機
+data/lanya-tote/
+data/inquiries/
