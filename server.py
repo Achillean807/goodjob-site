@@ -40,6 +40,7 @@ except ImportError:
     pass
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import parse_qs, unquote
+import urllib.request
 
 
 def _env_int(name, default):
@@ -70,6 +71,18 @@ QUOTE_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 # 工作清單共用進度：每個 quote 一個 JSON 檔，存放於 data/task-state/
 TASK_STATE_DIR = os.path.join(DATA_DIR, "task-state")
 MAX_TASK_STATE_BYTES = 64 * 1024
+# 蘭雅資優班紀念包投票：六位家長記名投票，每人一到兩票，資料存 data/lanya-tote/votes.json
+LANYA_VOTES_DIR = os.path.join(DATA_DIR, "lanya-tote")
+LANYA_VOTES_PATH = os.path.join(LANYA_VOTES_DIR, "votes.json")
+LANYA_VOTERS = ("Lindsay", "Melody", "Shin Yin", "天霸", "宜君", "智萍")
+LANYA_CANDIDATES = 6
+MAX_LANYA_VOTE_BYTES = 4 * 1024
+# 四十歲派對詢問單：每筆存成獨立 JSON 檔於 data/inquiries/，避免併發覆蓋；可選 Resend 通知信
+INQUIRY_DIR = os.path.join(DATA_DIR, "inquiries")
+MAX_INQUIRY_BYTES = 16 * 1024
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "").strip()
+RESEND_INQUIRY_FROM = "村花弄囍詢問單 <inquiry@reflunker.com>"
+RESEND_INQUIRY_TO = "weddingwishlove@gmail.com"
 QUOTE_PASSWORD_MIN_LENGTH = 8
 QUOTE_COOKIE_MAX_AGE = 7 * 24 * 60 * 60
 QUOTE_COOKIE_SECURE = os.environ.get("GOODJOB_QUOTE_COOKIE_SECURE", "").lower() in (
@@ -104,6 +117,8 @@ PRIVATE_DATA_PREFIXES = (
 # 整個目錄不得由靜態路徑取得（task-state 內含有閘門 quote 的進度）
 PRIVATE_DATA_DIRS = (
     "/data/task-state/",
+    "/data/lanya-tote/",
+    "/data/inquiries/",
 )
 
 VALID_ROLES = {"admin", "editor", "viewer", "custom"}
@@ -1785,6 +1800,180 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         self._send_json({"ok": True})
         return True
 
+    def _lanya_read_votes(self):
+        """讀 data/lanya-tote/votes.json 的 votes 字典；檔案不存在或格式壞掉都當空。"""
+        data = _read_json(LANYA_VOTES_PATH)
+        votes = data.get("votes") if isinstance(data, dict) else None
+        return votes if isinstance(votes, dict) else {}
+
+    def _api_lanya_votes_get(self):
+        """GET /api/lanya-tote/votes — 回傳投票人名單、候選數與目前票況。"""
+        self._send_json({
+            "voters": list(LANYA_VOTERS),
+            "candidates": LANYA_CANDIDATES,
+            "votes": self._lanya_read_votes(),
+        })
+
+    def _api_lanya_vote_post(self):
+        """POST /api/lanya-tote/votes — 記名投票，同一人重投即覆蓋（last-write-wins）。
+
+        body：{"name": <LANYA_VOTERS 之一>, "choices": [1..LANYA_CANDIDATES 的整數，1 或 2 個，不重複]}
+        """
+        # 先看 Content-Length 再讀，避免無上限讀入記憶體
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+        except (TypeError, ValueError):
+            self._send_error_json(400, "Content-Length 無效")
+            return
+        if length <= 0 or length > MAX_LANYA_VOTE_BYTES:
+            self._send_error_json(400, "請求內容大小不合法")
+            return
+        try:
+            payload = json.loads(self.rfile.read(length).decode("utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            self._send_error_json(400, "JSON 格式錯誤")
+            return
+        if not isinstance(payload, dict):
+            self._send_error_json(400, "內容必須是 JSON 物件")
+            return
+
+        name = payload.get("name")
+        if not isinstance(name, str) or name not in LANYA_VOTERS:
+            self._send_error_json(400, "投票人不在名單內")
+            return
+        choices = payload.get("choices")
+        if not isinstance(choices, list) or not 1 <= len(choices) <= 2:
+            self._send_error_json(400, "每人限投一到兩票")
+            return
+        for choice in choices:
+            # bool 是 int 的子類別，要明確排除，否則 true 會被當成 1
+            if isinstance(choice, bool) or not isinstance(choice, int):
+                self._send_error_json(400, "選項必須是整數")
+                return
+            if not 1 <= choice <= LANYA_CANDIDATES:
+                self._send_error_json(400, "選項超出範圍（1 到 %d）" % LANYA_CANDIDATES)
+                return
+        if len(set(choices)) != len(choices):
+            self._send_error_json(400, "選項不可重複")
+            return
+
+        votes = self._lanya_read_votes()
+        votes[name] = {
+            "choices": sorted(choices),
+            "updatedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        }
+        try:
+            os.makedirs(LANYA_VOTES_DIR, exist_ok=True)
+            _write_json_atomic(LANYA_VOTES_PATH, {"votes": votes})
+        except OSError:
+            self._send_error_json(500, "票資料寫入失敗")
+            return
+
+        self._send_json({"ok": True, "votes": votes})
+
+    def _api_inquiry_post(self):
+        """POST /api/inquiry — 四十歲派對詢問單：存檔一筆獨立 JSON + （可選）寄 Email 通知。
+
+        body：任意 JSON 物件（前端表單全部欄位）。蜜罐欄位 "website" 有非空值時，
+        視為機器人送出，回傳假成功但不存檔、不寄信。
+        """
+        # 先看 Content-Length 再讀，避免無上限讀入記憶體
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+        except (TypeError, ValueError):
+            self._send_error_json(400, "Content-Length 無效")
+            return
+        if length > MAX_INQUIRY_BYTES:
+            self._send_error_json(413, "請求內容過大")
+            return
+        if length <= 0:
+            self._send_error_json(400, "請求內容不可為空")
+            return
+        try:
+            payload = json.loads(self.rfile.read(length).decode("utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            self._send_error_json(400, "JSON 格式錯誤")
+            return
+        if not isinstance(payload, dict):
+            self._send_error_json(400, "內容必須是 JSON 物件")
+            return
+
+        # 蜜罐：正常使用者看不到這個隱藏欄位，會填的多半是機器人 → 假裝成功、不留任何紀錄
+        if str(payload.get("website") or "").strip():
+            self._send_json({"ok": True})
+            return
+
+        forwarded = (self.headers.get("X-Forwarded-For") or "").split(",", 1)[0].strip()
+        remote_ip = forwarded or (self.client_address[0] if self.client_address else "")
+        # 系統時鐘無論設在哪個時區，time.time() 都是 UTC epoch，故直接加 8 小時換算台北時間
+        taipei_now = time.gmtime(time.time() + 8 * 3600)
+
+        record = dict(payload)
+        record["received_at"] = time.strftime("%Y-%m-%dT%H:%M:%S+08:00", taipei_now)
+        record["remote_ip"] = remote_ip
+        record["user_agent"] = self.headers.get("User-Agent", "")
+
+        filename = "%s-%s.json" % (
+            time.strftime("%Y%m%d-%H%M%S", taipei_now),
+            secrets.token_hex(4),
+        )
+        try:
+            os.makedirs(INQUIRY_DIR, exist_ok=True)
+            _write_json_atomic(os.path.join(INQUIRY_DIR, filename), record)
+        except OSError:
+            self._send_error_json(500, "詢問單寫入失敗")
+            return
+
+        # 資料已經存檔，寄信只是錦上添花——失敗絕不能讓使用者看到錯誤
+        self._send_inquiry_email(payload)
+        self._send_json({"ok": True})
+
+    def _send_inquiry_email(self, payload):
+        """透過 Resend 寄詢問單通知信給村花信箱；沒設定 RESEND_API_KEY 就略過。
+
+        任何例外只記錄到 stderr、不往外拋出——呼叫端已經完成存檔與回應。
+        """
+        if not RESEND_API_KEY:
+            sys.stderr.write("[inquiry] 未設定 RESEND_API_KEY，略過通知信\n")
+            return
+        try:
+            nickname = str(payload.get("nickname") or "")
+            occupation = str(payload.get("occupation") or "")
+            subject = "【40歲派對詢問單】%s — %s" % (nickname, occupation)
+
+            lines = []
+            for key, value in payload.items():
+                if key == "website":
+                    continue  # 蜜罐欄位，通知信不需要出現
+                if isinstance(value, list):
+                    value_text = "、".join(str(item) for item in value)
+                elif value is None:
+                    value_text = ""
+                else:
+                    value_text = str(value)
+                lines.append("%s：%s" % (key, value_text))
+            text = "\n".join(lines)
+
+            body = json.dumps({
+                "from": RESEND_INQUIRY_FROM,
+                "to": [RESEND_INQUIRY_TO],
+                "subject": subject,
+                "text": text,
+            }).encode("utf-8")
+            req = urllib.request.Request(
+                "https://api.resend.com/emails",
+                data=body,
+                method="POST",
+                headers={
+                    "Authorization": "Bearer %s" % RESEND_API_KEY,
+                    "Content-Type": "application/json",
+                    "User-Agent": "murayama-goodjob/1.0",
+                },
+            )
+            urllib.request.urlopen(req, timeout=10)
+        except Exception as exc:
+            sys.stderr.write(f"[inquiry] 通知信寄送失敗: {exc}\n")
+
     def _handle_quote_auth_post(self):
         quote_id, rel_path = self._quote_parts()
         if quote_id is None or rel_path != "auth":
@@ -2557,6 +2746,21 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 self._api_delete_account(username)
                 return True
 
+        # GET /api/lanya-tote/votes — 蘭雅資優班紀念包投票現況
+        if method == "GET" and path == "/api/lanya-tote/votes":
+            self._api_lanya_votes_get()
+            return True
+
+        # POST /api/lanya-tote/votes — 蘭雅資優班紀念包記名投票
+        if method == "POST" and path == "/api/lanya-tote/votes":
+            self._api_lanya_vote_post()
+            return True
+
+        # POST /api/inquiry — 四十歲派對詢問單
+        if method == "POST" and path == "/api/inquiry":
+            self._api_inquiry_post()
+            return True
+
         return False
 
     # ------------------------------------------------------------------
@@ -2838,7 +3042,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         # Gallery HTML — alt = 標題 + 分類 + 關鍵字，幫助 Google Image Search
         img_alt_suffix = f"{cat_label} 活動佈置 村山良作"
         gallery_html = ""
-        for i, img in enumerate(images[:20], 1):
+        # SSR 取消 20 張上限：原本切片會讓 Google 只索引前 20 張圖，
+        # 單篇圖數上限 38 張，多出的 <img> tag 僅數 KB，體積可接受。（2026-09-14）
+        for i, img in enumerate(images, 1):
             escaped = img.replace('"', '&quot;')
             alt = f"{title} {img_alt_suffix} {i}"
             gallery_html += f'<img src="{escaped}" alt="{alt}" loading="lazy">\n'
@@ -3049,7 +3255,22 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         breadcrumb_jsonld_str = _json.dumps(breadcrumb_jsonld, ensure_ascii=False)
         faq_jsonld_str = _json.dumps(faq_jsonld, ensure_ascii=False)
 
-        css_v = "20260909e"
+        css_v = "20260911a"
+        # 2026-09-11 Meta pixel：用一般字串存放，下面 f-string 只插 {meta_pixel}，不必逐個 escape 大括號
+        meta_pixel = '''<!-- Meta Pixel（村山良作，2026-09-11 加裝） -->
+<script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1330894157559427');
+  fbq('track', 'PageView');
+  /* LINE 洽詢點擊 -> Contact。整段包 try/catch 且不呼叫 preventDefault，量測壞掉也絕不阻斷導流。 */
+  document.addEventListener('click', function (e) {
+    try {
+      var t = e.target;
+      if (t && t.closest && t.closest('a[href*="lin.ee"]')) { fbq('track', 'Contact'); }
+    } catch (err) {}
+  }, true);
+</script>
+<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1330894157559427&ev=PageView&noscript=1" /></noscript>'''
         html = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -3076,7 +3297,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon-256.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=optional" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/site.css?v={css_v}">
   <script type="application/ld+json">{jsonld_str}</script>
   <script type="application/ld+json">{breadcrumb_jsonld_str}</script>
@@ -3089,23 +3310,14 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     gtag('js', new Date());
     gtag('config', 'G-RCWT3M1FWX');
   </script>
+{meta_pixel}
   <!-- Microsoft Clarity -->
   <script type="text/javascript">
-    (function(){{
-      var loaded=false;
-      function loadClarity(){{
-        if(loaded){{return;}}loaded=true;
-        (function(c,l,a,r,i,t,y){{
-            c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        }})(window, document, "clarity", "script", "wqkwwcp7kt");
-      }}
-      ['scroll','pointerdown','keydown','touchstart'].forEach(function(e){{
-        window.addEventListener(e,loadClarity,{{once:true,passive:true}});
-      }});
-      window.addEventListener('load',function(){{setTimeout(loadClarity,3000);}});
-    }})();
+    (function(c,l,a,r,i,t,y){{
+        c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    }})(window, document, "clarity", "script", "wqkwwcp7kt");
   </script>
   <style>
     /* 鹽白編輯風：作品頁專屬版面（顏色沿用 site.css 的四色 token） */
@@ -3218,8 +3430,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
       <p class="footer-copy">&copy; 2026 村山良作 GOODJOB DESIGN. All rights reserved.</p>
     </div>
   </footer>
-  <a class="fab-line" href="https://lin.ee/P2HRySj" target="_blank" rel="noopener" aria-label="LINE 聯絡我們">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+  <a class="fab-line" href="https://lin.ee/P2HRySj" target="_blank" rel="noopener" aria-label="LINE 洽詢檔期">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg><span class="fab-line-label">洽詢檔期</span>
   </a>
 </body>
 </html>"""
