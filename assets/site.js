@@ -1181,3 +1181,22 @@
     }
   }
 })();
+
+// ── GA4 line_click：全站 LINE 連結點擊追蹤 ──
+(function () {
+  'use strict';
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href^="https://lin.ee/"], a[href^="https://line.me/"]');
+    if (!a) return;
+    var position = a.getAttribute('data-line-position');
+    if (!position) {
+      if (a.closest('.fab-line')) position = 'fab';
+      else if (a.closest('header, nav')) position = 'header';
+      else if (a.closest('footer')) position = 'footer';
+      else position = 'body';
+    }
+    if (window.gtag) {
+      gtag('event', 'line_click', { page_path: location.pathname, position: position });
+    }
+  });
+})();
