@@ -249,7 +249,8 @@
     more.className = 'chapter-more';
     more.href = meta.more;
     more.innerHTML = '<span class="chapter-dot"></span>';
-    more.appendChild(document.createTextNode('看完整 ' + articles.length + ' 件' + meta.name + '作品 →'));
+    var anchorLabel = { business: '主題活動佈置', party: '春酒尾牙佈置' }[category] || meta.name;
+    more.appendChild(document.createTextNode('看完整 ' + articles.length + ' 件' + anchorLabel + '作品 →'));
     section.appendChild(more);
   }
 
