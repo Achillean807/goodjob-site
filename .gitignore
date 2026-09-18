@@ -53,3 +53,6 @@ cf-tokens-*.png
 # 未入庫功能的 runtime 資料（投票／詢問單含個資），只存主機
 data/lanya-tote/
 data/inquiries/
+
+# session 暫存區（prod 快照、還原腳本、稽核輸出），不入庫
+.context/
