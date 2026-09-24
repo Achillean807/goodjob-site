@@ -151,6 +151,10 @@ MAX_UPLOAD_WIDTH = int(os.environ.get("GOODJOB_MAX_UPLOAD_WIDTH", "3000"))
 THUMB_WIDTH = int(os.environ.get("GOODJOB_THUMB_WIDTH", "400"))
 THUMB_QUALITY = int(os.environ.get("GOODJOB_THUMB_QUALITY", "75"))
 
+# /api/works-search 的 server-to-server 驗證金鑰（給村花官網 HelpDesk AI 客服
+# 呼叫用）。未設定時端點直接放行——反正 /api/articles 本來就整表公開。
+WORKS_SEARCH_KEY = os.environ.get("GOODJOB_WORKS_SEARCH_KEY", "").strip()
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -1042,6 +1046,82 @@ def _works_index_sort_key(article):
     featured = bool(article.get("featured"))
     order = article.get("featuredOrder") if featured else article.get("sortOrder")
     return (0 if featured else 1, order if order is not None else 10 ** 9)
+
+
+# 分類 → (服務頁 pillar 連結, 中文名)。/works/{id} SSR 頁的相關服務連結、
+# /api/works-search 的 theme 欄位共用同一份，避免像 WORKS_INDEX_CATEGORIES
+# 那樣各自寫一份中文名而彼此不一致。
+CLUSTER_PILLAR_MAP = {
+    "business": ("/services/business-event/", "主題化品牌活動"),
+    "party": ("/services/party-spring-banquet/", "春酒尾牙佈置"),
+    "magic": ("/services/magic-academy/", "魔法學院主題"),
+    "civil": ("/services/civil-makeover/", "戶政空間改造"),
+}
+
+# 「哈利波特」「霍格華茲」不會逐字出現在魔法學院作品的標題/文案裡（文案寫的是
+# 「魔法」「魔法學院」），所以視為 magic 分類的同義詞，命中就當分類命中。
+MAGIC_SYNONYMS = ("哈利波特", "魔法", "霍格華茲")
+
+_WORKS_SEARCH_TOKEN_RE = re.compile(r"[一-鿿]+|[A-Za-z0-9]+")
+
+
+def _works_search_terms(q):
+    """把使用者查詢字串切成關鍵詞：中文連續字取 2-gram、英數整詞，去重最多 16 個。
+
+    純函式，方便單元測試；不做長度驗證（q 是否為 1~120 字由呼叫端把關）。
+    """
+    terms = []
+
+    def _add(term):
+        if term and len(terms) < 16 and term not in terms:
+            terms.append(term)
+
+    # 魔法同義詞整詞優先塞進去，才不會被 2-gram 切散、也才擠得進 16 個上限。
+    for syn in MAGIC_SYNONYMS:
+        if syn in q:
+            _add(syn)
+
+    for run in _WORKS_SEARCH_TOKEN_RE.findall(q or ""):
+        run = run.lower()
+        if run[0].isascii():
+            _add(run)
+        else:
+            for i in range(len(run) - 1):
+                _add(run[i:i + 2])
+
+    return terms[:16]
+
+
+def _works_search_rank(articles, terms, limit):
+    """依關鍵詞把作品計分排序，回傳前 *limit* 篇（分數 >0 才回）。
+
+    每篇計分：title 命中 ×2、分類（中文名或 category 字串，magic 另含同義詞）
+    命中 ×3、description 命中 ×1；同一詞在同一欄位最多算一次。
+    """
+    if not terms or limit <= 0:
+        return []
+
+    scored = []
+    for article in articles:
+        title = (article.get("title") or "").lower()
+        description = (article.get("description") or "").lower()
+        category = (article.get("category") or "")
+        theme = CLUSTER_PILLAR_MAP.get(category, (None, ""))[1].lower()
+        category_l = category.lower()
+
+        title_hits = sum(1 for t in terms if t in title)
+        desc_hits = sum(1 for t in terms if t in description)
+        category_hits = sum(
+            1 for t in terms
+            if t in theme or t == category_l
+            or (category == "magic" and t in MAGIC_SYNONYMS)
+        )
+        score = title_hits * 2 + category_hits * 3 + desc_hits * 1
+        if score > 0:
+            scored.append((score, bool(article.get("featured")), article.get("createdAt") or "", article))
+
+    scored.sort(key=lambda row: (row[0], row[1], row[2]), reverse=True)
+    return [row[3] for row in scored[:limit]]
 
 
 def _grouped_works(articles):
@@ -2126,6 +2206,48 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 art["heroImage"] = images[0]
         self._send_json({"articles": articles})
 
+    def _api_works_search(self):
+        """GET /api/works-search?q=&limit= — 村花官網 HelpDesk AI 客服搜尋村山良作作品。"""
+        provided = self.headers.get("X-Village-Proxy-Key", "")
+        if WORKS_SEARCH_KEY and not hmac.compare_digest(
+            provided.encode("utf-8"), WORKS_SEARCH_KEY.encode("utf-8")
+        ):
+            self._send_error_json(403, "forbidden")
+            return
+
+        query = self.path.partition("?")[2].split("#")[0]
+        params = parse_qs(query)
+        q = (params.get("q") or [""])[0].strip()
+        if not q or len(q) > 120:
+            self._send_error_json(400, "q required (1-120 chars)")
+            return
+        try:
+            limit = int((params.get("limit") or ["5"])[0])
+        except ValueError:
+            limit = 5
+        limit = max(1, min(8, limit))
+
+        try:
+            articles = _load_articles()
+            ranked = _works_search_rank(articles, _works_search_terms(q), limit)
+        except Exception as exc:
+            sys.stderr.write(f"[works-search] 查詢失敗: {exc}\n")
+            self._send_json({"results": []})
+            return
+
+        results = []
+        for article in ranked:
+            summary = (article.get("description") or "").replace("\r", " ").replace("\n", " ").strip()
+            results.append({
+                "title": article.get("title", ""),
+                "url": f"{SITE_URL}/works/{_article_url_key(article)}",
+                "theme": CLUSTER_PILLAR_MAP.get(article.get("category", ""), (None, ""))[1],
+                "styles": [],
+                "summary": summary[:80],
+                "date": (article.get("createdAt") or "")[:7],
+            })
+        self._send_json({"results": results})
+
     def _api_get_images(self, article_id):
         """GET /api/images/{id} — return image list for an article."""
         articles = _load_articles()
@@ -2665,6 +2787,11 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self._api_get_articles()
             return True
 
+        # GET /api/works-search?q=&limit= — 給村花官網 HelpDesk AI 客服搜尋作品
+        if method == "GET" and path == "/api/works-search":
+            self._api_works_search()
+            return True
+
         # GET /api/images/{id}
         if method == "GET" and path.startswith("/api/images/"):
             article_id = path[len("/api/images/"):]
@@ -2957,12 +3084,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 self.wfile.write(b"<h1>404 Not Found</h1>")
             return
 
-        CLUSTER_PILLAR_MAP = {
-            "business": ("/services/business-event/", "主題化品牌活動"),
-            "party": ("/services/party-spring-banquet/", "春酒尾牙佈置"),
-            "magic": ("/services/magic-academy/", "魔法學院主題"),
-            "civil": ("/services/civil-makeover/", "戶政空間改造"),
-        }
+        # CLUSTER_PILLAR_MAP 定義在模組層級（供 /api/works-search 共用），見上方。
         pillar_info = CLUSTER_PILLAR_MAP.get(article.get("category", ""))
 
         site_url = SITE_URL
