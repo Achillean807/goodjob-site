@@ -1568,6 +1568,23 @@ body:has(.lightbox:not([hidden])) .fab-line {
     scrollbar-width: none;
   }
 
+  /* 快捷列右緣淡出：提示可往右滑，捲到底（.quick-end）即消失；需 assets/quick-fade.js 加上 .quick-fade 才生效 */
+  .topbar.quick-fade::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 40px;
+    height: var(--quick-h, 0px);
+    background: linear-gradient(to right, transparent, var(--salt));
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .topbar.quick-fade.quick-end::after {
+    opacity: 0;
+  }
+
   .mobile-quick-links::-webkit-scrollbar {
     display: none;
   }
