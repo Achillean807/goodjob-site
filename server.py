@@ -3476,7 +3476,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         breadcrumb_jsonld_str = _json.dumps(breadcrumb_jsonld, ensure_ascii=False)
         faq_jsonld_str = _json.dumps(faq_jsonld, ensure_ascii=False)
 
-        css_v = "20260930a"
+        css_v = "20260930b"
         # 2026-09-11 Meta pixel：用一般字串存放，下面 f-string 只插 {meta_pixel}，不必逐個 escape 大括號
         meta_pixel = '''<!-- Meta Pixel（村山良作，2026-09-11 加裝） -->
 <script>
