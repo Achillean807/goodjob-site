@@ -3479,6 +3479,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     .pillar-breadcrumb a {{ color: var(--stone); text-decoration: none; }}
     .pillar-breadcrumb a:hover {{ color: var(--ink); text-decoration: underline; }}
     .pillar-breadcrumb .sep {{ margin: 0 8px; color: var(--stone); }}
+    /* ≤980px 版頭多一列 mobile-quick-links（實測 100–108px 高），麵包屑下移避免被固定版頭蓋住 */
+    @media (max-width: 980px) {{ .pillar-breadcrumb {{ margin-top: 128px; }} }}
     .works-cases {{ margin: 40px 0 0; }}
     .case-blocks {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px 32px; margin: 0; }}
     .case-blocks dt {{ font-size: .85rem; font-weight: 700; color: var(--point); letter-spacing: .08em; margin-bottom: 8px; }}
@@ -3520,14 +3522,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   <header class="topbar">
     <div class="wrap topbar-inner">
       <a class="brand" href="/" aria-label="村山良作 GOODJOB DESIGN 首頁">
-        <svg class="brand-emblem" viewBox="0 0 1000 1000" role="img" aria-label="村山良作">
-          <path fill="#222322" d="M80 100 340 260v350H80zm0 535h260v205H80zM370 270l130 100 130-100v340H370zm0 365h260v205H370zM660 260l260-160v510H660zm0 375h260v205H660z"/>
-          <rect x="468" y="604" width="64" height="64" fill="#9B3E35" stroke="#F2F0EB" stroke-width="14"/>
-        </svg>
-        <div class="brand-text">
-          <span class="brand-name">村山良作</span>
-          <span class="brand-tagline">商業設計・場景製作</span>
-        </div>
+        <img class="brand-logo" src="/assets/images/logo-topbar-ci.png" alt="村山良作 GOODJOB DESIGN" width="1640" height="624" decoding="async" />
       </a>
       <nav class="nav">
         <a href="/">首頁</a>
