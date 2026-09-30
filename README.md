@@ -7,7 +7,7 @@
 ## 目前狀態
 
 - 正式站：`https://goodjob.weddingwishlove.com/`
-- 正式資料：PostgreSQL `goodjob_site`（64 篇作品）
+- 正式資料：PostgreSQL `goodjob_site`（65 篇作品）
 - 作品圖片：Cloudflare R2／`goodjob-img.weddingwishlove.com`
 - 正式服務：`murayama-goodjob.service`，監聽 `127.0.0.1:10814`
 - 視覺系統：SALT `#F2F0EB`、INK `#222322`、STONE `#817C74`、POINT `#9B3E35`
