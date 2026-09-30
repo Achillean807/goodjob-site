@@ -487,6 +487,23 @@ def _absolute_image_url(site_url, url):
     return f"{site_url}/{url.lstrip('/')}"
 
 
+def _meta_summary(text, limit=160):
+    """meta／og／twitter／JSON-LD 共用摘要：壓成單行後，在 limit 字內收在最近的句末標點「。！？」（
+    連同緊跟的收尾引號括號），不補刪節號；limit 內完全沒有句末標點才退回最近的逗號／頓號並補「…」。"""
+    flat = re.sub(r"\s+", " ", text or "").strip()
+    if len(flat) <= limit:
+        return flat
+    cut = flat[:limit]
+    idx = max(cut.rfind(c) for c in "。！？")
+    if idx != -1:
+        while idx + 1 < limit and cut[idx + 1] in "」』）)":
+            idx += 1
+        return cut[:idx + 1]
+    idx = max(cut.rfind(c) for c in "，、")
+    # ponytail: 連逗號都沒有就硬切，實際文案（純中文、3–4 段）不會走到這條
+    return (cut[:idx] if idx > 0 else cut[:limit - 1]) + "…"
+
+
 def _iso_day(value):
     """從 ISO datetime 取 YYYY-MM-DD；取不到回 None（不造假日期）。"""
     s = str(value or "").strip()
@@ -3145,8 +3162,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             )
 
         # Keep crawler/share summaries compact even when the CMS copy has paragraphs.
-        meta_source = re.sub(r"\s+", " ", description).strip()
-        meta_desc = meta_source[:157] + "..." if len(meta_source) > 160 else meta_source
+        meta_desc = _meta_summary(description)
         # Hero image
         hero = article.get("heroImage") or ""
         if hero and not hero.startswith("http"):
