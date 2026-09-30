@@ -487,6 +487,89 @@ def _absolute_image_url(site_url, url):
     return f"{site_url}/{url.lstrip('/')}"
 
 
+# SSR 作品頁點圖放大：沿用 site.css 的 .lightbox* 樣式與首頁 SPA（site.js openLightbox）
+# 同一套 markup／行為（左右切換、「n / N」計數、點背景關閉），另補鍵盤、手機滑動、焦點歸還。
+# ponytail: site.js 是整包 SPA IIFE（會抓 /api/articles），無法單獨引入，故此處內嵌精簡版。
+WORKS_LIGHTBOX_HTML = """
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="作品圖片放大檢視" hidden>
+    <button type="button" class="lightbox-close" aria-label="關閉">&times;</button>
+    <button type="button" class="lightbox-prev" aria-label="上一張">&#8249;</button>
+    <button type="button" class="lightbox-next" aria-label="下一張">&#8250;</button>
+    <div class="lightbox-content"><img id="lightbox-img" src="" alt=""></div>
+    <div class="lightbox-counter" id="lightbox-counter" aria-live="polite"></div>
+  </div>
+  <style>.works-hero, .works-gallery img { cursor: zoom-in; }</style>
+  <script>
+  (function () {
+    'use strict';
+    var box = document.getElementById('lightbox');
+    if (!box) return;
+    var img = document.getElementById('lightbox-img');
+    var counter = document.getElementById('lightbox-counter');
+    var thumbs = Array.prototype.slice.call(document.querySelectorAll('.works-gallery img'));
+    var hero = document.querySelector('.works-hero');
+    var idx = 0, opener = null, startX = null;
+    if (!thumbs.length) return;
+    function show(i) {
+      idx = (i + thumbs.length) % thumbs.length;
+      img.src = thumbs[idx].currentSrc || thumbs[idx].src;
+      img.alt = thumbs[idx].alt;
+      counter.textContent = (idx + 1) + ' / ' + thumbs.length;
+    }
+    function open(i, from) {
+      opener = from || null;
+      show(i);
+      box.hidden = false;
+      document.body.style.overflow = 'hidden';
+      box.querySelector('.lightbox-close').focus();
+    }
+    function close() {
+      box.hidden = true;
+      img.src = '';
+      document.body.style.overflow = '';
+      if (opener) opener.focus();
+    }
+    function bind(el, i) {
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('role', 'button');
+      el.setAttribute('aria-haspopup', 'dialog');
+      el.addEventListener('click', function () { open(i, el); });
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(i, el); }
+      });
+    }
+    thumbs.forEach(bind);
+    if (hero) bind(hero, 0);
+    box.querySelector('.lightbox-close').addEventListener('click', close);
+    box.querySelector('.lightbox-prev').addEventListener('click', function () { show(idx - 1); });
+    box.querySelector('.lightbox-next').addEventListener('click', function () { show(idx + 1); });
+    box.addEventListener('click', function (e) {
+      if (e.target === box || e.target.classList.contains('lightbox-content')) close();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (box.hidden) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') show(idx - 1);
+      else if (e.key === 'ArrowRight') show(idx + 1);
+      else if (e.key === 'Tab') {
+        var f = box.querySelectorAll('button');
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+    box.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+    box.addEventListener('touchend', function (e) {
+      if (startX === null) return;
+      var dx = e.changedTouches[0].clientX - startX;
+      startX = null;
+      if (Math.abs(dx) > 50) show(idx + (dx < 0 ? 1 : -1));
+    });
+  })();
+  </script>
+"""
+
+
 def _meta_summary(text, limit=160):
     """meta／og／twitter／JSON-LD 共用摘要：壓成單行後，在 limit 字內收在最近的句末標點「。！？」（
     連同緊跟的收尾引號括號），不補刪節號；limit 內完全沒有句末標點才退回最近的逗號／頓號並補「…」。"""
@@ -3586,6 +3669,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   <a class="fab-line" data-line-position="fab" href="https://lin.ee/P2HRySj" target="_blank" rel="noopener" aria-label="LINE 洽詢檔期">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg><span class="fab-line-label">洽詢檔期</span>
   </a>
+{WORKS_LIGHTBOX_HTML}
 </body>
 </html>"""
 
