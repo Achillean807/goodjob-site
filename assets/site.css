@@ -1250,7 +1250,7 @@ body.js-ready .ssr-featured {
   position: fixed;
   inset: 0;
   z-index: 300;
-  background: rgba(0, 0, 0, 0.92);
+  background: rgba(12, 12, 12, 0.97);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1258,6 +1258,11 @@ body.js-ready .ssr-featured {
 
 .lightbox[hidden] {
   display: none !important;
+}
+
+/* lightbox 開啟時藏起 LINE 浮動鈕，避免壓到計數與左右鍵；關閉即恢復（首頁 SPA 與 SSR 作品頁共用） */
+body:has(.lightbox:not([hidden])) .fab-line {
+  display: none;
 }
 
 .lightbox-content {
