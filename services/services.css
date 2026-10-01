@@ -113,6 +113,13 @@
   font-size: 0.98rem;
 }
 
+/* 內文作品連結：定位紅＋底線，與 SSR 作品頁 .works-pillar a 一致 */
+.pillar-intro a {
+  color: var(--point);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .pillar-intro strong {
   color: var(--point);
   font-weight: 700;
