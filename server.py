@@ -1131,6 +1131,9 @@ def _load_featured_articles(limit=6, articles=None):
 
 
 # 首頁 noscript 索引與 ItemList JSON-LD 的分類順序與中文名。
+# Meta Pixel 只放在廣告落地作品頁（id 或 slug 命中才輸出；2026-10-05 村長裁示）
+PIXEL_WORK_KEYS = {"f8b4b9f4", "lianyun-logistics-2025-year-end", "c35fa390", "maritime-magic-academy-party"}
+
 # ponytail: 四類是全站封閉集合（server.py 的 CLUSTER_PILLAR_MAP、前端 chapter
 # 區塊都寫死同一組），分類若哪天擴充，這裡要一起補，否則新分類不會進索引。
 WORKS_INDEX_CATEGORIES = (
@@ -3492,6 +3495,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   }, true);
 </script>
 <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1330894157559427&ev=PageView&noscript=1" /></noscript>'''
+        if article.get("id") not in PIXEL_WORK_KEYS and article.get("slug") not in PIXEL_WORK_KEYS:
+            meta_pixel = ""
         html = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>

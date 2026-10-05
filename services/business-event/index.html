@@ -254,12 +254,11 @@
   </script>
   <!-- Google Analytics 4 (村山良作 Property) -->
   <script>
-      /* 效能：Meta Pixel／GA4 腳本延到首次互動或 load 後閒置時（無支援則 1.5 秒）才載入（fbq／gtag 已先排佇列，事件不遺失） */
+      /* 效能：GA4 腳本延到首次互動或 load 後閒置時（無支援則 1.5 秒）才載入（gtag 已先排佇列，事件不遺失） */
       (function(){
         var done=false;
         function loadTrackers(){
           if(done){return;}done=true;
-          if(window.__fbLoad){window.__fbLoad();}
           var g=document.createElement('script');g.async=true;
           g.src='https://www.googletagmanager.com/gtag/js?id=G-RCWT3M1FWX';
           document.head.appendChild(g);
@@ -270,20 +269,6 @@
         window.addEventListener('load',function(){if(window.requestIdleCallback){requestIdleCallback(loadTrackers,{timeout:3000});}else{setTimeout(loadTrackers,1500);}});
       })();
     </script><script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-RCWT3M1FWX');</script>
-  <!-- Meta Pixel（村山良作，2026-09-11 加裝） -->
-  <script>
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];window.__fbLoad=function(){s.parentNode.insertBefore(t,s)}}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1330894157559427');
-    fbq('track', 'PageView');
-    /* LINE 洽詢點擊 -> Contact。整段包 try/catch 且不呼叫 preventDefault，量測壞掉也絕不阻斷導流。 */
-    document.addEventListener('click', function (e) {
-      try {
-        var t = e.target;
-        if (t && t.closest && t.closest('a[href*="lin.ee"]')) { fbq('track', 'Contact'); }
-      } catch (err) {}
-    }, true);
-  </script>
-  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1330894157559427&ev=PageView&noscript=1" /></noscript>
   <!-- Microsoft Clarity -->
   <script type="text/javascript">
     (function(){
