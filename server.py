@@ -3525,7 +3525,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   <script type="application/ld+json">{faq_jsonld_str}</script>
   <!-- Google Analytics 4 (村山良作 Property) -->
   <script>
-      /* 效能：Meta Pixel／GA4 腳本延到首次互動或 load 後 3 秒才載入（fbq／gtag 已先排佇列，事件不遺失） */
+      /* 效能：Meta Pixel／GA4 腳本延到首次互動或 load 後 12 秒才載入（fbq／gtag 已先排佇列，事件不遺失） */
       (function(){{
         var done=false;
         function loadTrackers(){{
@@ -3538,7 +3538,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         ['scroll','pointerdown','keydown','touchstart'].forEach(function(e){{
           window.addEventListener(e,loadTrackers,{{once:true,passive:true}});
         }});
-        window.addEventListener('load',function(){{setTimeout(loadTrackers,3000);}});
+        window.addEventListener('load',function(){{setTimeout(loadTrackers,12000);}});
       }})();
     </script>
   <script>
@@ -3550,11 +3550,21 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
 {meta_pixel}
   <!-- Microsoft Clarity -->
   <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){{
-        c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    }})(window, document, "clarity", "script", "wqkwwcp7kt");
+    (function(){{
+      var loaded=false;
+      function loadClarity(){{
+        if(loaded){{return;}}loaded=true;
+        (function(c,l,a,r,i,t,y){{
+            c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        }})(window, document, "clarity", "script", "wqkwwcp7kt");
+      }}
+      ['scroll','pointerdown','keydown','touchstart'].forEach(function(e){{
+        window.addEventListener(e,loadClarity,{{once:true,passive:true}});
+      }});
+      window.addEventListener('load',function(){{setTimeout(loadClarity,12000);}});
+    }})();
   </script>
   <style>
     /* 鹽白編輯風：作品頁專屬版面（顏色沿用 site.css 的四色 token） */
