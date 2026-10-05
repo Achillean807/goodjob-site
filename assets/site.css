@@ -1897,6 +1897,8 @@ body:has(.lightbox:not([hidden])) .fab-line {
 }
 
 .chapter-card {
+  content-visibility: auto; /* 畫面外卡片不排版，lazy 圖才不會因高度為 0 而全部一起載入（效能） */
+  contain-intrinsic-size: auto 260px;
   position: relative;
   display: block;
   break-inside: avoid;
