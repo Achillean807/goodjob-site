@@ -333,6 +333,7 @@
     if (!src || heroBg.getAttribute('src') === src) return;
     heroBg.classList.add('is-swapping');
     setTimeout(function () {
+      heroBg.removeAttribute('srcset'); // 首屏 srcset 只服務第一張，換圖後改回單一 src
       heroBg.setAttribute('src', src);
       heroBg.onload = function () { heroBg.classList.remove('is-swapping'); };
       setTimeout(function () { heroBg.classList.remove('is-swapping'); }, 400);

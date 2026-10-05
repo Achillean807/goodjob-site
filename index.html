@@ -142,6 +142,7 @@
     <link rel="aeo-profile" href="https://aeo.washinmura.jp/ai/goodjob.weddingwishlove.com/">
     <meta name="aeo-verified" content="washinmura-aeo-goodjob.weddingwishlove.com">
     <script async src="https://aeo.washinmura.jp/widget/crawler-track.js" data-site="goodjob.weddingwishlove.com"></script>
+    <link rel="preload" as="image" href="https://goodjob-img.weddingwishlove.com/works/datong-civil/hero.webp" imagesrcset="/assets/images/hero-home-800.webp 800w, https://goodjob-img.weddingwishlove.com/works/datong-civil/hero.webp 1600w" imagesizes="(max-width: 980px) 100vw, 640px" fetchpriority="high" />
     <link rel="stylesheet" href="./assets/site.css?v=20261005a" />
     <!-- ponytail: SSR 後備區塊預設隱藏，僅在無 JS 時由 noscript 還原。
          原本「先顯示 → DOMContentLoaded 加 js-ready 後 display:none」，
@@ -299,6 +300,8 @@
               <img
                 class="hero-bg"
                 src="https://goodjob-img.weddingwishlove.com/works/datong-civil/hero.webp"
+                srcset="/assets/images/hero-home-800.webp 800w, https://goodjob-img.weddingwishlove.com/works/datong-civil/hero.webp 1600w"
+                sizes="(max-width: 980px) 100vw, 640px"
                 fetchpriority="high"
                 alt=""
                 aria-hidden="true"
@@ -476,7 +479,7 @@
     <!-- Toast -->
     <div id="toast" class="toast"></div>
 
-    <script src="./assets/site.js?v=20260918a"></script>
+    <script src="./assets/site.js?v=20261005a"></script>
     <script src="./assets/quick-fade.js?v=20261001a" defer></script>
   </body>
 </html>
