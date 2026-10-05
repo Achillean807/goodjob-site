@@ -170,3 +170,4 @@ COMMIT;
 6. 上架後**視覺驗收**：Read 幾張 webp + 開 `/works/{id}` 確認方向、順序、封面對。
 7. **description 存純文字**（前端 `textContent` + CSS `white-space:pre-wrap`），段落用**空行**分隔，**嚴禁 `<p>`／HTML 標籤**——否則會原樣顯示成文字（2026-07-06 踩坑）。SSR `/works/{id}` 由 server.py 自己包一層 `<p class="works-desc">`，你只需給乾淨純文字。
 8. **覆蓋既有圖檔（同名重傳）後必須 CF purge**：R2 CDN 對 GET 快取 4 小時（HEAD 會顯示 DYNAMIC，不可信），用 `~/.claude/.cf-env` 的 `CLOUDFLARE_PURGE_TOKEN_MULTI` 對該批 URL 定點 purge，再以對外 GET 的 `size_download` 對本機檔案大小逐檔比對（2026-09-30 The Roman 擴圖實踩）。
+9. **改 DB 或文案後，必須 purge 該頁、首頁、服務頁的 HTML 邊緣快取**（2026-10-05 起 CF Cache Rule 對 `/`、`/works/*`、`/services/*` 的 HTML 快取 300 秒）：新增作品、改 `articles` 欄位、改服務頁文案後，用 `~/.claude/.cf-env` 的 `CLOUDFLARE_PURGE_TOKEN_MULTI` 對 `POST /zones/${CLOUDFLARE_ZONE_ID_WEDDINGWISHLOVE}/purge_cache` 帶 `{"files":[".../works/<id>", ".../", ".../services/<該分類>/"]}`（新增作品要清首頁與其分類服務頁，因為兩頁都有作品清單），再對外 GET 兩次確認新內容。不 purge 最多舊 5 分鐘，會自然過期。規則本體與坑見 `~/.claude/refs/ach-clawhome.md`「goodjob HTML 邊緣快取」。
