@@ -3480,7 +3480,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         # 2026-09-11 Meta pixel：用一般字串存放，下面 f-string 只插 {meta_pixel}，不必逐個 escape 大括號
         meta_pixel = '''<!-- Meta Pixel（村山良作，2026-09-11 加裝） -->
 <script>
-  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];window.__fbLoad=function(){s.parentNode.insertBefore(t,s)}}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
   fbq('init', '1330894157559427');
   fbq('track', 'PageView');
   /* LINE 洽詢點擊 -> Contact。整段包 try/catch 且不呼叫 preventDefault，量測壞掉也絕不阻斷導流。 */
@@ -3524,7 +3524,23 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
   <script type="application/ld+json">{breadcrumb_jsonld_str}</script>
   <script type="application/ld+json">{faq_jsonld_str}</script>
   <!-- Google Analytics 4 (村山良作 Property) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RCWT3M1FWX"></script>
+  <script>
+      /* 效能：Meta Pixel／GA4 腳本延到首次互動或 load 後 3 秒才載入（fbq／gtag 已先排佇列，事件不遺失） */
+      (function(){{
+        var done=false;
+        function loadTrackers(){{
+          if(done){{return;}}done=true;
+          if(window.__fbLoad){{window.__fbLoad();}}
+          var g=document.createElement('script');g.async=true;
+          g.src='https://www.googletagmanager.com/gtag/js?id=G-RCWT3M1FWX';
+          document.head.appendChild(g);
+        }}
+        ['scroll','pointerdown','keydown','touchstart'].forEach(function(e){{
+          window.addEventListener(e,loadTrackers,{{once:true,passive:true}});
+        }});
+        window.addEventListener('load',function(){{setTimeout(loadTrackers,3000);}});
+      }})();
+    </script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){{dataLayer.push(arguments);}}
