@@ -1197,7 +1197,7 @@
       else position = 'body';
     }
     if (window.gtag) {
-      gtag('event', 'line_click', { page_path: location.pathname, position: position });
+      gtag('event', 'line_click', { page_path: location.pathname, position: position, transport_type: 'beacon' });
     }
   });
 })();

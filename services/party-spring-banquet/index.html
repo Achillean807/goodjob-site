@@ -258,7 +258,7 @@
   <link rel="stylesheet" href="/services/services.css?v=20261001a" />
 <!-- Google Analytics 4 (村山良作 Property) -->
 <script>
-      /* 效能：Meta Pixel／GA4 腳本延到首次互動或 load 後 12 秒才載入（fbq／gtag 已先排佇列，事件不遺失） */
+      /* 效能：Meta Pixel／GA4 腳本延到首次互動或 load 後閒置時（無支援則 1.5 秒）才載入（fbq／gtag 已先排佇列，事件不遺失） */
       (function(){
         var done=false;
         function loadTrackers(){
@@ -271,7 +271,7 @@
         ['scroll','pointerdown','keydown','touchstart'].forEach(function(e){
           window.addEventListener(e,loadTrackers,{once:true,passive:true});
         });
-        window.addEventListener('load',function(){setTimeout(loadTrackers,12000);});
+        window.addEventListener('load',function(){if(window.requestIdleCallback){requestIdleCallback(loadTrackers,{timeout:3000});}else{setTimeout(loadTrackers,1500);}});
       })();
     </script><script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-RCWT3M1FWX');</script>
 <!-- Meta Pixel（村山良作，2026-09-11 加裝） -->
@@ -321,7 +321,7 @@
       else position = 'body';
     }
     if (window.gtag) {
-      gtag('event', 'line_click', { page_path: location.pathname, position: position });
+      gtag('event', 'line_click', { page_path: location.pathname, position: position, transport_type: 'beacon' });
     }
   });
 })();
