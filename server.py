@@ -3189,6 +3189,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
 
         # CLUSTER_PILLAR_MAP 定義在模組層級（供 /api/works-search 共用），見上方。
         pillar_info = CLUSTER_PILLAR_MAP.get(article.get("category", ""))
+        # 聖誕作品改推聖誕節佈置承接頁（2026-10-06）
+        if article.get("id") == "2c4af1fc":
+            pillar_info = ("/services/christmas-decor/", "聖誕節佈置")
 
         site_url = SITE_URL
         # canonical / og:url / JSON-LD 一律用對外網址（slug 優先，無 slug 才用 id）
@@ -3743,6 +3746,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             "/services/party-spring-banquet/",
             "/services/magic-academy/",
             "/services/civil-makeover/",
+            "/services/christmas-decor/",
         ]:
             day = _static_day(loc)
             lastmod = f"<lastmod>{day}</lastmod>" if day else ""
