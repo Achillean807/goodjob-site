@@ -73,7 +73,7 @@ python3 server.py --port 8000
 ### 文章
 | 方法 | 端點 | 權限 | 說明 |
 |------|------|------|------|
-| GET | `/api/articles` | 公開 | 列出全部 65 篇 |
+| GET | `/api/articles` | 公開 | 列出全部 69 篇 |
 | GET | `/api/works-search?q=&limit=` | `X-Village-Proxy-Key`（`GOODJOB_WORKS_SEARCH_KEY` 未設則公開） | 村花官網 AI 客服搜作品：中文 2-gram 計分（分類中文名×3／標題×2／內文×1，哈利波特／魔法／霍格華茲視為魔法學院），回 `{results:[{title,url,theme,styles,summary,date}]}`（2026-09-24） |
 | GET | `/api/images/{id}` | 公開 | 取單篇圖片清單 |
 | POST | `/api/articles` | `articles.write` | 新增 |
@@ -261,7 +261,7 @@ A: 頁面已於 2026-07-30 下架（301 至村花主站 /services/packages）；
 | `assets/site.css` | 1964 | 所有樣式 |
 | `admin/index.html` + `admin/app.js` | — | CMS 後台（文章 + 帳號管理）|
 | `index.html` | — | 首頁模板 |
-| `data/articles.json` | — | 舊資料備份（正式資料源已切至 PostgreSQL `goodjob_site.articles` 共 65 篇） |
+| `data/articles.json` | — | 舊資料備份（正式資料源已切至 PostgreSQL `goodjob_site.articles` 共 69 篇） |
 | `data/config.json` | git-ignored | 舊版單一 admin（fallback） |
 | `data/accounts.json` | git-ignored | 多帳號 + permissions |
 | `path-map.json` | — | R2 遷移反查表（回滾用） |

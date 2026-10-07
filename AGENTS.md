@@ -45,7 +45,7 @@ python3 server.py --port 8000
 ### 文章
 | 方法 | 端點 | 權限 | 說明 |
 |------|------|------|------|
-| GET | `/api/articles` | 公開 | 列出全部 65 篇 |
+| GET | `/api/articles` | 公開 | 列出全部 69 篇 |
 | GET | `/api/images/{id}` | 公開 | 取單篇圖片清單 |
 | POST | `/api/articles` | `articles.write` | 新增 |
 | PUT | `/api/articles/{id}` | `articles.write` | 更新欄位 |
@@ -241,7 +241,7 @@ A: 頁面已於 2026-07-30 下架（301 至村花主站 `/services/packages`）�
 | `assets/site.css` | — | 所有樣式與 CI tokens |
 | `admin/index.html` + `admin/app.js` | — | CMS 後台（文章 + 帳號管理）|
 | `index.html` | — | 首頁模板 |
-| `data/articles.json` | — | 舊資料備份（正式資料源已切至 PostgreSQL `goodjob_site.articles` 共 65 篇） |
+| `data/articles.json` | — | 舊資料備份（正式資料源已切至 PostgreSQL `goodjob_site.articles` 共 69 篇） |
 | `data/config.json` | git-ignored | 舊版單一 admin（fallback） |
 | `data/accounts.json` | git-ignored | 多帳號 + permissions |
 | `path-map.json` | — | R2 遷移反查表（回滾用） |
