@@ -256,6 +256,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=optional" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/site.css?v=20260911a" />
   <link rel="stylesheet" href="/services/services.css?v=20261001a" />
+  <link rel="stylesheet" href="/services/party-spring-banquet/inquiry.css?v=20261007a" />
 <!-- Google Analytics 4 (村山良作 Property) -->
 <script>
       /* 效能：Meta Pixel／GA4 腳本延到首次互動或 load 後閒置時（無支援則 1.5 秒）才載入（fbq／gtag 已先排佇列，事件不遺失） */
@@ -494,7 +495,19 @@
 
     <section class="pillar-cta">
       <h2>2027 年尾牙春酒檔期開放洽詢（2026 年 12 月～2027 年 2 月）</h2>
-      <p>尾牙旺季集中在 12 月到隔年 2 月，週五、週六的檔期最早被訂走。傳活動日期、人數與場地到 LINE，我們會先幫你確認檔期，方向可以之後慢慢談。</p>
+      <p>先把日期、場地與需求傳到 LINE，讓我們確認檔期與施作範圍。還沒決定的項目填「未定」即可。</p>
+      <div class="inquiry-kit">
+        <label for="party-inquiry">詢價需求清單</label>
+        <p id="party-inquiry-help">可直接填寫後複製，再貼到 LINE；尚未填好的清單也能先傳。</p>
+        <textarea id="party-inquiry" aria-describedby="party-inquiry-help" rows="7" spellcheck="false">活動日期：未定
+場地／城市：未定
+預計人數：未定
+預算區間：未定
+主題方向／想佈置的區域：未定
+進場與撤場時段／場地限制：未定</textarea>
+        <button class="inquiry-copy" id="party-inquiry-copy" type="button">複製詢價清單</button>
+        <p class="inquiry-status" id="party-inquiry-status" role="status" aria-live="polite"></p>
+      </div>
       <a class="line-cta-btn" href="https://lin.ee/P2HRySj" target="_blank" rel="noopener">
         <svg class="line-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
         LINE 洽詢
@@ -507,6 +520,7 @@
       <a href="/">回到首頁</a>
     </section>
   </main>
+  <script src="/services/party-spring-banquet/inquiry.js?v=20261007a" defer></script>
 
   <script>
     (function () {

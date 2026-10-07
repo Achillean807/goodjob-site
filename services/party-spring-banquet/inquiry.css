@@ -1,0 +1,35 @@
+.inquiry-kit {
+  max-width: 680px;
+  margin: 28px auto 20px;
+  text-align: left;
+}
+.inquiry-kit label { display: block; font-weight: 700; font-size: 18px; }
+.inquiry-kit #party-inquiry-help { margin: 8px 0 12px; font-size: 14px; }
+.inquiry-kit textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 210px;
+  padding: 16px;
+  border: 1px solid var(--rule, #ccc);
+  border-radius: 0;
+  color: var(--ink, #222);
+  background: var(--paper, #fff);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.8;
+  resize: vertical;
+}
+.inquiry-copy {
+  margin-top: 12px;
+  min-height: 44px;
+  padding: 10px 20px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.inquiry-copy:focus-visible,
+.inquiry-kit textarea:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.inquiry-kit .inquiry-status { min-height: 24px; margin: 8px 0 0; font-size: 14px; }
