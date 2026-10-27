@@ -1,3 +1,8 @@
+# 換行規則：repo 與工作區一律 LF（部署目標皆 Linux）；僅 Windows 批次檔用 CRLF
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
 data/articles.json export-ignore
 data/accounts.json export-ignore
 data/config.json export-ignore
