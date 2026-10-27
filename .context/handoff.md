@@ -1,20 +1,33 @@
-# 收工交接｜2026-09-26
+# 收工交接｜2026-10-28
 
-- Repo：`D:\AI_Site\goodjob-site`
+- Repo：`E:\01_村花與活動營運\村山良作官網__goodjob-site`（家用機 DESKTOP-Shiva）
 - 分支：`master`
-- HEAD：`cb62c22`（收工時雙向比對 `origin/master` 皆 0，工作區乾淨）
-- 本檔為本場新建；`.gitignore` 忽略 `.context/`，本檔用 `git add -f` 強制追蹤，是否改規則由村長決定。
+- 交接檔寫入前 HEAD：`0c77a3b`（changelog commit）；收工時本機與 `origin/master` 雙向差 0
+- 工作區殘留：`.playwright-cli/`、`output/` 為 session 開始前就有的未追蹤目錄，未處理
+- `.gitignore` 第 58 行仍忽略 `.context/`；本檔已被追蹤，所以照常 commit。是否移除該規則：待村長決定
 
-## 本場完成
+## 本場完成（全部已上正式站）
 
-- `cf3b01e`：新增 `GET /api/works-search?q=&limit=`（給村花官網 HelpDesk 的 `works_search(scope=commercial)` 工具）。中文 2-gram 計分：分類中文名×3／標題×2／內文×1，哈利波特／魔法／霍格華茲視為魔法學院同義詞；回 `{results:[{title,url,theme,styles,summary,date}]}`。`CLUSTER_PILLAR_MAP` 拉到模組層級供 SSR 與端點共用。測試 `tests/test_works_search.py` 11 題。
-- `cb62c22`：CLAUDE.md API 對照表與變更紀錄補記。
+| commit | 內容 |
+|--------|------|
+| `390ce70` | 首頁 5 個 alt 補文字；LocalBusiness 補電話 `+886-976-747-372` 與營業時間（週一至週五 12:00–18:00）|
+| `9fa1fd2` | 首頁補完整地址（劍潭路55巷8號1F）、可見 FAQ 區塊、標題描述加「台北」 |
+| `9e37d7e` | 新增 `.gitattributes`，換行統一為 LF |
+| `1c06cb2` | IDAEO 缺口修補：`llms.txt` 更新日與 FB／IG 分組、LINE 洽詢 FAQ 三處一致、5 個服務頁 footer 加 LINE 連結 |
+| `098c766`／`582b990`／`0c77a3b` | CLAUDE.md changelog 補記 |
 
-## 部署證據
+另：Synology `26 skills` 新增 `ideao-ref` 技能（IDAEO 教科書三層式參考），已推到 GitHub `claude-skills`。
 
-- staging（`/srv/raid1/weddingwish/goodjob-staging`，git repo）`reset --hard origin/master` 到 `cf3b01e`，驗 400／200／200 後 `cp server.py` 到 prod（`/srv/raid1/weddingwish/goodjob-sit`，非 git；備份 `server.py.bak-20260924`）。prod 舊檔 md5 等於 `cf3b01e~1` 的 `server.py`，證實這次是乾淨落差、沒有未回寫的手改。
-- 金鑰 `GOODJOB_WORKS_SEARCH_KEY` 寫在 `/etc/systemd/system/murayama-goodjob{,-staging}.service.d/works-search.conf`（600 root），值與 HelpDesk `LH_VILLAGE_CHAT_PROXY_KEY` 同一把（末 4 碼 f047）。prod 不帶金鑰 403、帶金鑰 200；對外站 200。
+## 部署狀態（1c06cb2）
 
-## 待辦
+- staging→`cp` prod→restart；repo／staging／prod 三方 md5 一致
+- 備份：`/srv/raid1/backups/goodjob-aeo-idaeo-20261028/pre.tgz`（7 檔）
+- validator.schema.org：0 錯誤 0 警告
+- fresh-context agent 獨立驗收：6/6 PASS，`/api/articles` 69 篇
 
-- 無。之後若 HelpDesk 輪替 proxy key，這兩個 override 要同步換並 `daemon-reload` + restart。
+## 未竟事項
+
+1. AEO 報告「重新檢測」（1c06cb2 這一輪）：未驗證，待村長按 https://aeo.idaeo.ai/goodjob-weddingwishlove-com/report/zh/
+2. 已合併的 worktree `goodjob-wt-idaeo` 與分支 `aeo/idaeo-gaps-20261028` 還在。刪除前需村長同意
+3. 舊未竟事項（09-16）：GSC sitemap 重新提交，仍未做
+4. IDAEO 評估中未處理的項目：每月 AI 點名率實測（S6／S7）、Google 商家等第三方平台的 NAP 一致性。未開工
