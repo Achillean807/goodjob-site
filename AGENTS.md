@@ -136,7 +136,7 @@ Environment="HOME=/home/achilean"
   "id": "kebab-case-slug",
   "title": "顯示標題",
   "description": "純文字（空行分段，前端 textContent + pre-wrap 渲染，禁 HTML 標籤）",
-  "category": "party" | "business" | "civil" | "magic",
+  "category": "party" | "business" | "school" | "civil" | "magic",
   "featured": true/false,
   "featuredOrder": 0,
   "heroImage": "https://goodjob-img.weddingwishlove.com/works/{id}/hero.webp",
@@ -149,7 +149,7 @@ Environment="HOME=/home/achilean"
 }
 ```
 
-分類：`business`（主題活動）、`party`（春酒尾牙）、`magic`（魔法學院）、`civil`（戶政改造）
+分類：`business`（主題活動）、`party`（春酒尾牙）、`school`（學校活動，2026-11-02 新增）、`magic`（魔法學院）、`civil`（戶政改造）
 
 ## 子頁面
 

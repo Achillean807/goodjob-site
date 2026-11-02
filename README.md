@@ -53,9 +53,10 @@ server.py :10814
 
 | 路徑 | 說明 |
 |---|---|
-| `/` | 首頁、精選作品與四類章節式相簿 |
+| `/` | 首頁、精選作品與五類章節式相簿（0 篇的分類不顯示） |
 | `/services/business-event/` | 主題活動 |
 | `/services/party-spring-banquet/` | 春酒尾牙 |
+| `/services/school-event/` | 學校活動 |
 | `/services/magic-academy/` | 魔法學院 |
 | `/services/civil-makeover/` | 戶政改造 |
 | `/teabar.html` | 迎賓花果茶 |
