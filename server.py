@@ -3560,7 +3560,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         breadcrumb_jsonld_str = _json.dumps(breadcrumb_jsonld, ensure_ascii=False)
         faq_jsonld_str = _json.dumps(faq_jsonld, ensure_ascii=False)
 
-        css_v = "20261001a"
+        css_v = "20261102a"
         # 2026-09-11 Meta pixel：用一般字串存放，下面 f-string 只插 {meta_pixel}，不必逐個 escape 大括號
         meta_pixel = '''<!-- Meta Pixel（村山良作，2026-09-11 加裝） -->
 <script>
@@ -3731,6 +3731,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         <a href="/">首頁</a>
         <a href="/services/business-event/">主題活動佈置</a>
         <a href="/services/party-spring-banquet/">春酒尾牙佈置</a>
+        <a href="/services/school-event/">學校活動</a>
         <a href="/services/magic-academy/">魔法學院</a>
         <a href="/services/civil-makeover/">戶政改造</a>
       </nav>
@@ -3743,6 +3744,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     <nav class="mobile-quick-links" aria-label="手機版主要入口">
       <a href="/services/business-event/">主題活動佈置</a>
       <a href="/services/party-spring-banquet/">春酒尾牙佈置</a>
+      <a href="/services/school-event/">學校活動</a>
       <a href="/services/magic-academy/">魔法學院</a>
       <a href="/services/civil-makeover/">戶政改造</a>
       <a href="/teabar.html">迎賓花果茶</a>
@@ -3825,6 +3827,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             "/muse-2026.html",
             "/services/business-event/",
             "/services/party-spring-banquet/",
+            "/services/school-event/",
             "/services/magic-academy/",
             "/services/civil-makeover/",
             "/services/christmas-decor/",

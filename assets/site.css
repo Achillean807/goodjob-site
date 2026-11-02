@@ -139,6 +139,18 @@ img {
   display: none;
 }
 
+/* 981–1060px：導覽 6 個連結（2026-11-02 加「學校活動」）會被擠到逐字折行，收窄間距 */
+@media (min-width: 981px) and (max-width: 1060px) {
+  .nav {
+    gap: 16px;
+    margin-left: 18px;
+  }
+
+  .topbar-tools {
+    gap: 12px;
+  }
+}
+
 .tool-button {
   border: 0;
   background: transparent;

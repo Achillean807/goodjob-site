@@ -20,7 +20,7 @@
   var CHAPTER_META = {
     business: { en: 'BUSINESS', name: '主題活動', lead: '把品牌的故事，變成一個走得進去的現場。', more: '/services/business-event/' },
     party:    { en: 'PARTY',    name: '春酒尾牙', lead: '一年一度的犒賞，值得一個被記住的舞台。', more: '/services/party-spring-banquet/' },
-    school:   { en: 'SCHOOL',   name: '學校活動', lead: '畢業、迎新與校慶，把一段校園時光收進同一個場景。', more: '/services/school-event/' },
+    school:   { en: 'SCHOOL',   name: '學校活動', lead: '畢業、迎新與校慶，把一段校園時光留在現場。', more: '/services/school-event/' },
     magic:    { en: 'MAGIC',    name: '魔法學院', lead: '讓活動長出一個世界觀，大人小孩都想留下來。', more: '/services/magic-academy/' },
     civil:    { en: 'CIVIL',    name: '戶政改造', lead: '把辦證的冷空間，變成想拍照打卡的場景。', more: '/services/civil-makeover/' }
   };

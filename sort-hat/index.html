@@ -132,6 +132,11 @@
       .nav a { opacity: 0.9; transition: opacity 0.3s; }
       .nav a:hover { opacity: 1; }
       .topbar-tools { display: flex; align-items: center; gap: 16px; }
+      /* 981–1060px：導覽 6 個連結（2026-11-02 加「學校活動」）會逐字折行，收窄間距（同 site.css） */
+      @media (min-width: 981px) and (max-width: 1060px) {
+        .nav { gap: 16px; margin-left: 14px; }
+        .topbar-tools { gap: 12px; }
+      }
       .tool-button {
         border: 0; background: transparent; cursor: pointer; text-decoration: none;
         white-space: nowrap;
@@ -653,6 +658,7 @@
           <a href="/">首頁</a>
           <a href="/services/business-event/">主題活動佈置</a>
           <a href="/services/party-spring-banquet/">春酒尾牙佈置</a>
+          <a href="/services/school-event/">學校活動</a>
           <a href="/services/magic-academy/">魔法學院</a>
           <a href="/services/civil-makeover/">戶政改造</a>
         </nav>
