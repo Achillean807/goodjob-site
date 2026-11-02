@@ -69,10 +69,14 @@ function hasPermission(permission) {
 
 function thumbUrl(src) {
   if (!src) return src;
-  var lower = src.toLowerCase();
+  // 查詢字串（例：?v=20261102c 快取版本號）先拆開，只對路徑換 -thumb.webp，再接回去
+  var q = src.indexOf('?');
+  var path = q === -1 ? src : src.slice(0, q);
+  var query = q === -1 ? '' : src.slice(q);
+  var lower = path.toLowerCase();
   if (lower.indexOf('-thumb.webp') !== -1) return src;
   if (lower.slice(-5) !== '.webp') return src;
-  return src.slice(0, -5) + '-thumb.webp';
+  return path.slice(0, -5) + '-thumb.webp' + query;
 }
 
 function requirePermission(permission, message) {
