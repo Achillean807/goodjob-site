@@ -595,7 +595,8 @@ def _plan_work_sections(description, sections, n_images):
 
     description 以「【label】其餘標題」開頭的行切段，sections 的 images 是 1-based 圖片序號。
     回傳 None＝不啟用（sections 不是非空清單，或 description 沒有標題行），沿用舊版版面；
-    否則回傳 (開場文字, [(label, 標題其餘文字, 段落內文, [0-based 圖片索引])], [未認領的索引])。
+    否則回傳 (開場文字, [(label, 標題其餘文字, 段落內文, [0-based 圖片索引], wide)], [未認領的索引])。
+    wide：段落物件帶 "wide": true 時為 True，該段圖庫改單欄、圖片原比例不裁切。
     不變式：每張圖只出現一次——重複序號只取第一次、超出範圍忽略、沒被認領的放最後的精彩花絮。
     """
     if not isinstance(sections, list) or not sections:
@@ -604,22 +605,23 @@ def _plan_work_sections(description, sections, n_images):
     heads = [(i, m) for i, m in ((i, _SECTION_HEAD_RE.match(l)) for i, l in enumerate(lines)) if m]
     if not heads:
         return None
-    wanted = {}  # label → 序號清單；同 label 重複定義只取第一個
+    wanted = {}  # label → 段落物件；同 label 重複定義只取第一個
     for s in sections:
         if isinstance(s, dict) and isinstance(s.get("label"), str) and isinstance(s.get("images"), list):
-            wanted.setdefault(s["label"].strip(), s["images"])
+            wanted.setdefault(s["label"].strip(), s)
     used = set()
     parts = []
     for k, (i, m) in enumerate(heads):
         end = heads[k + 1][0] if k + 1 < len(heads) else len(lines)
         picks = []
-        for n in wanted.get(m.group(1).strip(), []):
+        sec = wanted.get(m.group(1).strip(), {})
+        for n in sec.get("images", []):
             # bool 是 int 的子類別，要明確排除
             if isinstance(n, int) and not isinstance(n, bool) and 1 <= n <= n_images and n - 1 not in used:
                 used.add(n - 1)
                 picks.append(n - 1)
         body = "\n".join(lines[i + 1:end]).strip()
-        parts.append((m.group(1).strip(), m.group(2).strip(), body, picks))
+        parts.append((m.group(1).strip(), m.group(2).strip(), body, picks, sec.get("wide") is True))
     intro = "\n".join(lines[:heads[0][0]]).strip()
     return intro, parts, [i for i in range(n_images) if i not in used]
 
@@ -3329,20 +3331,21 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if plan:
             intro, parts, leftover = plan
 
-            def _sec_gallery(idxs):
+            def _sec_gallery(idxs, wide=False):
                 tags = "".join(
                     f'<img src="{_esc(images[i])}" alt="{_esc(title)} {img_alt_suffix} {i + 1}" loading="lazy">'
                     for i in idxs)
-                return f'<div class="works-gallery">{tags}</div>' if idxs else ""
+                cls = "works-gallery works-gallery--wide" if wide else "works-gallery"
+                return f'<div class="{cls}">{tags}</div>' if idxs else ""
 
             sec_html = [f'<p class="works-desc">{_esc(intro)}</p>'] if intro else []
-            for label, rest, body, idxs in parts:
+            for label, rest, body, idxs, wide in parts:
                 rest_html = f'<span>{_esc(rest)}</span>' if rest else ""
                 body_html = f'<p class="works-desc">{_esc(body)}</p>' if body else ""
                 sec_html.append(
                     '<section class="works-part">'
                     f'<h2 class="works-section-title"><span class="works-part-label">{_esc(label)}</span>{rest_html}</h2>'
-                    f'{body_html}{_sec_gallery(idxs)}</section>'
+                    f'{body_html}{_sec_gallery(idxs, wide)}</section>'
                 )
             works_desc_html = "\n    ".join(sec_html)
             gallery_section_html = (
@@ -3667,6 +3670,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     .works-part {{ margin: 0 0 48px; }}
     .works-part .works-desc {{ margin: 0; }}
     .works-part .works-gallery {{ margin-top: 16px; }}
+    .works-gallery--wide {{ grid-template-columns: 1fr; }}
+    .works-gallery--wide img {{ aspect-ratio: auto; height: auto; }}
     .works-part-label {{ flex: none; font-size: .85rem; font-weight: 700; color: var(--point); letter-spacing: .08em; padding-right: 12px; border-right: 1px solid var(--stone); }}
     .works-back {{ display: inline-flex; align-items: center; gap: 8px; color: var(--stone); text-decoration: none; font-size: .9rem; margin-bottom: 32px; }}
     .works-back:hover {{ color: var(--point); }}
