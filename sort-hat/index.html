@@ -137,6 +137,24 @@
         .nav { gap: 16px; margin-left: 14px; }
         .topbar-tools { gap: 12px; }
       }
+      /* ≤980px：比照主站，隱藏 .nav、改顯示可橫向捲動的快捷列（2026-11-02）。
+         本頁 topbar-tools 在這些寬度仍顯示，所以快捷列只放 .nav 的 6 個連結 */
+      .mobile-quick-links { display: none; }
+      @media (max-width: 980px) {
+        .nav { display: none; }
+        .mobile-quick-links {
+          display: flex; gap: 8px; overflow-x: auto;
+          padding: 0 0 10px; scrollbar-width: none;
+        }
+        .mobile-quick-links::-webkit-scrollbar { display: none; }
+        .mobile-quick-links a {
+          flex: 0 0 auto; padding: 7px 12px;
+          border: 1px solid rgba(196,164,74,0.35); border-radius: 999px;
+          background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.92);
+          font-size: 0.82rem; font-weight: 700; line-height: 1;
+          text-decoration: none; white-space: nowrap;
+        }
+      }
       .tool-button {
         border: 0; background: transparent; cursor: pointer; text-decoration: none;
         white-space: nowrap;
@@ -554,7 +572,6 @@
         }
         .phones-labels { flex-direction: column; align-items: center; }
         .price-grid { grid-template-columns: 1fr; max-width: 380px; }
-        .nav { display: none; }
         .brand-tagline { display: none; }
         .topbar-tools { gap: 10px; }
         .tool-button { font-size: 0.84rem; }
@@ -668,6 +685,14 @@
           <a class="tool-button" href="../workflow.html" aria-label="合作流程">合作流程</a>
         </div>
       </div>
+      <nav class="wrap mobile-quick-links" aria-label="手機版主要入口">
+        <a href="/">首頁</a>
+        <a href="/services/business-event/">主題活動佈置</a>
+        <a href="/services/party-spring-banquet/">春酒尾牙佈置</a>
+        <a href="/services/school-event/">學校活動</a>
+        <a href="/services/magic-academy/">魔法學院</a>
+        <a href="/services/civil-makeover/">戶政改造</a>
+      </nav>
     </header>
 
     <!-- Hero -->
