@@ -626,6 +626,19 @@ def _plan_work_sections(description, sections, n_images):
     return intro, parts, [i for i in range(n_images) if i not in used]
 
 
+def _section_gallery_class(n, wide=False):
+    """分段圖庫的 class（2026-11-02）。只給分段的段落圖庫用，最後的精彩花絮不套。
+
+    wide 段落單欄（優先）；張數 n 不是 3 的倍數、但是 2 的倍數時每排 2 張（4 張→2×2、8 張→2×4），
+    避免桌面每排 3 張時最後一排留空。CSS 只在 >600px 生效，手機本來就是 1 欄。
+    """
+    if wide:
+        return "works-gallery works-gallery--wide"
+    if n >= 2 and n % 3 and n % 2 == 0:
+        return "works-gallery works-gallery--2col"
+    return "works-gallery"
+
+
 def _iso_day(value):
     """從 ISO datetime 取 YYYY-MM-DD；取不到回 None（不造假日期）。"""
     s = str(value or "").strip()
@@ -3331,11 +3344,10 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         if plan:
             intro, parts, leftover = plan
 
-            def _sec_gallery(idxs, wide=False):
+            def _sec_gallery(idxs, cls="works-gallery"):
                 tags = "".join(
                     f'<img src="{_esc(images[i])}" alt="{_esc(title)} {img_alt_suffix} {i + 1}" loading="lazy">'
                     for i in idxs)
-                cls = "works-gallery works-gallery--wide" if wide else "works-gallery"
                 return f'<div class="{cls}">{tags}</div>' if idxs else ""
 
             sec_html = [f'<p class="works-desc">{_esc(intro)}</p>'] if intro else []
@@ -3345,7 +3357,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 sec_html.append(
                     '<section class="works-part">'
                     f'<h2 class="works-section-title"><span class="works-part-label">{_esc(label)}</span>{rest_html}</h2>'
-                    f'{body_html}{_sec_gallery(idxs, wide)}</section>'
+                    f'{body_html}{_sec_gallery(idxs, _section_gallery_class(len(idxs), wide))}</section>'
                 )
             works_desc_html = "\n    ".join(sec_html)
             gallery_section_html = (
@@ -3672,6 +3684,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     .works-part .works-gallery {{ margin-top: 16px; }}
     .works-gallery--wide {{ grid-template-columns: 1fr; }}
     .works-gallery--wide img {{ aspect-ratio: auto; height: auto; }}
+    /* 分段圖庫張數是 2 的倍數、不是 3 的倍數時每排 2 張；≤600px 本來就是 1 欄，不改 */
+    @media (min-width: 601px) {{ .works-gallery--2col {{ grid-template-columns: repeat(2, 1fr); }} }}
     .works-part-label {{ flex: none; font-size: .85rem; font-weight: 700; color: var(--point); letter-spacing: .08em; padding-right: 12px; border-right: 1px solid var(--stone); }}
     .works-back {{ display: inline-flex; align-items: center; gap: 8px; color: var(--stone); text-decoration: none; font-size: .9rem; margin-bottom: 32px; }}
     .works-back:hover {{ color: var(--point); }}
