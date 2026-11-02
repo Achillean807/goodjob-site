@@ -40,4 +40,4 @@
 4. **HelpDesk 部署注意事項（村長選 A）還沒寫**：`docs/conventions/deploy-host.md` 要補「restart 前也要看最近約 10 秒有沒有 `Webhook received`」。11-03 查：另一個 session 的未推送 commit 已推送（本機領先 0），但 HelpDesk 工作區仍有大量別人的未提交變更，動手時只 stage 這一個檔
 5. 11-02 上半場留下、仍未驗證：被中斷的 outbound sync（群組 `…1a04`）有沒有補齊；小村子收到「畢業典禮佈置」會不會用 scope=commercial 查作品
 6. 已知風險（村長裁示不改）：分類帽頁麵包屑上距寫死 108px；≤900px 小標靠左
-7. 舊未竟（10-28 起，沒查證現況）：AEO 重新檢測待村長按；遠端分支 `origin/aeo/idaeo-gaps-20261028` 刪除需村長同意；GSC sitemap 重新提交；IDAEO 每月 AI 點名率實測
+7. 舊未竟（10-28 起，沒查證現況）：AEO 重新檢測待村長按；IDAEO 每月 AI 點名率實測。（11-03 村長指示後已完成：遠端分支 `aeo/idaeo-gaps-20261028` 已刪除；GSC sitemap 已用 API 重新提交）
