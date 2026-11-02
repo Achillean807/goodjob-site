@@ -3743,8 +3743,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
       </a>
       <nav class="nav">
         <a href="/">首頁</a>
-        <a href="/services/business-event/">主題活動佈置</a>
-        <a href="/services/party-spring-banquet/">春酒尾牙佈置</a>
+        <a href="/services/business-event/">主題活動</a>
+        <a href="/services/party-spring-banquet/">春酒尾牙</a>
         <a href="/services/school-event/">學校活動</a>
         <a href="/services/magic-academy/">魔法學院</a>
         <a href="/services/civil-makeover/">戶政改造</a>
@@ -3756,8 +3756,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
       </div>
     </div>
     <nav class="mobile-quick-links" aria-label="手機版主要入口">
-      <a href="/services/business-event/">主題活動佈置</a>
-      <a href="/services/party-spring-banquet/">春酒尾牙佈置</a>
+      <a href="/services/business-event/">主題活動</a>
+      <a href="/services/party-spring-banquet/">春酒尾牙</a>
       <a href="/services/school-event/">學校活動</a>
       <a href="/services/magic-academy/">魔法學院</a>
       <a href="/services/civil-makeover/">戶政改造</a>
