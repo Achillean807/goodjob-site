@@ -254,7 +254,9 @@
     more.href = meta.more;
     more.innerHTML = '<span class="chapter-dot"></span>';
     var anchorLabel = { business: '主題活動佈置', party: '春酒尾牙佈置' }[category] || meta.name;
-    more.appendChild(document.createTextNode('看完整 ' + articles.length + ' 件' + anchorLabel + '作品 →'));
+    // 件數只算本分類：春酒章節會併入標題含「尾牙」的他類作品，但連到的服務頁只算 party（2026-11-02）
+    var ownCount = articles.filter(function (a) { return a.category === category; }).length;
+    more.appendChild(document.createTextNode('看完整 ' + ownCount + ' 件' + anchorLabel + '作品 →'));
     section.appendChild(more);
     return true;
   }
