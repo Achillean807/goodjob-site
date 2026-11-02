@@ -68,7 +68,7 @@ tr:hover td{background:rgba(34,35,34,.05)}
 
 /* Badges */
 .badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600}
-.badge-business,.badge-party,.badge-magic,.badge-civil{background:var(--bg3);color:var(--ink);border:1px solid var(--border)}
+.badge-business,.badge-party,.badge-school,.badge-magic,.badge-civil{background:var(--bg3);color:var(--ink);border:1px solid var(--border)}
 .badge-featured{background:rgba(155,62,53,.12);color:var(--point);margin-left:4px}
 
 /* Modal */
@@ -250,6 +250,7 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
       <button class="cat-tab is-active" data-cat="" onclick="filterCat(this)">全部</button>
       <button class="cat-tab" data-cat="business" onclick="filterCat(this)">主題活動</button>
       <button class="cat-tab" data-cat="party" onclick="filterCat(this)">春酒尾牙</button>
+      <button class="cat-tab" data-cat="school" onclick="filterCat(this)">學校活動</button>
       <button class="cat-tab" data-cat="magic" onclick="filterCat(this)">魔法學院</button>
       <button class="cat-tab" data-cat="civil" onclick="filterCat(this)">戶政改造</button>
     </div>
@@ -323,6 +324,7 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
         <select id="f-category">
           <option value="business">主題活動</option>
           <option value="party">春酒尾牙</option>
+          <option value="school">學校活動</option>
           <option value="magic">魔法學院</option>
           <option value="civil">戶政改造</option>
         </select>
@@ -586,6 +588,6 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
   };
 })();
 </script>
-<script src="/controlcenter/app.js?v=20261102b"></script>
+<script src="/controlcenter/app.js?v=20261102c"></script>
 </body>
 </html>

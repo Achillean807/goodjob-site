@@ -96,6 +96,7 @@ def verify_article(article: dict) -> VerifyResult:
             category_map = {
                 'business': '/services/business-event/',
                 'party': '/services/party-spring-banquet/',
+                'school': '/services/school-event/',
                 'magic': '/services/magic-academy/',
                 'civil': '/services/civil-makeover/'
             }

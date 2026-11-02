@@ -11,6 +11,7 @@
   var CAT_LABELS = {
     business: '主題活動',
     party: '春酒尾牙',
+    school: '學校活動',
     magic: '魔法學院',
     civil: '戶政改造'
   };
@@ -19,6 +20,7 @@
   var CHAPTER_META = {
     business: { en: 'BUSINESS', name: '主題活動', lead: '把品牌的故事，變成一個走得進去的現場。', more: '/services/business-event/' },
     party:    { en: 'PARTY',    name: '春酒尾牙', lead: '一年一度的犒賞，值得一個被記住的舞台。', more: '/services/party-spring-banquet/' },
+    school:   { en: 'SCHOOL',   name: '學校活動', lead: '畢業、迎新與校慶，把一段校園時光收進同一個場景。', more: '/services/school-event/' },
     magic:    { en: 'MAGIC',    name: '魔法學院', lead: '讓活動長出一個世界觀，大人小孩都想留下來。', more: '/services/magic-academy/' },
     civil:    { en: 'CIVIL',    name: '戶政改造', lead: '把辦證的冷空間，變成想拍照打卡的場景。', more: '/services/civil-makeover/' }
   };
@@ -167,9 +169,11 @@
   // ── Render Category Chapter（章節式相簿：沉浸開場 + 章內拼貼陳列）──
   function renderChapter(category, articles, chapterNo) {
     var section = document.getElementById(category);
-    if (!section) return;
+    if (!section) return false;
     section.innerHTML = '';
-    if (!articles.length) return;
+    // 該分類 0 篇：整個章節藏起來，不留空殼（回傳 false，章節編號不佔號）
+    section.hidden = !articles.length;
+    if (!articles.length) return false;
 
     var meta = CHAPTER_META[category] ||
       { en: (category || '').toUpperCase(), name: CAT_LABELS[category] || category, lead: '', more: '#' };
@@ -252,6 +256,7 @@
     var anchorLabel = { business: '主題活動佈置', party: '春酒尾牙佈置' }[category] || meta.name;
     more.appendChild(document.createTextNode('看完整 ' + articles.length + ' 件' + anchorLabel + '作品 →'));
     section.appendChild(more);
+    return true;
   }
 
   function renderAll() {
@@ -260,15 +265,18 @@
 
     var business = articlesData.filter(function (a) { return a.category === 'business'; });
     var party = articlesData.filter(function (a) { return a.category === 'party' || /尾牙/.test(a.title || ''); });
+    var school = articlesData.filter(function (a) { return a.category === 'school'; });
     var magic = articlesData.filter(function (a) { return a.category === 'magic'; });
     var civil = articlesData.filter(function (a) { return a.category === 'civil'; });
 
     renderTop10(featured);
-    // 章節顯示順序沿用首頁現有分類順序（business→party→magic→civil = CHAPTER 01→04）
-    renderChapter('business', business, 1);
-    renderChapter('party', party, 2);
-    renderChapter('magic', magic, 3);
-    renderChapter('civil', civil, 4);
+    // 章節順序：business→party→school→magic→civil。編號只算有作品的章節，
+    // 某分類 0 篇時後面的章節自動遞補，不會跳號（2026-11-02 新增 school）。
+    var chapterNo = 0;
+    [['business', business], ['party', party], ['school', school], ['magic', magic], ['civil', civil]]
+      .forEach(function (c) {
+        if (renderChapter(c[0], c[1], chapterNo + 1)) chapterNo++;
+      });
   }
 
   // ══════════════════════════════════════════

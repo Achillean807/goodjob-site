@@ -35,6 +35,11 @@ ARTICLES = [
         "年度春酒尾牙宴會廳佈置，主視覺牆與舞台燈光設計。",
         "party", created_at="2026-02-01T00:00:00",
     ),
+    _article(
+        "emba-graduation", "企家班畢業晚會",
+        "主舞台、背板與花藝串起典禮與合影。",
+        "school", created_at="2026-04-01T00:00:00",
+    ),
 ]
 
 
@@ -76,6 +81,12 @@ class WorksSearchRankTest(unittest.TestCase):
         ranked = server._works_search_rank(ARTICLES, terms, 5)
         ids = [a["id"] for a in ranked]
         self.assertIn("brand-launch-event", ids)
+
+    def test_school_article_matched_by_category_label_term(self):
+        # 標題與內文都沒有「學校」，只能靠 CLUSTER_PILLAR_MAP 的 school 中文名命中
+        terms = server._works_search_terms("學校")
+        ranked = server._works_search_rank(ARTICLES, terms, 5)
+        self.assertEqual([a["id"] for a in ranked], ["emba-graduation"])
 
     def test_limit_applies(self):
         terms = server._works_search_terms("魔法")

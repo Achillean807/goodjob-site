@@ -20,6 +20,7 @@ var QUOTE_PASSWORD_MIN_LENGTH = 8;
 var CAT_LABELS = {
   business: '主題活動',
   party: '春酒尾牙',
+  school: '學校活動',
   magic: '魔法學院',
   civil: '戶政改造'
 };
@@ -27,6 +28,7 @@ var CAT_LABELS = {
 var CAT_CLASSES = {
   business: 'badge-business',
   party: 'badge-party',
+  school: 'badge-school',
   magic: 'badge-magic',
   civil: 'badge-civil'
 };
@@ -302,7 +304,7 @@ function filterCat(btn) {
 }
 
 function sortVisibleArticles(items) {
-  var catOrder = { business: 1, party: 2, magic: 3, civil: 4 };
+  var catOrder = { business: 1, party: 2, school: 3, magic: 4, civil: 5 };
   return items.sort(function(a, b) {
     var catA = catOrder[a.category] || 99;
     var catB = catOrder[b.category] || 99;

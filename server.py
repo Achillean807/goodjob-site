@@ -1173,11 +1173,14 @@ def _load_featured_articles(limit=6, articles=None):
 # Meta Pixel 只放在廣告落地作品頁（id 或 slug 命中才輸出；2026-10-05 村長裁示）
 PIXEL_WORK_KEYS = {"f8b4b9f4", "lianyun-logistics-2025-year-end", "c35fa390", "maritime-magic-academy-party"}
 
-# ponytail: 四類是全站封閉集合（server.py 的 CLUSTER_PILLAR_MAP、前端 chapter
-# 區塊都寫死同一組），分類若哪天擴充，這裡要一起補，否則新分類不會進索引。
+# ponytail: 五類是全站封閉集合（server.py 的 CLUSTER_PILLAR_MAP、前端 site.js 的
+# CAT_LABELS／CHAPTER_META、後台 admin 分類選單都寫死同一組），分類若哪天擴充，
+# 這幾處要一起補，否則新分類不會進索引。school 學校活動 2026-11-02 新增。
+# 作品頁分類標籤也讀這份（dict(WORKS_INDEX_CATEGORIES)），中文名只維護一處。
 WORKS_INDEX_CATEGORIES = (
     ("business", "主題活動"),
     ("party", "春酒尾牙"),
+    ("school", "學校活動"),
     ("civil", "戶政改造"),
     ("magic", "魔法學院"),
 )
@@ -1196,6 +1199,7 @@ def _works_index_sort_key(article):
 CLUSTER_PILLAR_MAP = {
     "business": ("/services/business-event/", "主題化品牌活動"),
     "party": ("/services/party-spring-banquet/", "春酒尾牙佈置"),
+    "school": ("/services/school-event/", "學校活動佈置"),
     "magic": ("/services/magic-academy/", "魔法學院主題"),
     "civil": ("/services/civil-makeover/", "戶政空間改造"),
 }
@@ -3298,11 +3302,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         else:
             og_image = hero or f"{site_url}/assets/images/og-goodjob.png"
 
-        cat_labels = {
-            "business": "主題活動", "party": "春酒尾牙",
-            "magic": "魔法學院", "civil": "戶政改造"
-        }
-        cat_label = cat_labels.get(article.get("category", ""), "作品")
+        cat_label = dict(WORKS_INDEX_CATEGORIES).get(article.get("category", ""), "作品")
         images = article.get("images") or ([hero] if hero else [])
 
         # Gallery HTML — alt = 標題 + 分類 + 關鍵字，幫助 Google Image Search
