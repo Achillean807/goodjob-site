@@ -158,6 +158,19 @@ COMMIT;
 
 > 描述若含單引號要 `''` 轉義（生成腳本可 `assert "'" not in ...` 擋掉）。
 
+### 4-1. 分段配圖（`case_blocks.sections`，2026-11-02 起）
+
+作品頁預設是「整段文案 → 最後一個精彩花絮圖庫」。要讓每段文字後面直接接該段照片，照下面設定：
+
+- **資料**：寫在 `articles.case_blocks`（jsonb）的 `sections` 鍵。description **不加任何標記**（description 會進 meta、JSON-LD、works-search、SPA）。
+  格式：`{"sections": [{"label": "主背板", "images": [1, 2, 4]}, ...]}`。`images` 是 1-based 圖片序號（＝position+1），依陣列順序顯示。
+- **label 對應**：description 中以「【label】其餘文字」開頭的行是段落標題。標題行之前的文字是開場段，不配圖。標題顯示為「label 小標籤｜其餘文字」，不顯示【】。
+- **啟用條件**：`sections` 是非空陣列，且 description 至少有一行符合 `^【([^】]+)】(.*)$`。不符合就照舊版面輸出，逐字不變。有 6 鍵案例區塊（background…outcome）的作品不啟用。
+- **保底規則**（`server.py` `_plan_work_sections`）：每張圖只出現一次。重複序號只取第一次；超出範圍、非整數的序號忽略；沒被認領的圖放最後的「精彩花絮」，一張都沒有就省略該區塊；找不到對應 label 的段落只顯示文字。序號對應錯只會放錯位置，照片不會消失。
+- **後台**：`admin/app.js` 儲存時保留 `sections`，只覆寫表單的 6 個鍵。後台沒有編輯 `sections` 的介面，改序號要直寫 DB（UPDATE 帶舊值條件、交易內驗證序號 1～N 各一次）。
+- **範例（蘭雅，23 張）**：`{"sections": [{"label": "主背板", "images": [1, 2, 4, 14, 3, 20, 5, 13, 6, 7, 21, 8, 22]}, {"label": "學院錦旗", "images": [9, 10, 23, 11, 12, 15, 16, 17, 18]}, {"label": "舞台", "images": [19]}]}`。
+- **注意**：最後一個標題段會一路收到 description 結尾。結尾的 CTA 段落（例如「歡迎把活動日期…傳到村花囍 LINE」）會落在最後一段文字裡、該段照片之前。
+
 ---
 
 ## 5. 鐵律速查
@@ -172,3 +185,5 @@ COMMIT;
 8. **覆蓋既有圖檔（同名重傳）後必須 CF purge**：R2 CDN 對 GET 快取 4 小時（HEAD 會顯示 DYNAMIC，不可信），用 `~/.claude/.cf-env` 的 `CLOUDFLARE_PURGE_TOKEN_MULTI` 對該批 URL 定點 purge，再以對外 GET 的 `size_download` 對本機檔案大小逐檔比對（2026-09-30 The Roman 擴圖實踩）。
 9. **改 DB 或文案後，必須 purge 該頁、首頁、服務頁的 HTML 邊緣快取**（2026-10-05 起 CF Cache Rule 對 `/`、`/works/*`、`/services/*` 的 HTML 快取 300 秒）：新增作品、改 `articles` 欄位、改服務頁文案後，用 `~/.claude/.cf-env` 的 `CLOUDFLARE_PURGE_TOKEN_MULTI` 對 `POST /zones/${CLOUDFLARE_ZONE_ID_WEDDINGWISHLOVE}/purge_cache` 帶 `{"files":[".../works/<id>", ".../", ".../services/<該分類>/"]}`（新增作品要清首頁與其分類服務頁，因為兩頁都有作品清單），再對外 GET 兩次確認新內容。不 purge 最多舊 5 分鐘，會自然過期。規則本體與坑見 `~/.claude/refs/ach-clawhome.md`「goodjob HTML 邊緣快取」。
 10. **description 用「【段落標題】」分段時，第一段要夠長**：`server.py` `_meta_summary` 先把全文壓成單行，再在前 160 字內收到**最後一個**「。！？」。第一段太短時，視窗會吃進下一段的「【標題】」和第一句，標題與內文被接成一句，出現在 meta／og／twitter／JSON-LD 共 4 處。第一段約 125 字以上，且「第一段＋空格＋下一段到第一個句末標點」超過 160 字，摘要才會收在第一段的句末標點。上架前用同一份函式模擬一次：`python -c "import server; print(server._meta_summary(open('desc.txt',encoding='utf-8').read().strip()))"`（在 repo 根目錄跑），確認摘要不含「【」。2026-11-02 蘭雅案例：分段版第一段 106 字，摘要 146 字，結尾吃進「【主背板】一道時空裂縫，隔開兩個年代 背板窗外…」；第一段補一句「現場分成主背板、學院錦旗與舞台三個區塊。」後，摘要 126 字、收在第一段，HTML 內「【主背板】」只剩正文 1 次。
+11. **刪圖或重新編號後，必須同步更新 `case_blocks.sections` 的序號**（序號＝position+1）。沒改的話，照片會跑到錯的段落或掉進最後的精彩花絮（見 4-1 保底規則）。
+12. **同名覆蓋或重新編號的圖片，CF purge 清不到訪客瀏覽器的快取**：R2 圖片 `Cache-Control: max-age=14400`，訪客瀏覽器最多 4 小時仍顯示舊圖。DB 網址要加 `?v=日期字母`（例：`-2.webp?v=20261102c`），或改用新檔名。`hero_image` 與 position 0 要同步改，維持兩者相等。2026-11-02 蘭雅案例：一天內重新編號三次，村長瀏覽器仍顯示舊的 `-2.webp`，第 2～23 張加 `?v=20261102c` 解決。
