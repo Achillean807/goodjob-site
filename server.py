@@ -3667,7 +3667,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     .works-part {{ margin: 0 0 48px; }}
     .works-part .works-desc {{ margin: 0; }}
     .works-part .works-gallery {{ margin-top: 16px; }}
-    .works-part-label {{ font-size: .85rem; font-weight: 700; color: var(--point); letter-spacing: .08em; padding-right: 12px; border-right: 1px solid var(--stone); }}
+    .works-part-label {{ flex: none; font-size: .85rem; font-weight: 700; color: var(--point); letter-spacing: .08em; padding-right: 12px; border-right: 1px solid var(--stone); }}
     .works-back {{ display: inline-flex; align-items: center; gap: 8px; color: var(--stone); text-decoration: none; font-size: .9rem; margin-bottom: 32px; }}
     .works-back:hover {{ color: var(--point); }}
     .pillar-breadcrumb {{
