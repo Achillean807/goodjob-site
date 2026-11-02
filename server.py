@@ -539,7 +539,7 @@ WORKS_LIGHTBOX_HTML = """
       });
     }
     thumbs.forEach(bind);
-    if (hero) bind(hero, 0);
+    if (hero) bind(hero, Math.max(0, thumbs.map(function (t) { return t.src; }).indexOf(hero.src)));
     box.querySelector('.lightbox-close').addEventListener('click', close);
     box.querySelector('.lightbox-prev').addEventListener('click', function () { show(idx - 1); });
     box.querySelector('.lightbox-next').addEventListener('click', function () { show(idx + 1); });
@@ -585,6 +585,43 @@ def _meta_summary(text, limit=160):
     idx = max(cut.rfind(c) for c in "，、")
     # ponytail: 連逗號都沒有就硬切，實際文案（純中文、3–4 段）不會走到這條
     return (cut[:idx] if idx > 0 else cut[:limit - 1]) + "…"
+
+
+_SECTION_HEAD_RE = re.compile(r"^【([^】]+)】(.*)$")
+
+
+def _plan_work_sections(description, sections, n_images):
+    """作品頁分段配圖（case_blocks.sections，2026-11-02）。
+
+    description 以「【label】其餘標題」開頭的行切段，sections 的 images 是 1-based 圖片序號。
+    回傳 None＝不啟用（sections 不是非空清單，或 description 沒有標題行），沿用舊版版面；
+    否則回傳 (開場文字, [(label, 標題其餘文字, 段落內文, [0-based 圖片索引])], [未認領的索引])。
+    不變式：每張圖只出現一次——重複序號只取第一次、超出範圍忽略、沒被認領的放最後的精彩花絮。
+    """
+    if not isinstance(sections, list) or not sections:
+        return None
+    lines = (description or "").splitlines()
+    heads = [(i, m) for i, m in ((i, _SECTION_HEAD_RE.match(l)) for i, l in enumerate(lines)) if m]
+    if not heads:
+        return None
+    wanted = {}  # label → 序號清單；同 label 重複定義只取第一個
+    for s in sections:
+        if isinstance(s, dict) and isinstance(s.get("label"), str) and isinstance(s.get("images"), list):
+            wanted.setdefault(s["label"].strip(), s["images"])
+    used = set()
+    parts = []
+    for k, (i, m) in enumerate(heads):
+        end = heads[k + 1][0] if k + 1 < len(heads) else len(lines)
+        picks = []
+        for n in wanted.get(m.group(1).strip(), []):
+            # bool 是 int 的子類別，要明確排除
+            if isinstance(n, int) and not isinstance(n, bool) and 1 <= n <= n_images and n - 1 not in used:
+                used.add(n - 1)
+                picks.append(n - 1)
+        body = "\n".join(lines[i + 1:end]).strip()
+        parts.append((m.group(1).strip(), m.group(2).strip(), body, picks))
+    intro = "\n".join(lines[:heads[0][0]]).strip()
+    return intro, parts, [i for i in range(n_images) if i not in used]
 
 
 def _iso_day(value):
@@ -3275,6 +3312,44 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             escaped = img.replace('"', '&quot;')
             alt = f"{title} {img_alt_suffix} {i}"
             gallery_html += f'<img src="{escaped}" alt="{alt}" loading="lazy">\n'
+        # 舊版精彩花絮區塊：空白與換行和原模板逐字相同（非分段作品輸出不得改變）
+        gallery_section_html = (
+            '<section>\n'
+            '      <h2 class="works-section-title">精彩花絮</h2>\n'
+            '      <div class="works-gallery">\n'
+            f'        {gallery_html}\n'
+            '      </div>\n'
+            '    </section>'
+        )
+
+        # 分段配圖：case_blocks.sections 對應 description 的「【label】」標題行，每段文字後接該段照片。
+        # ponytail: 有 6 鍵案例區塊（has_blocks）的作品不啟用；目前 70 篇皆無 6 鍵，日後兩者並存再議。
+        plan = None if has_blocks else _plan_work_sections(
+            description, case_blocks.get("sections"), len(images))
+        if plan:
+            intro, parts, leftover = plan
+
+            def _sec_gallery(idxs):
+                tags = "".join(
+                    f'<img src="{_esc(images[i])}" alt="{_esc(title)} {img_alt_suffix} {i + 1}" loading="lazy">'
+                    for i in idxs)
+                return f'<div class="works-gallery">{tags}</div>' if idxs else ""
+
+            sec_html = [f'<p class="works-desc">{_esc(intro)}</p>'] if intro else []
+            for label, rest, body, idxs in parts:
+                rest_html = f'<span>{_esc(rest)}</span>' if rest else ""
+                body_html = f'<p class="works-desc">{_esc(body)}</p>' if body else ""
+                sec_html.append(
+                    '<section class="works-part">'
+                    f'<h2 class="works-section-title"><span class="works-part-label">{_esc(label)}</span>{rest_html}</h2>'
+                    f'{body_html}{_sec_gallery(idxs)}</section>'
+                )
+            works_desc_html = "\n    ".join(sec_html)
+            gallery_section_html = (
+                '<section class="works-part">'
+                '<h2 class="works-section-title">精彩花絮</h2>'
+                f'{_sec_gallery(leftover)}</section>'
+            ) if leftover else ""
 
         # 同分類其他作品：內部連結區塊，最多 6 篇。排序沿用首頁精選慣例——
         # sortOrder 升冪、None 排最後，同值則保留 _load_articles() 的 row_index 順序。
@@ -3588,6 +3663,11 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     .works-section-title::before {{ content: ""; width: 11px; height: 11px; background: var(--point); flex: 0 0 auto; }}
     .works-gallery {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 32px; }}
     .works-gallery img {{ width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; display: block; }}
+    /* 分段配圖（case_blocks.sections）：段落標題、內文、照片緊貼，不留大片空白 */
+    .works-part {{ margin: 0 0 48px; }}
+    .works-part .works-desc {{ margin: 0; }}
+    .works-part .works-gallery {{ margin-top: 16px; }}
+    .works-part-label {{ font-size: .85rem; font-weight: 700; color: var(--point); letter-spacing: .08em; padding-right: 12px; border-right: 1px solid var(--stone); }}
     .works-back {{ display: inline-flex; align-items: center; gap: 8px; color: var(--stone); text-decoration: none; font-size: .9rem; margin-bottom: 32px; }}
     .works-back:hover {{ color: var(--point); }}
     .pillar-breadcrumb {{
@@ -3680,12 +3760,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     {works_desc_html}
     {case_blocks_html}
     {video_html}
-    <section>
-      <h2 class="works-section-title">精彩花絮</h2>
-      <div class="works-gallery">
-        {gallery_html}
-      </div>
-    </section>
+    {gallery_section_html}
     {related_html}
     {pillar_cta_html}
     {faq_html}

@@ -1042,6 +1042,24 @@ function uploadFiles(articleId, files, callback) {
   uploadOne(0);
 }
 
+// 儲存時以該篇既有 caseBlocks 為基底：保留 sections（分段配圖）等表單沒有的鍵，
+// 只覆寫表單的 6 個欄位；欄位清空就刪掉該鍵。伺服器 PUT 會整個取代 caseBlocks，所以要送合併後的完整物件。
+function mergeCaseBlocks(existing, values) {
+  var out = {};
+  var k;
+  if (existing && typeof existing === 'object') {
+    for (k in existing) {
+      if (Object.prototype.hasOwnProperty.call(existing, k)) out[k] = existing[k];
+    }
+  }
+  for (k in values) {
+    if (!Object.prototype.hasOwnProperty.call(values, k)) continue;
+    if (values[k]) out[k] = values[k];
+    else delete out[k];
+  }
+  return out;
+}
+
 function saveArticle() {
   if (!requirePermission('articles.write', '你沒有儲存作品的權限')) {
     return;
@@ -1065,12 +1083,14 @@ function saveArticle() {
   var data = {
     title: title,
     description: document.getElementById('f-desc').value.replace(/^\s+|\s+$/g, ''),
-    caseBlocks: ['background','constraint','strategy','highlight','industry','outcome'].reduce(function(acc, k){
-      var el = document.getElementById('f-cb-' + k);
-      var v = el ? el.value.replace(/^\s+|\s+$/g, '') : '';
-      if (v) acc[k] = v;
-      return acc;
-    }, {}),
+    caseBlocks: mergeCaseBlocks(
+      id && findArticleById(id) ? findArticleById(id).caseBlocks : null,
+      ['background','constraint','strategy','highlight','industry','outcome'].reduce(function(acc, k){
+        var el = document.getElementById('f-cb-' + k);
+        acc[k] = el ? el.value.replace(/^\s+|\s+$/g, '') : '';
+        return acc;
+      }, {})
+    ),
     category: document.getElementById('f-category').value,
     sortOrder: parseInt(document.getElementById('f-sort').value, 10) || 99,
     featured: document.getElementById('f-featured').checked,
