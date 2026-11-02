@@ -13,7 +13,7 @@
 | 原圖位置 | Synology 路徑（例：`F:\SynologyDrive\Share\13 商業佈置\...`） |
 | 選圖配比 | 各場景各挑幾張、封面用哪張（**hero = position 0**） |
 | 分類 | `business`（主題活動）/ `party`（春酒尾牙）/ `school`（學校活動，2026-11-02 起）/ `magic`（魔法學院）/ `civil`（戶政改造） |
-| 文案 | 哈雷酱寫初稿 → 村長審（title / slug / description） |
+| 文案 | 哈雷醬寫初稿 → 村長審（title / slug / description） |
 
 slug 用 kebab-case、純 ASCII（當圖片目錄名與 DB 主鍵）。
 
