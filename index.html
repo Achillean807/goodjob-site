@@ -334,33 +334,64 @@
         </div>
       </section>
 
-      <!-- 季節性：聖誕入口，2026-11-09 加，預計 2027-01 初撤下 -->
-      <section class="xmas-banner" aria-labelledby="xmas-banner-title">
+      <!-- 季節性入口外框（聖誕卡、春節卡共用），2026-11-10 改；兩張卡都撤下後，連同本段刪除 -->
+      <div class="season-cards">
         <style>
-          .xmas-banner { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-          .xmas-banner-inner { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 28px; align-items: center; padding: 24px 0; }
-          .xmas-banner-img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: center bottom; }
-          .xmas-banner-title { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--ink); }
-          .xmas-banner-title::before { content: ""; width: 9px; height: 9px; background: var(--point); flex: 0 0 auto; }
-          .xmas-banner-desc { margin: 8px 0 0; color: var(--stone); font-size: 0.95rem; line-height: 1.7; }
-          .xmas-banner .xmas-banner-btn { margin-top: 14px; }
+          .season-cards { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+          .season-cards-grid { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 48px; padding: 24px 0; }
+          .season-card { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 20px; align-items: stretch; }
+          .season-card-img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
+          .season-card-copy { display: flex; flex-direction: column; align-items: flex-start; }
+          .season-card-title { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 1.3rem; line-height: 1.3; font-weight: 800; color: var(--ink); }
+          .season-card-title::before { content: ""; width: 9px; height: 9px; background: var(--point); flex: 0 0 auto; }
+          .season-card-desc { margin: 8px 0 14px; color: var(--stone); font-size: 0.95rem; line-height: 1.7; }
+          .season-card .season-card-btn { margin-top: auto; }
+          @media (max-width: 980px) {
+            .season-cards-grid { grid-auto-flow: row; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+            .season-card { grid-template-columns: 160px minmax(0, 1fr); align-items: center; }
+            .season-card .season-card-btn { margin-top: 0; }
+            .season-card + .season-card { padding-top: 24px; border-top: 1px solid var(--line); }
+          }
           @media (max-width: 640px) {
-            .xmas-banner-inner { grid-template-columns: 1fr; gap: 14px; padding: 16px 0 20px; }
-            .xmas-banner-title { font-size: 1.2rem; }
-            .xmas-banner-desc { font-size: 0.9rem; }
-            .xmas-banner-img { aspect-ratio: 4 / 3; object-position: center 70%; }
+            .season-cards-grid { padding: 16px 0 20px; }
+            .season-card { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+            .season-card-img { aspect-ratio: 3 / 2; }
+            .season-card-title { font-size: 1.2rem; }
+            .season-card-desc { font-size: 0.9rem; margin-bottom: 12px; }
           }
         </style>
-        <div class="wrap xmas-banner-inner">
-          <img class="xmas-banner-img" src="https://goodjob-img.weddingwishlove.com/works/2c4af1fc/2c4af1fc-6-thumb.webp" srcset="https://goodjob-img.weddingwishlove.com/works/2c4af1fc/2c4af1fc-6-thumb.webp 400w, https://goodjob-img.weddingwishlove.com/works/2c4af1fc/2c4af1fc-6.webp 1067w" sizes="(max-width: 640px) 100vw, 200px" width="400" height="600" alt="白色窗框、燈籠、覆雪麋鹿擺飾與聖誕樹組成的角落" loading="lazy" decoding="async" />
-          <div class="xmas-banner-copy">
-            <h2 id="xmas-banner-title" class="xmas-banner-title">聖誕節佈置主題</h2>
-            <p class="xmas-banner-desc">白色壁爐與北歐帳篷、薑餅屋燈飾、木門板、桌面小景、聖誕花圈與桌上聖誕樹，五種實拍。</p>
-            <a class="button button-primary xmas-banner-btn" href="/services/christmas-decor/" data-season="xmas-2026">看 5 種聖誕主題 →</a>
-          </div>
+        <div class="wrap season-cards-grid">
+          <!-- 季節性：聖誕入口，2026-11-09 加，預計 2027-01 初撤下 -->
+          <article class="season-card season-card--xmas" aria-labelledby="xmas-banner-title">
+            <style>
+              .season-card--xmas .season-card-img { object-position: center bottom; }
+              @media (max-width: 640px) { .season-card--xmas .season-card-img { object-position: center 60%; } }
+            </style>
+            <img class="season-card-img" src="https://goodjob-img.weddingwishlove.com/works/2c4af1fc/2c4af1fc-6-thumb.webp" srcset="https://goodjob-img.weddingwishlove.com/works/2c4af1fc/2c4af1fc-6-thumb.webp 400w, https://goodjob-img.weddingwishlove.com/works/2c4af1fc/2c4af1fc-6.webp 1067w" sizes="(max-width: 640px) 100vw, 160px" width="400" height="600" alt="白色窗框、燈籠、覆雪麋鹿擺飾與聖誕樹組成的角落" loading="lazy" decoding="async" />
+            <div class="season-card-copy">
+              <h2 id="xmas-banner-title" class="season-card-title">聖誕節佈置主題</h2>
+              <p class="season-card-desc">白色壁爐與北歐帳篷、薑餅屋燈飾、木門板、桌面小景、聖誕花圈與桌上聖誕樹，五種實拍。</p>
+              <a class="button button-primary season-card-btn" href="/services/christmas-decor/" data-season="xmas-2026">看 5 種聖誕主題 →</a>
+            </div>
+          </article>
+          <!-- 季節性：聖誕入口，2026-11-09 加，預計 2027-01 初撤下 -->
+          <!-- 季節性：春節入口，2026-11-10 加，預計 2027-02 底撤下 -->
+          <article class="season-card season-card--cny" aria-labelledby="cny-banner-title">
+            <style>
+              .season-card--cny .season-card-img { object-position: 75% center; }
+              @media (max-width: 640px) { .season-card--cny .season-card-img { object-position: center; } }
+            </style>
+            <img class="season-card-img" src="https://goodjob-img.weddingwishlove.com/works/1c45c415/1c45c415-1-thumb.webp?v=20261110a" srcset="https://goodjob-img.weddingwishlove.com/works/1c45c415/1c45c415-1-thumb.webp?v=20261110a 400w, https://goodjob-img.weddingwishlove.com/works/1c45c415/1c45c415-1.webp?v=20261110a 1626w" sizes="(max-width: 640px) 100vw, 160px" width="400" height="248" alt="梅花背板前的深紅窗花屏風、兩座黑色花架與龍字圓牌" loading="lazy" decoding="async" />
+            <div class="season-card-copy">
+              <h2 id="cny-banner-title" class="season-card-title">2027 羊年春節佈置主題</h2>
+              <p class="season-card-desc">梅花背板、團圓錦上花、展間紅金紙扇牆、屋簷紅牆與迎春條幅，四種實拍。</p>
+              <a class="button button-primary season-card-btn" href="/services/lunar-new-year-decor/" data-season="cny-2027">看 4 種春節主題 →</a>
+            </div>
+          </article>
+          <!-- 季節性：春節入口，2026-11-10 加，預計 2027-02 底撤下 -->
         </div>
-      </section>
-      <!-- 季節性：聖誕入口，2026-11-09 加，預計 2027-01 初撤下 -->
+      </div>
+      <!-- 季節性入口外框（聖誕卡、春節卡共用），2026-11-10 改；兩張卡都撤下後，連同本段刪除 -->
 
       <!-- 精選作品 — JS renders cards -->
       <section class="shelf shelf-top10" id="works">
