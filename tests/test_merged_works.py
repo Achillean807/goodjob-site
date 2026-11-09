@@ -25,6 +25,18 @@ class MergedWorksRedirectTest(unittest.TestCase):
                 self.assertEqual(sent["headers"]["Location"],
                                  "/works/benz-taichung-lunar-new-year-decor")
 
+    def test_small_banquet_merged_into_zheyuan(self):
+        for key in ("5a1e1bc3", "small-banquet-celebration-party"):
+            for head_only in (False, True):
+                sent = self._call(key, f"/works/{key}", head_only)
+                self.assertEqual(sent["status"], 301)
+                self.assertEqual(sent["headers"]["Location"],
+                                 "/works/zheyuan-platinum-nightclub-celebration")
+        sent = self._call("small-banquet-celebration-party",
+                          "/works/small-banquet-celebration-party?utm=x")
+        self.assertEqual(sent["headers"]["Location"],
+                         "/works/zheyuan-platinum-nightclub-celebration?utm=x")
+
     def test_query_string_kept(self):
         sent = self._call("81bf85d4", "/works/81bf85d4?utm=x&a=1")
         self.assertEqual(sent["headers"]["Location"],

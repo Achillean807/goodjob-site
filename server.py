@@ -1242,6 +1242,8 @@ def _works_index_sort_key(article):
 MERGED_WORKS = {
     "81bf85d4": "benz-taichung-lunar-new-year-decor",
     "auto-brand-new-year-showroom": "benz-taichung-lunar-new-year-decor",
+    "5a1e1bc3": "zheyuan-platinum-nightclub-celebration",
+    "small-banquet-celebration-party": "zheyuan-platinum-nightclub-celebration",
 }
 
 # 分類 → (服務頁 pillar 連結, 中文名)。/works/{id} SSR 頁的相關服務連結、
