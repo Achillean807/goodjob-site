@@ -278,6 +278,14 @@
             <a class="hero-award" href="./muse-2026.html" aria-label="查看 2026 MUSE Design Awards 金獎作品：成美文化園昆蟲展介紹">
               2026 MUSE Design Awards Gold｜成美文化園昆蟲展・了解更多 →
             </a>
+            <!-- 季節性：聖誕入口，2026-11-09 加，預計 2027-01 初撤下 -->
+            <style>
+              .hero-award.hero-xmas { display: flex; width: fit-content; max-width: 100%; margin-top: 10px; text-wrap: balance; word-break: keep-all; overflow-wrap: anywhere; }
+              .hero-award.hero-xmas::before { content: none; }
+              .hero-xmas-icon { flex: 0 0 auto; width: 16px; height: 16px; color: var(--point); pointer-events: none; }
+            </style>
+            <a class="hero-award hero-xmas" href="/services/christmas-decor/" data-season="xmas-2026"><svg class="hero-xmas-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 1 12.2 6.6H10.4L13.6 11.4H9V15H7V11.4H2.4L5.6 6.6H3.8Z"/></svg>聖誕節佈置主題｜壁爐帳篷、薑餅屋與聖誕花圈實拍・看更多 →</a>
+            <!-- 季節性：聖誕入口，2026-11-09 加，預計 2027-01 初撤下 -->
 
             <div class="ci-palette" aria-label="村山良作品牌標準色">
               <span class="ci-palette-title">Color Palette / CI System</span>
@@ -327,19 +335,30 @@
       </section>
 
       <!-- 季節性：聖誕入口，2026-11-09 加，預計 2027-01 初撤下 -->
-      <div class="season-strip">
+      <section class="xmas-banner" aria-labelledby="xmas-banner-title">
         <style>
-          .season-strip { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-          .season-strip .wrap { padding: 14px 0; }
-          .season-strip a { display: inline-block; max-width: 100%; font-size: 0.95rem; font-weight: 700; line-height: 1.6; color: var(--ink); text-wrap: balance; }
-          .season-strip a::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 10px; vertical-align: 0.12em; background: var(--point); }
-          .season-strip a:hover, .season-strip a:focus-visible { text-decoration: underline; text-decoration-color: var(--point); text-underline-offset: 4px; }
-          @media (max-width: 640px) { .season-strip .wrap { padding: 12px 0; } .season-strip a { font-size: 0.85rem; } }
+          .xmas-banner { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+          .xmas-banner-inner { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 28px; align-items: center; padding: 24px 0; }
+          .xmas-banner-img { width: 100%; height: auto; aspect-ratio: 400 / 267; object-fit: cover; }
+          .xmas-banner-title { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--ink); }
+          .xmas-banner-title::before { content: ""; width: 9px; height: 9px; background: var(--point); flex: 0 0 auto; }
+          .xmas-banner-desc { margin: 8px 0 0; color: var(--stone); font-size: 0.95rem; line-height: 1.7; }
+          .xmas-banner .xmas-banner-btn { margin-top: 14px; }
+          @media (max-width: 640px) {
+            .xmas-banner-inner { grid-template-columns: 1fr; gap: 14px; padding: 16px 0 20px; }
+            .xmas-banner-title { font-size: 1.2rem; }
+            .xmas-banner-desc { font-size: 0.9rem; }
+          }
         </style>
-        <div class="wrap">
-          <a href="/services/christmas-decor/" data-season="xmas-2026">聖誕節佈置主題：壁爐帳篷、薑餅屋與聖誕花圈實拍 →</a>
+        <div class="wrap xmas-banner-inner">
+          <img class="xmas-banner-img" src="https://goodjob-img.weddingwishlove.com/static/christmas-decor/flora-1-thumb.webp" width="400" height="267" alt="兩棵桌上聖誕樹，點綴玫瑰、棉花、肉桂棒與松果" loading="lazy" decoding="async" />
+          <div class="xmas-banner-copy">
+            <h2 id="xmas-banner-title" class="xmas-banner-title">聖誕節佈置主題</h2>
+            <p class="xmas-banner-desc">白色壁爐與北歐帳篷、薑餅屋燈飾、木門板、桌面小景、聖誕花圈與桌上聖誕樹，五種實拍。</p>
+            <a class="button button-primary xmas-banner-btn" href="/services/christmas-decor/" data-season="xmas-2026">看 5 種聖誕主題 →</a>
+          </div>
         </div>
-      </div>
+      </section>
       <!-- 季節性：聖誕入口，2026-11-09 加，預計 2027-01 初撤下 -->
 
       <!-- 精選作品 — JS renders cards -->
