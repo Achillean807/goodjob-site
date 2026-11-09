@@ -1246,6 +1246,16 @@ MERGED_WORKS = {
     "small-banquet-celebration-party": "zheyuan-platinum-nightclub-celebration",
 }
 
+# 個別作品的服務入口與麵包屑改指主題頁（只影響 SSR 作品頁；/api/works-search 的 theme
+# 仍照 CLUSTER_PILLAR_MAP 的分類）。聖誕 2026-10-06 加；春節 2026-11-10 加。
+PILLAR_OVERRIDES = {
+    "2c4af1fc": ("/services/christmas-decor/", "聖誕節佈置"),
+    "1c45c415": ("/services/lunar-new-year-decor/", "春節佈置"),
+    "tianyuequan-lunar-new-year-decor": ("/services/lunar-new-year-decor/", "春節佈置"),
+    "benz-taichung-lunar-new-year-decor": ("/services/lunar-new-year-decor/", "春節佈置"),
+    "corporate-lobby-lunar-new-year-decor": ("/services/lunar-new-year-decor/", "春節佈置"),
+}
+
 # 分類 → (服務頁 pillar 連結, 中文名)。/works/{id} SSR 頁的相關服務連結、
 # /api/works-search 的 theme 欄位共用同一份，避免像 WORKS_INDEX_CATEGORIES
 # 那樣各自寫一份中文名而彼此不一致。
@@ -3618,9 +3628,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
 
         # CLUSTER_PILLAR_MAP 定義在模組層級（供 /api/works-search 共用），見上方。
         pillar_info = CLUSTER_PILLAR_MAP.get(article.get("category", ""))
-        # 聖誕作品改推聖誕節佈置承接頁（2026-10-06）
-        if article.get("id") == "2c4af1fc":
-            pillar_info = ("/services/christmas-decor/", "聖誕節佈置")
+        # 聖誕、春節作品改推主題頁（PILLAR_OVERRIDES，見上方）
+        pillar_info = PILLAR_OVERRIDES.get(article.get("id"), pillar_info)
 
         site_url = SITE_URL
         # canonical / og:url / JSON-LD 一律用對外網址（slug 優先，無 slug 才用 id）
