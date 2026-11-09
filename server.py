@@ -4218,6 +4218,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             "/services/magic-academy/",
             "/services/civil-makeover/",
             "/services/christmas-decor/",
+            "/services/lunar-new-year-decor/",
         ]:
             day = _static_day(loc)
             lastmod = f"<lastmod>{day}</lastmod>" if day else ""
