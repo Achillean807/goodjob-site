@@ -338,8 +338,8 @@
       <section class="xmas-banner" aria-labelledby="xmas-banner-title">
         <style>
           .xmas-banner { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-          .xmas-banner-inner { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 28px; align-items: center; padding: 24px 0; }
-          .xmas-banner-img { width: 100%; height: auto; aspect-ratio: 400 / 267; object-fit: cover; }
+          .xmas-banner-inner { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 28px; align-items: center; padding: 24px 0; }
+          .xmas-banner-img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: center bottom; }
           .xmas-banner-title { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--ink); }
           .xmas-banner-title::before { content: ""; width: 9px; height: 9px; background: var(--point); flex: 0 0 auto; }
           .xmas-banner-desc { margin: 8px 0 0; color: var(--stone); font-size: 0.95rem; line-height: 1.7; }
@@ -348,10 +348,11 @@
             .xmas-banner-inner { grid-template-columns: 1fr; gap: 14px; padding: 16px 0 20px; }
             .xmas-banner-title { font-size: 1.2rem; }
             .xmas-banner-desc { font-size: 0.9rem; }
+            .xmas-banner-img { aspect-ratio: 4 / 3; object-position: center 70%; }
           }
         </style>
         <div class="wrap xmas-banner-inner">
-          <img class="xmas-banner-img" src="https://goodjob-img.weddingwishlove.com/static/christmas-decor/flora-1-thumb.webp" width="400" height="267" alt="兩棵桌上聖誕樹，點綴玫瑰、棉花、肉桂棒與松果" loading="lazy" decoding="async" />
+          <img class="xmas-banner-img" src="https://goodjob-img.weddingwishlove.com/works/2c4af1fc/2c4af1fc-6-thumb.webp" srcset="https://goodjob-img.weddingwishlove.com/works/2c4af1fc/2c4af1fc-6-thumb.webp 400w, https://goodjob-img.weddingwishlove.com/works/2c4af1fc/2c4af1fc-6.webp 1067w" sizes="(max-width: 640px) 100vw, 200px" width="400" height="600" alt="白色窗框、燈籠、覆雪麋鹿擺飾與聖誕樹組成的角落" loading="lazy" decoding="async" />
           <div class="xmas-banner-copy">
             <h2 id="xmas-banner-title" class="xmas-banner-title">聖誕節佈置主題</h2>
             <p class="xmas-banner-desc">白色壁爐與北歐帳篷、薑餅屋燈飾、木門板、桌面小景、聖誕花圈與桌上聖誕樹，五種實拍。</p>
