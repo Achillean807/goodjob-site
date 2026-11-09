@@ -1,43 +1,43 @@
-# 收工交接｜2026-11-03（涵蓋 11-02 下半場）
+# 收工交接｜2026-11-10（涵蓋 11-06～11-10）
 
 - Repo：`D:\AI_Site\goodjob-site`
 - 分支：`master`
-- 交接檔寫入前 HEAD：`6baa813`（CLAUDE.md 11-02(J)）；收工時本機與 `origin/master` 雙向差 0
+- 交接檔寫入前 HEAD：`f094d1a`（CLAUDE.md 11-10(F)）；收工時本機與 `origin/master` 雙向差 0
 - 工作區：沒有未提交的 tracked 變更
-- 測試：`python -m unittest discover -s tests` 52 tests OK
-- `.gitignore` 仍忽略 `.context/`；本檔已被追蹤，要用 `git add -u` 或指定路徑加 `-f`
+- 測試：`python -m unittest discover -s tests` 112 tests OK
+- `.gitignore` 仍忽略 `.context/`；本檔已被追蹤，要用 `git add -u`
 
-## 本場完成（全部已上正式站，詳細數字見 CLAUDE.md changelog 11-02(F)～(J)）
+## 本場完成（全部已上正式站，詳細數字見 CLAUDE.md changelog 11-06～11-10(F)）
 
-| commit | 內容 |
-|--------|------|
-| `55c6dc0` | 新增作品「葳格國際學校 2026 畢業典禮佈置・萊特薇庭」（school，71 篇／school 10）。2 張合照的人物用 AI 重新合成（未成年、無肖像授權）；服務頁、llms.txt、README、AGENTS 同步 |
-| `5d07482` | `server.py` 分段圖庫：張數是 2 的倍數、但不是 3 的倍數時，每排 2 張（`_section_gallery_class`，附測試） |
-| DB（無 commit） | 葳格文案 v3→v4（段落短標題）→v5（加入木製扶手介紹，md5 `631da932…`） |
-| DB＋R2（無 commit） | 葳格拿掉第 9 張（座位牌讀得出姓名），13→12 張，重新編號，後 4 張加 `?v=20261102d` |
-| `9dab60b`／`f1252d8`／`9213628` | SOP：標題行格式、2 欄規則、選圖準則第 5 條（AI 重新合成人物）與第 6 條（名牌 1:1 讀得出就整張不收） |
-| `e6449b4` | 全站頂部導覽「主題活動佈置」「春酒尾牙佈置」改為「主題活動」「春酒尾牙」（12 檔 48 處，含 SSR 作品頁） |
-| `4e88586`／`f0b20fb`／`3b5d317`／`6baa813` | CLAUDE.md changelog 11-02(F)～(J)；內文作品數 70→71 |
+| 日期 | 內容 |
+|---|---|
+| 11-06 | SEO／AEO 週報網頁版（Artifact `https://claude.ai/artifact/H6oyADXtfmSkN84beGbMhj`）；聖誕節佈置服務頁改寫成五主題實拍指南（`80d0bb9`） |
+| 11-06(B)(C) | 新作品「台中賓士 春節佈置」（`benz-taichung-lunar-new-year-decor`），小桌花補第 12 張 |
+| 11-09 | 頂部導覽改四字（`e6449b4`，11-02(J)）之後：首頁季節入口（hero 聖誕按鈕＋橫幅）、春酒尾牙代表案例換入台中賓士 |
+| 11-09(D) | **收回 11-04 正式站資安修補入庫**（`800a897`，server.py／admin／tests 6 檔）；合併重複作品 `81bf85d4`→台中賓士（301，`MERGED_WORKS`） |
+| 11-10 | 三篇合輯整理：`5a1e1bc3` 301 到喆園；`92387fe2` 留 4 張＋兩個分段；`1c45c415` 改「天玥泉 2024 龍年」3 張 |
+| 11-10(B)～(F) | 春節佈置主題頁 `/services/lunar-new-year-decor/`（2027 丁未羊年）；新作品「企業大廳春節佈置」（`corporate-lobby-lunar-new-year-decor`）；4 篇春節作品服務入口改連春節頁（`PILLAR_OVERRIDES`）；首頁橫幅改聖誕卡＋春節卡並排（`be4aa08`）；fresh 驗收 13 項 12 PASS（第 13 項村長裁示保留） |
 
-全域制度檔（`~/.claude/refs/`，備份在 `~/.claude/backups/*.bak-20261103`）：
-- `model-dispatch.md`：派工單「對外 0 處」驗收條件要先查不准改的來源輸出到哪裡，基準寫成「改前計數減預期變化量」
-- `windows-pitfalls.md`：網址清單 CRLF 讓 curl 回 000；`python -c` 跳脫 `\r` 變成真的控制字元
-
-素材留存：AI 合成人物 4 檔放在 NAS 照片原檔資料夾 `260604_葳格國際學校_萊特薇庭\AI合成人物_官網用\`（村長同意寫入）。
+制度與文件：
+- SOP 選圖準則第 7 條：上架前用感知雜湊查重複（`923755e`）
+- `~/.claude/refs/ga-analytics-access.md`：GSC 帳號表更正（google-ga profile 是 achillean807）、用網域資源送索引的做法與 3 個坑
+- `~/.claude/refs/model-dispatch.md`：驗收單「對外 0 處」條件、追蹤像素排除規則
+- `~/.claude/refs/windows-pitfalls.md`：網址清單 CRLF、`python -c` 跳脫字元
 
 ## 部署狀態
 
-- 正式站流程：staging `git pull --ff-only` → 回歸閘門（staging 對 prod 全部作品頁）→ prod 漂移檢查 → 備份 → 從 staging `cp` → md5 對 HEAD → restart（`server.py` 有改才做）→ purge
-- 備份：`/srv/raid1/backups/goodjob-add-wagor-20261102/`（`before.sql`、`pre/`、`pre-2col/`、`article-before-v4.tsv`、`article-before-v5.tsv`、`before-remove9-*`、`r2-before-remove9/`）、`/srv/raid1/backups/goodjob-navlabel-20261102/pre/`
-- 驗收：葳格整篇 Opus 9/10（第 10 項隱私已修）→ 拿掉第 9 張後 Haiku 5/5；扶手文案主對話對外複驗；導覽改字主對話對外複驗 83/83
-- DB 現況：business 26／party 16／school 10／magic 5／civil 14，共 71 篇、圖片 717 列
+- 作品數 71 篇：business 24／party 18／school 10／magic 5／civil 14
+- 正式站 `server.py` 等於 repo HEAD，且含 11-04 資安修補（PBKDF2、CF-Connecting-IP）。**投放 server.py 前一律先做漂移檢查**，退版會讓 7 份 PBKDF2 提案的客人登不進去
+- 301：`81bf85d4`、`auto-brand-new-year-showroom` → 台中賓士；`5a1e1bc3`、`small-banquet-celebration-party` → 喆園
+- 主機備份：`/srv/raid1/backups/goodjob-dedup-benz-20261109/`、`goodjob-cleanup-20261110/`、`goodjob-cny-20261110/`、`goodjob-entries-20261109/`（pre～pre5）、`goodjob-xmas-20261106/`、`goodjob-add-benz-20261106/`
 
 ## 未竟事項
 
-1. **村長可選**：16 篇春酒尾牙作品頁的麵包屑與「服務入口」仍寫「春酒尾牙佈置」（`server.py` `CLUSTER_PILLAR_MAP`）。其他分類這兩處本來就用長名稱，所以預設不改；要改的話會連帶改 `/api/works-search` 的 theme 欄位
-2. 首頁章末「看完整 N 件主題活動佈置作品」（`assets/site.js` `anchorLabel`）沒改，理由同上
-3. 訪客瀏覽器若在 11-02 拿掉照片前快取過不帶 `?v` 的舊第 9 張，最多保留 4 小時；作品頁已改用 `?v` 網址
-4. **HelpDesk 部署注意事項（村長選 A）還沒寫**：`docs/conventions/deploy-host.md` 要補「restart 前也要看最近約 10 秒有沒有 `Webhook received`」。11-03 查：另一個 session 的未推送 commit 已推送（本機領先 0），但 HelpDesk 工作區仍有大量別人的未提交變更，動手時只 stage 這一個檔
-5. 11-02 上半場留下、仍未驗證：被中斷的 outbound sync（群組 `…1a04`）有沒有補齊；小村子收到「畢業典禮佈置」會不會用 scope=commercial 查作品
-6. 已知風險（村長裁示不改）：分類帽頁麵包屑上距寫死 108px；≤900px 小標靠左
-7. 舊未竟（10-28 起，沒查證現況）：AEO 重新檢測待村長按；IDAEO 每月 AI 點名率實測。（11-03 村長指示後已完成：遠端分支 `aeo/idaeo-gaps-20261028` 已刪除；GSC sitemap 已用 API 重新提交）
+1. **季節入口撤下**：聖誕卡＋hero 聖誕按鈕預計 2027-01 初撤下；春節卡預計 2027-02 底撤下。撤下方法見 CLAUDE.md 11-09(B)、11-10(F)（`grep data-season`）
+2. **GSC 收錄追蹤**：聖誕頁 11-06 送索引後到 11-10 仍「已找到 - 目前尚未建立索引」；春節頁與企業大廳春節作品 11-10 剛送。台中賓士已收錄。建議 11-13 左右跑週報（`D:/AI_Work/MyLord/scripts/goodjob_seo_check.py --out-dir <scratchpad>`，NAS 只讀所以不寫預設路徑）時一起查；聖誕頁仍未收錄就查原因
+3. 正式站 6 份文件是 5～7 月舊副本（`.gitattributes`、`.gitignore`、`CLAUDE.md`、`DESIGN.md`、`README.md`、`handoff.md`），不影響網站，未動
+4. `92387fe2` 第 1 張底片條有客戶活動真人照（疑似含小孩，未驗證），村長 11-10 裁示保留
+5. 本機 `test_quote_auth` 偶發失敗（測試伺服器 5 秒內沒起來、WinError 10053），乾淨 worktree 全過，根因未查
+6. 手機版 3 張的段落排成 2＋1（聖誕頁、春節頁）；春酒服務頁 1000px 代表案例 3＋3＋2；村長未要求處理
+7. **HelpDesk 部署注意事項（村長選 A）還沒寫**：`docs/conventions/deploy-host.md` 補「restart 前看最近約 10 秒有沒有 `Webhook received`」；該 repo 有別的 session 的未提交變更，只 stage 這一個檔
+8. 舊未竟：AEO 重新檢測待村長按；IDAEO 每月 AI 點名率實測；舊 Meta Pixel `1330894157559427` 等尾牙廣告結束後移除（日期村長決定）
