@@ -108,6 +108,43 @@ class AdminQuoteUiTest(unittest.TestCase):
         self.assertIn("requirePermission('quotes.manage'", body)
         self.assertIn("api('DELETE', '/api/quotes/' + encodeURIComponent(id))", body)
 
+    def test_admin_js_logs_out_only_on_401_and_explains_429(self):
+        js = self.read("admin/app.js")
+        self.assertIn("var RATE_LIMITED_MESSAGE = '登入嘗試過多，請稍後再試';", js)
+
+        api_body = self.js_function_body(js, "api")
+        self.assertIn("response.status === 429", api_body)
+        self.assertIn("message = RATE_LIMITED_MESSAGE;", api_body)
+        self.assertEqual(api_body.count("handleUnauthorized("), 1)
+        self.assertIn("if (response.status === 401 && !(options && options.suppressLogout))", api_body)
+
+        message_body = self.js_function_body(js, "loginErrorMessage")
+        self.assertIn("status === 401", message_body)
+        self.assertIn("status === 429", message_body)
+        self.assertIn("return RATE_LIMITED_MESSAGE;", message_body)
+        self.assertIn("showLoginError(loginErrorMessage(error));", self.js_function_body(js, "doLogin"))
+
+        # 開頁還原登入：只有 401 才登出，其他錯誤保留 sessionStorage、只顯示訊息
+        restore_body = self.js_function_body(js, "restoreSession")
+        self.assertIn("if (error && error.status === 401) {", restore_body)
+        self.assertEqual(restore_body.count("handleUnauthorized("), 1)
+        self.assertIn("showLoginError(loginErrorMessage(error));", restore_body)
+        self.assertNotIn("sessionStorage.removeItem", restore_body)
+
+        self.assertIn("/controlcenter/app.js?v=20261104b", self.read("admin/index.html"))
+
+    def test_admin_ui_never_shows_quote_plaintext_password(self):
+        js = self.read("admin/app.js")
+        html = self.read("admin/index.html")
+        self.assertNotIn("quote.password", js)
+        self.assertNotIn("quote-pw", js)
+        for old_text in ("重設後顯示", "重設密碼後才會顯示"):
+            self.assertNotIn(old_text, js)
+        self.assertIn("已設定（無法回看，忘記請重設）", self.js_function_body(js, "renderQuotesList"))
+        self.assertIn("（已設定，無法回看；忘記請輸入新密碼重設）", self.js_function_body(js, "openQuoteForm"))
+        self.assertIn("密碼不會保存明碼，請先記下或傳給客人", self.js_function_body(js, "saveQuote"))
+        self.assertNotIn("明文密碼", html)
+
 
 if __name__ == "__main__":
     unittest.main()

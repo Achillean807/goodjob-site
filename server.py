@@ -15,6 +15,7 @@ import argparse
 import base64
 import hashlib
 import hmac
+import ipaddress
 import json
 import os
 import posixpath
@@ -104,22 +105,44 @@ QUOTE_AUTH_FAILURE_WINDOW_SECONDS = max(
 )
 QUOTE_AUTH_LOCK_SECONDS = max(1, _env_int("GOODJOB_QUOTE_AUTH_LOCK_SECONDS", 300))
 QUOTE_AUTH_FAILURES = {}
+# 後台 Basic Auth 每 IP 失敗限制：窗內失敗 N 次就鎖定；鎖定中直接 429，不跑 PBKDF2。
+ADMIN_AUTH_FAILURE_LIMIT = max(1, _env_int("GOODJOB_ADMIN_AUTH_FAILURE_LIMIT", 10))
+ADMIN_AUTH_FAILURE_WINDOW_SECONDS = max(
+    1,
+    _env_int("GOODJOB_ADMIN_AUTH_FAILURE_WINDOW_SECONDS", 300),
+)
+ADMIN_AUTH_LOCK_SECONDS = max(1, _env_int("GOODJOB_ADMIN_AUTH_LOCK_SECONDS", 300))
+ADMIN_AUTH_FAILURES = {}
+# 後台全域保險：所有 IP 合計的失敗。伺服器單執行緒、PBKDF2 一次 0.33～0.5 秒，
+# 每秒最多只產生 2～3 筆失敗，「每秒 N 次」門檻永遠不會觸發，所以用「W 秒內 N 次」。
+# 預設 10 秒內 5 次就鎖 30 秒：持續攻擊時每輪最多佔約 3 秒 PBKDF2（實測一次約 0.6 秒），
+# 接著 30 秒全拒，PBKDF2 佔用約 10%。
+ADMIN_AUTH_GLOBAL_FAILURE_LIMIT = max(1, _env_int("GOODJOB_ADMIN_AUTH_GLOBAL_FAILURE_LIMIT", 5))
+ADMIN_AUTH_GLOBAL_WINDOW_SECONDS = max(
+    1,
+    _env_int("GOODJOB_ADMIN_AUTH_GLOBAL_WINDOW_SECONDS", 10),
+)
+ADMIN_AUTH_GLOBAL_LOCK_SECONDS = max(1, _env_int("GOODJOB_ADMIN_AUTH_GLOBAL_LOCK_SECONDS", 30))
+ADMIN_AUTH_GLOBAL_FAILURES = {}
+ADMIN_AUTH_GLOBAL_KEY = "*"
+# 被全域保險／全網預算擋下（便宜的 429，沒跑 PBKDF2）的次數，每個限流鍵一筆。
+# 不算進 ADMIN_AUTH_FAILURES（真管理員重試才不會把自己鎖住），只給 _check_auth 的快取防線用。
+ADMIN_AUTH_BLOCKED = {}
+# 每個失敗紀錄 dict 的筆數上限，防止大量假 IP 撐爆記憶體。
+AUTH_FAILURE_MAX_ENTRIES = 10000
+# 全網 PBKDF2 預算：所有「沒命中快取、要跑 PBKDF2」的登入驗證共用（提案登入＋後台登入）。
+# 單位是 PBKDF2 實際花掉的秒數，不是次數：每秒回補 PERCENT% 秒，最多存 BURST_MS 毫秒；
+# 餘額 > 0 才准跑，跑完扣掉實測耗時。單次 PBKDF2 是 0.3 秒還是 1.2 秒都一樣，長期佔用不超過 PERCENT%。
+# 預設 30%＋3 秒：任何長度 ≥ (3 秒＋單次耗時) / (50% − 30%) 的時間窗（單次 0.6 秒時約 18 秒）
+# 至少一半時間留給其他請求；正常使用每分鐘可驗約 30 次（單次 0.6 秒），連續最多約 5 次。
+# PERCENT=100 等於關掉預算（單執行緒每秒最多只花得掉 1 秒）。
+PBKDF2_BUDGET_PERCENT = min(100, max(1, _env_int("GOODJOB_PBKDF2_BUDGET_PERCENT", 30)))
+PBKDF2_BUDGET_BURST_MS = max(1, _env_int("GOODJOB_PBKDF2_BUDGET_BURST_MS", 3000))
+_PBKDF2_BUDGET = {"balance": PBKDF2_BUDGET_BURST_MS / 1000, "updatedAt": time.monotonic()}
+# 後台 JSON API 與提案登入的 request body 上限；上傳圖片（/api/upload/）不套用。
+MAX_REQUEST_BODY_BYTES = 1024 * 1024
 ADMIN_PUBLIC_PREFIX = "/controlcenter"
 ADMIN_LEGACY_PREFIX = "/admin"
-PRIVATE_DATA_FILENAMES = {
-    "accounts.json",
-    "config.json",
-    "quote_manifest.json",
-}
-PRIVATE_DATA_PREFIXES = (
-    "goodjob.sqlite3",
-)
-# 整個目錄不得由靜態路徑取得（task-state 內含有閘門 quote 的進度）
-PRIVATE_DATA_DIRS = (
-    "/data/task-state/",
-    "/data/lanya-tote/",
-    "/data/inquiries/",
-)
 
 VALID_ROLES = {"admin", "editor", "viewer", "custom"}
 VALID_PERMISSIONS = {
@@ -159,6 +182,14 @@ WORKS_SEARCH_KEY = os.environ.get("GOODJOB_WORKS_SEARCH_KEY", "").strip()
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+class RequestBodyError(Exception):
+    """request body 不收（Content-Length 不是整數、或超過上限）；do_POST／do_PUT 統一回 status。"""
+
+    def __init__(self, status, message):
+        super().__init__(message)
+        self.status = status
+
 
 class QuoteManifestError(Exception):
     pass
@@ -1368,7 +1399,173 @@ def _save_accounts(accounts):
 
 
 def _hash_password(salt, password):
+    # 舊格式：單次 SHA-256（64 字元 hex）。只留給舊雜湊驗證；
+    # register_quote.py 仍寫這個格式，所以 _verify_password 必須繼續相容。
     return hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
+
+
+PBKDF2_ALGORITHM = "pbkdf2_sha256"
+PBKDF2_ITERATIONS = 600000
+# 儲存的次數只接受這個範圍：太少等於沒雜湊，太多會讓一次驗證卡住單執行緒伺服器。
+_PBKDF2_MIN_ITERATIONS = 100000
+_PBKDF2_MAX_ITERATIONS = 1200000
+_PBKDF2_ITERATIONS_RE = re.compile(r"[0-9]{1,8}")
+_LEGACY_HASH_RE = re.compile(r"[0-9a-fA-F]{64}")
+# 帳號不存在／停用時拿來跑一次完整 PBKDF2 的假雜湊（不可能比對成功），讓回應時間猜不出帳號在不在。
+_DUMMY_PASSWORD_HASH = f"{PBKDF2_ALGORITHM}${PBKDF2_ITERATIONS}$" + "0" * 64
+
+
+def _pbkdf2_hex(salt, password, iterations):
+    # salt 是記錄裡的字串欄位（token_hex 或測試用的任意字串），直接當 UTF-8 bytes 用。
+    return hashlib.pbkdf2_hmac(
+        "sha256", password.encode("utf-8"), (salt or "").encode("utf-8"), iterations
+    ).hex()
+
+
+def _make_password_hash(salt, password):
+    """產生新格式密碼雜湊：pbkdf2_sha256$<次數>$<hex>；次數寫在字串裡，日後可調。"""
+    return f"{PBKDF2_ALGORITHM}${PBKDF2_ITERATIONS}${_pbkdf2_hex(salt, password, PBKDF2_ITERATIONS)}"
+
+
+def _pbkdf2_parts(stored_hash):
+    """新格式且次數在範圍內 → (次數, 摘要)；其他一律 None。
+
+    _verify_password 只對這種雜湊跑 PBKDF2；登入流程也用它判斷「這次驗證會不會跑 PBKDF2」。
+    """
+    if not isinstance(stored_hash, str) or not stored_hash.startswith(PBKDF2_ALGORITHM + "$"):
+        return None
+    parts = stored_hash.split("$")
+    if len(parts) != 3 or not _PBKDF2_ITERATIONS_RE.fullmatch(parts[1]):
+        return None
+    iterations = int(parts[1])
+    if not _PBKDF2_MIN_ITERATIONS <= iterations <= _PBKDF2_MAX_ITERATIONS:
+        return None
+    return iterations, parts[2]
+
+
+def _verify_password(salt, password, stored_hash):
+    """驗證密碼。新格式依字串內次數驗 PBKDF2；舊格式（64 字元 hex）用單次 SHA-256。
+
+    空值、格式錯誤（含次數超出範圍）一律回 False，不丟例外（呼叫端在請求處理中，丟例外會變 500）。
+    """
+    if not isinstance(stored_hash, str) or not stored_hash or not isinstance(password, str):
+        return False
+    salt = salt if isinstance(salt, str) else ""
+    try:
+        pbkdf2 = _pbkdf2_parts(stored_hash)
+        if pbkdf2:
+            iterations, digest = pbkdf2
+            candidate = _pbkdf2_hex(salt, password, iterations)
+            return hmac.compare_digest(candidate.encode("ascii"), digest.lower().encode("utf-8"))
+        if _LEGACY_HASH_RE.fullmatch(stored_hash):
+            candidate = _hash_password(salt, password)
+            return hmac.compare_digest(candidate.encode("ascii"), stored_hash.lower().encode("ascii"))
+    except (TypeError, ValueError, UnicodeError):
+        return False
+    return False
+
+
+def _password_needs_upgrade(stored_hash):
+    """已驗證成功的雜湊若不是「目前演算法＋目前次數」，就該改存新格式。"""
+    return not (stored_hash or "").startswith(f"{PBKDF2_ALGORITHM}${PBKDF2_ITERATIONS}$")
+
+
+# ponytail: 後台每個請求都帶 Basic Auth 重驗密碼，而 HTTPServer 是單執行緒，
+# PBKDF2 一次約 0.5 秒會讓全站跟著卡。這裡只記「驗證成功」的組合（行程內隨機金鑰的
+# HMAC，不存明碼）；stored_hash 一變（改密碼／升級）自然失效；滿了整個清空。
+# 改成 session token 登入後就可以拿掉。
+# 快取綁訪客 IP：全域保險期間只有快取命中的人能通過，若不綁 IP，攻擊者就能從任何 IP
+# 不跑 PBKDF2 地快速猜「別人剛登入過的密碼」。綁了之後只有「同 IP、同密碼驗過」才算命中。
+# 這裡的「IP」是 _ip_limit_key 的結果（IPv6 是 /64），IPv6 隱私位址輪換時已登入的管理員不會掉出快取。
+_AUTH_CACHE_KEY = secrets.token_bytes(32)
+_AUTH_CACHE = set()
+_AUTH_CACHE_MAX = 256
+
+
+def _auth_cache_tag(salt, password, stored_hash, client_ip):
+    try:
+        return hmac.new(
+            _AUTH_CACHE_KEY,
+            json.dumps([salt, stored_hash, password, client_ip]).encode("utf-8"),
+            hashlib.sha256,
+        ).digest()
+    except (TypeError, ValueError):
+        return None
+
+
+def _auth_cache_hit(salt, password, stored_hash, client_ip=""):
+    """只查快取、不驗密碼（不跑 PBKDF2）。"""
+    tag = _auth_cache_tag(salt, password, stored_hash, client_ip)
+    return tag is not None and tag in _AUTH_CACHE
+
+
+def _verify_password_cached(salt, password, stored_hash, client_ip=""):
+    tag = _auth_cache_tag(salt, password, stored_hash, client_ip)
+    if tag is not None and tag in _AUTH_CACHE:
+        return True
+    if not _verify_password(salt, password, stored_hash):
+        return False
+    if tag is not None:
+        if len(_AUTH_CACHE) >= _AUTH_CACHE_MAX:
+            _AUTH_CACHE.clear()
+        _AUTH_CACHE.add(tag)
+    return True
+
+
+def _upgrade_account_password_hash(account, password):
+    """帳號登入成功且存的是舊格式時，改存新格式。失敗只記錄，不影響登入。
+
+    不走 _save_accounts：它會刪光 accounts／account_permissions 再全部重插，
+    和同時間的帳號管理操作互蓋。這裡只 UPDATE 這一筆的 password_hash，
+    並以舊值當條件（compare-and-swap），期間有人改密碼就不寫。updated_at 不動（不是使用者編輯）。
+    """
+    username = account.get("username")
+    old_hash = account.get("passwordHash") or ""
+    try:
+        new_hash = _make_password_hash(account.get("salt") or "", password)
+        if _using_postgres():
+            with _pg_connect() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        "UPDATE accounts SET password_hash = %s WHERE username = %s AND password_hash = %s",
+                        (new_hash, username, old_hash),
+                    )
+                    updated = cur.rowcount
+        else:
+            with _db_connect() as conn:
+                updated = conn.execute(
+                    "UPDATE accounts SET password_hash = ? WHERE username = ? AND password_hash = ?",
+                    (new_hash, username, old_hash),
+                ).rowcount
+    except Exception as exc:
+        sys.stderr.write(f"[auth] 帳號 {username} 密碼雜湊升級失敗: {exc}\n")
+        return
+    if updated != 1:
+        sys.stderr.write(f"[auth] 帳號 {username} 密碼雜湊未升級（更新筆數 {updated}）\n")
+
+
+def _upgrade_quote_password_hash(quote_id, record, password):
+    """提案密碼驗證成功且存的是舊格式時，改存新格式。回傳「磁碟上實際生效」的記錄給 cookie 簽章用。
+
+    重讀 manifest 再改，不用請求開頭的快照（register_quote.py 可能同時寫同一個檔）；
+    該筆雜湊仍是剛驗過的舊值才寫。任何失敗都回傳原記錄（舊雜湊），訪客照常進入。
+    updatedAt 不動（不是內容編輯）。
+    """
+    try:
+        # 先算好（PBKDF2 約 0.5 秒）再重讀＋寫入，讓「讀到寫」之間越短越好。
+        new_hash = _make_password_hash(record.get("passwordSalt") or "", password)
+        manifest = _load_quote_manifest(strict=True)
+        fresh = _quote_record(manifest, quote_id)
+        if (not fresh
+                or fresh.get("passwordHash") != record.get("passwordHash")
+                or fresh.get("passwordSalt") != record.get("passwordSalt")):
+            return record
+        fresh["passwordHash"] = new_hash
+        _save_quote_manifest(manifest)
+        return fresh
+    except Exception as exc:
+        sys.stderr.write(f"[quote] {quote_id} 密碼雜湊升級失敗: {exc}\n")
+        return record
 
 
 def _generate_salt():
@@ -1441,6 +1638,11 @@ def _load_quote_manifest(strict=False):
 
 
 def _save_quote_manifest(manifest):
+    # 提案密碼不存明碼：任何寫回（改標題／狀態、雜湊升級、刪除）都順手清掉舊版留下的 passwordPlain，
+    # 整份 manifest 的每一筆都清，不只這次改到的那筆。
+    for record in manifest.get("quotes", {}).values():
+        if isinstance(record, dict):
+            record.pop("passwordPlain", None)
     os.makedirs(os.path.dirname(QUOTE_MANIFEST_PATH), exist_ok=True)
     _write_json_atomic(QUOTE_MANIFEST_PATH, manifest)
 
@@ -1481,9 +1683,6 @@ def _public_quote_record(quote_id, record, exists=True):
         "title": (record or {}).get("title") or quote_id,
         "status": status,
         "hasPassword": has_password,
-        # 明文密碼：僅 _public_quote_record 的三個呼叫端皆在 quotes.manage 後方，
-        # 不會洩漏給公開的提案密碼頁。舊雜湊資料無明文時回空字串。
-        "password": (record or {}).get("passwordPlain") or "",
         "exists": bool(exists),
         "url": f"/quote/{quote_id}/",
         "createdAt": (record or {}).get("createdAt"),
@@ -1520,21 +1719,109 @@ def _valid_quote_cookie(quote_id, record, raw_cookie):
         issued_at, sig = morsel.value.split(":", 1)
         if int(time.time()) - int(issued_at) > QUOTE_COOKIE_MAX_AGE:
             return False
-    except (ValueError, TypeError):
+    except (ValueError, TypeError, cookies.CookieError):
         return False
     expected = _quote_cookie_signature(quote_id, record, issued_at)
-    return hmac.compare_digest(sig, expected)
+    # 比 bytes：cookie 帶非 ASCII 字元（例如 "1:é"）時，str 版 compare_digest 會丟 TypeError、連線直接斷掉。
+    return hmac.compare_digest(sig.encode("utf-8"), expected.encode("ascii"))
+
+
+def _ip_limit_key(ip):
+    """限流用的訪客鍵：IPv6 取 /64（一段 /64 能換無數個位址）；IPv4 對應的 IPv6 轉回 IPv4。
+
+    只給登入失敗限制與後台登入快取用；詢問單等要記完整位址的地方直接用 _client_ip()。
+    """
+    try:
+        addr = ipaddress.ip_address(ip)
+    except ValueError:
+        return ip
+    if addr.version == 6:
+        if addr.ipv4_mapped:
+            return str(addr.ipv4_mapped)
+        return f"{ipaddress.IPv6Address(int(addr) >> 64 << 64)}/64"
+    return str(addr)
 
 
 def _quote_auth_state_key(client_ip, quote_id):
-    return f"{client_ip}:{quote_id}"
+    return f"{_ip_limit_key(client_ip)}:{quote_id}"
 
 
-def _pruned_quote_auth_failures(state, now):
+# 登入失敗限制（提案登入、後台每 IP、後台全域保險共用）。
+# store 是 {key: {"failures": [時間戳...], "lockedUntil": 時間戳}}；伺服器單執行緒，不需要鎖。
+def _pruned_auth_failures(state, now, window):
     return [
         ts for ts in state.get("failures", [])
-        if now - ts <= QUOTE_AUTH_FAILURE_WINDOW_SECONDS
+        if now - ts <= window
     ]
+
+
+def _auth_failure_limited(store, key, window):
+    """key 鎖定中回 True；不在鎖定中就順手清掉過期紀錄。"""
+    now = time.time()
+    state = store.get(key)
+    if not state:
+        return False
+    locked_until = state.get("lockedUntil") or 0
+    if locked_until > now:
+        return True
+    failures = _pruned_auth_failures(state, now, window)
+    if failures:
+        state["failures"] = failures
+        state["lockedUntil"] = 0
+    else:
+        store.pop(key, None)
+    return False
+
+
+def _record_auth_failure(store, key, limit, window, lock_seconds):
+    """記一次失敗；窗內累計達 limit 就鎖定 lock_seconds 秒並回 True。"""
+    now = time.time()
+    # 先 pop 再寫回：dict 依插入順序，最前面的就是最久沒失敗的，超量時從前面踢。
+    state = store.pop(key, None) or {}
+    failures = _pruned_auth_failures(state, now, window)
+    failures.append(now)
+    locked = len(failures) >= limit
+    store[key] = {
+        "failures": failures[-limit:],
+        # 鎖定中又記一筆（ADMIN_AUTH_BLOCKED 會這樣）時不縮短原本的鎖。
+        "lockedUntil": max(state.get("lockedUntil") or 0, now + lock_seconds if locked else 0),
+    }
+    if len(store) > AUTH_FAILURE_MAX_ENTRIES:
+        # ponytail: 超量才 O(n) 掃，一次刪到上限的 90%，均攤每筆 O(1)（否則滿了以後每個新鍵都掃一次，
+        # 實測 1 萬筆時每筆約 4 毫秒，便宜的 429 會變貴）。不整個 clear()。
+        # 順序：先清過期的，再從最舊的「未鎖定」刪起。鎖定中的不刪（否則灌大量新鍵就能洗掉自己的鎖），
+        # 剛寫入的這筆也不刪（否則永遠累積不到上限）。
+        target = AUTH_FAILURE_MAX_ENTRIES - AUTH_FAILURE_MAX_ENTRIES // 10
+        for old_key in list(store):
+            old = store[old_key]
+            if (old.get("lockedUntil") or 0) <= now and not _pruned_auth_failures(old, now, window):
+                del store[old_key]
+        for old_key in list(store)[:-1]:
+            if len(store) <= target:
+                break
+            if (store[old_key].get("lockedUntil") or 0) <= now:
+                del store[old_key]
+        # 只剩鎖定中的紀錄才會走到這裡：為了守住記憶體上限，退回刪最舊的（會提早解除那些鎖）。
+        while len(store) > target:
+            del store[next(iter(store))]
+    return locked
+
+
+def _pbkdf2_budget_available():
+    """全網 PBKDF2 預算：先依經過時間回補，餘額 > 0 才准跑。伺服器單執行緒，不需要鎖。"""
+    now = time.monotonic()
+    budget = _PBKDF2_BUDGET
+    budget["balance"] = min(
+        PBKDF2_BUDGET_BURST_MS / 1000,
+        budget["balance"] + (now - budget["updatedAt"]) * PBKDF2_BUDGET_PERCENT / 100,
+    )
+    budget["updatedAt"] = now
+    return budget["balance"] > 0
+
+
+def _spend_pbkdf2_budget(seconds):
+    """扣掉這次驗證實際花掉的秒數；餘額最多欠一次 PBKDF2，之後回補到 > 0 才再准跑。"""
+    _PBKDF2_BUDGET["balance"] -= max(0.0, seconds)
 
 
 def _public_account(account):
@@ -1606,19 +1893,12 @@ def _is_blocked_path(path):
 
 
 def _is_private_data_path(path):
+    # 2026-11-04 改白名單：/data 底下只放行 articles.json（舊版公開網址），其餘一律不對外。
+    # 舊黑名單漏掉「檔名後加日期」的備份（accounts.json.20260505-…），且 normpath 會吃掉結尾斜線，
+    # /data/ 目錄列表因此公開。片段切法比照 SimpleHTTPRequestHandler.translate_path（略過空片段與 . ..）。
     clean = unquote(path.split("?", 1)[0].split("#", 1)[0]).replace("\\", "/")
-    normalized = posixpath.normpath(clean)
-    normalized_lower = normalized.lower()
-    if not normalized_lower.startswith("/data/"):
-        return False
-    if any(normalized_lower.startswith(d) for d in PRIVATE_DATA_DIRS):
-        return True
-    filename = posixpath.basename(normalized_lower)
-    base_filename = filename[:-4] if filename.endswith(".tmp") else filename
-    return (
-        base_filename in PRIVATE_DATA_FILENAMES
-        or any(base_filename.startswith(prefix) for prefix in PRIVATE_DATA_PREFIXES)
-    )
+    segs = [s.lower() for s in posixpath.normpath(clean).split("/") if s and s not in (".", "..")]
+    return bool(segs) and segs[0] == "data" and segs != ["data", "articles.json"]
 
 
 def _parse_multipart(body, content_type):
@@ -1678,6 +1958,11 @@ def _parse_multipart(body, content_type):
 
 class MurayamaHandler(SimpleHTTPRequestHandler):
     """Extends SimpleHTTPRequestHandler with JSON API routes."""
+
+    def list_directory(self, path):
+        # 2026-11-04：不提供目錄列表（/data/、/assets/ 曾公開列出檔名）。回 404 不回 403，不暴露存在。
+        self.send_error(404, "Not found")
+        return None
 
     # Override server_version for log output
     server_version = "MurayamaServer/1.0"
@@ -1809,45 +2094,35 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         quote_id, _sep, rel = rest.partition("/")
         return quote_id, rel
 
-    def _quote_auth_client_ip(self):
+    def _client_ip(self):
+        """訪客完整 IP（詢問單照這個記）。登入限制要再經過 _ip_limit_key（IPv6 取 /64）。
+
+        信任代理（GOODJOB_TRUST_PROXY_HEADERS=1）時只認 CF-Connecting-IP：Cloudflare 會覆寫它，
+        訪客改不了。X-Forwarded-For 的第一個值是訪客自己帶的、可偽造，不用。
+        CF-Connecting-IP 沒帶或不是合法 IP，就退回 TCP 來源位址。
+        """
         if TRUST_PROXY_HEADERS:
-            forwarded = (self.headers.get("X-Forwarded-For") or "").split(",", 1)[0].strip()
-            if forwarded:
-                return forwarded[:64]
+            raw = (self.headers.get("CF-Connecting-IP") or "").strip()
+            if raw and len(raw) <= 64:
+                try:
+                    return str(ipaddress.ip_address(raw))
+                except ValueError:
+                    pass
         return self.client_address[0] if self.client_address else ""
 
     def _is_quote_auth_limited(self, quote_id):
-        now = time.time()
-        key = _quote_auth_state_key(self._quote_auth_client_ip(), quote_id)
-        state = QUOTE_AUTH_FAILURES.get(key)
-        if not state:
-            return False
-        locked_until = state.get("lockedUntil") or 0
-        if locked_until > now:
-            return True
-        failures = _pruned_quote_auth_failures(state, now)
-        if failures:
-            state["failures"] = failures
-            state["lockedUntil"] = 0
-        else:
-            QUOTE_AUTH_FAILURES.pop(key, None)
-        return False
+        key = _quote_auth_state_key(self._client_ip(), quote_id)
+        return _auth_failure_limited(QUOTE_AUTH_FAILURES, key, QUOTE_AUTH_FAILURE_WINDOW_SECONDS)
 
     def _record_quote_auth_failure(self, quote_id):
-        now = time.time()
-        key = _quote_auth_state_key(self._quote_auth_client_ip(), quote_id)
-        state = QUOTE_AUTH_FAILURES.get(key) or {}
-        failures = _pruned_quote_auth_failures(state, now)
-        failures.append(now)
-        locked = len(failures) >= QUOTE_AUTH_FAILURE_LIMIT
-        QUOTE_AUTH_FAILURES[key] = {
-            "failures": failures[-QUOTE_AUTH_FAILURE_LIMIT:],
-            "lockedUntil": now + QUOTE_AUTH_LOCK_SECONDS if locked else 0,
-        }
-        return locked
+        key = _quote_auth_state_key(self._client_ip(), quote_id)
+        return _record_auth_failure(
+            QUOTE_AUTH_FAILURES, key, QUOTE_AUTH_FAILURE_LIMIT,
+            QUOTE_AUTH_FAILURE_WINDOW_SECONDS, QUOTE_AUTH_LOCK_SECONDS,
+        )
 
     def _clear_quote_auth_failures(self, quote_id):
-        key = _quote_auth_state_key(self._quote_auth_client_ip(), quote_id)
+        key = _quote_auth_state_key(self._client_ip(), quote_id)
         QUOTE_AUTH_FAILURES.pop(key, None)
 
     def _should_set_secure_quote_cookie(self):
@@ -1884,7 +2159,10 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
 
     def _send_quote_login(self, quote_id, error="", head_only=False, status=200):
         import html as _html
-        error_text = "嘗試次數過多，請稍後再試。" if error == "rate" else "密碼錯誤，請再試一次。"
+        error_text = {
+            "rate": "嘗試次數過多，請稍後再試。",
+            "busy": "目前登入人數較多，請稍後再試。",  # 全網 PBKDF2 預算用完
+        }.get(error, "密碼錯誤，請再試一次。")
         error_html = (
             f"<p style=\"color:#fca5a5;margin:0 0 12px\">{error_text}</p>"
             if error else ""
@@ -2142,8 +2420,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self._send_json({"ok": True})
             return
 
-        forwarded = (self.headers.get("X-Forwarded-For") or "").split(",", 1)[0].strip()
-        remote_ip = forwarded or (self.client_address[0] if self.client_address else "")
+        remote_ip = self._client_ip()
         # 系統時鐘無論設在哪個時區，time.time() 都是 UTC epoch，故直接加 8 小時換算台北時間
         taipei_now = time.gmtime(time.time() + 8 * 3600)
 
@@ -2230,13 +2507,22 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self._send_quote_login(quote_id, error="rate", status=429)
             return True
 
-        raw = self._read_body()
+        raw = self._read_body(MAX_REQUEST_BODY_BYTES)
         try:
             params = parse_qs(raw.decode("utf-8"))
         except UnicodeDecodeError:
             params = {}
         password = (params.get("password") or [""])[0]
-        if _hash_password(record.get("passwordSalt", ""), password) != record.get("passwordHash", ""):
+        stored_hash = record.get("passwordHash", "")
+        # 只有會跑 PBKDF2 的雜湊才吃全網預算；舊格式 SHA-256 失敗很便宜，不擋。
+        # 預算用完：不跑、不記失敗（不是這位訪客猜錯），請客人稍後再試。
+        if _pbkdf2_parts(stored_hash) is not None and not _pbkdf2_budget_available():
+            self._send_quote_login(quote_id, error="busy", status=429)
+            return True
+        started = time.perf_counter()
+        verified = _verify_password(record.get("passwordSalt", ""), password, stored_hash)
+        _spend_pbkdf2_budget(time.perf_counter() - started)
+        if not verified:
             if self._record_quote_auth_failure(quote_id):
                 self._send_quote_login(quote_id, error="rate", status=429)
             else:
@@ -2244,6 +2530,11 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             return True
 
         self._clear_quote_auth_failures(quote_id)
+        # 升級一定要在發 cookie 之前：cookie 用 passwordHash 當 HMAC 金鑰，
+        # 必須用升級後實際存檔的雜湊簽，否則訪客下一個請求就被踢回密碼頁。
+        # ponytail: 升級要密碼正確、每筆最多一次，不吃全網預算。
+        if _password_needs_upgrade(stored_hash):
+            record = _upgrade_quote_password_hash(quote_id, record, password)
         cookie_value = _make_quote_cookie_value(quote_id, record)
         cookie = cookies.SimpleCookie()
         cookie[_quote_cookie_name(quote_id)] = cookie_value
@@ -2271,7 +2562,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         data/config.json (legacy single-user fallback).
 
         On success, stores the matched account dict on `self._auth_account`
-        and returns True. On failure, sends 401 and returns False.
+        and returns True. On failure, sends 401 (or 429 when rate-limited)
+        and returns False.
         """
         auth_header = self.headers.get("Authorization", "")
         if not auth_header.startswith("Basic "):
@@ -2285,34 +2577,86 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self._send_401()
             return False
 
+        # 每 IP 鎖定：連快取都不查、不跑 PBKDF2。快取命中也不放行，
+        # 否則鎖定期間攻擊者仍可用快取當「猜中就放行」的快速通道。
+        # 限流鍵與快取都綁 client_key（IPv6 取 /64）：同一段 /64 視為同一位訪客，換位址不會洗掉計數。
+        client_key = _ip_limit_key(self._client_ip())
+        if _auth_failure_limited(ADMIN_AUTH_FAILURES, client_key, ADMIN_AUTH_FAILURE_WINDOW_SECONDS):
+            self._send_429()
+            return False
+
         accounts = _load_accounts()
         if accounts:
             account = _find_account(accounts, user)
-            if (account
-                    and account.get("enabled")
-                    and _hash_password(account.get("salt", ""), password)
-                        == account.get("passwordHash", "")):
-                self._auth_account = account
-                return True
-            self._send_401()
-            return False
-
-        # Legacy fallback: single-user config.json
-        cfg = _load_config()
-        expected_user = cfg.get("adminUser", "")
-        expected_hash = cfg.get("adminPasswordHash", "")
-        salt = cfg.get("adminSalt", "")
-        if (user == expected_user and expected_hash
-                and _hash_password(salt, password) == expected_hash):
-            self._auth_account = {
+            usable = bool(account and account.get("enabled"))
+            if usable:
+                salt, stored_hash = account.get("salt", ""), account.get("passwordHash", "")
+        else:
+            # Legacy fallback: single-user config.json
+            # 舊版單一管理員：只驗不升級（accounts 有資料時根本走不到這裡；
+            # config 的寫入路徑 _replace_config 是整表刪除重插，不值得為後備路徑冒險）。
+            cfg = _load_config()
+            expected_user = cfg.get("adminUser", "")
+            usable = bool(user == expected_user and cfg.get("adminPasswordHash", ""))
+            if usable:
+                salt, stored_hash = cfg.get("adminSalt", ""), cfg.get("adminPasswordHash", "")
+            account = {
                 "username": expected_user,
                 "name": expected_user,
                 "role": "admin",
                 "enabled": True,
                 "permissions": sorted(VALID_PERMISSIONS),
             }
+        if not usable:
+            # 帳號不存在／停用：照樣跑一次完整 PBKDF2（假雜湊不可能比對成功），回應時間才猜不出帳號在不在。
+            salt, stored_hash = "", _DUMMY_PASSWORD_HASH
+
+        # 全域保險與全網 PBKDF2 預算只擋「快取沒命中、得跑 PBKDF2」的請求；
+        # 同一個 client_key 已用同一組密碼驗過的人照常通過。不看帳號在不在、雜湊格式（否則 429／401 會洩漏帳號存在）。
+        cache_hit = _auth_cache_hit(salt, password, stored_hash, client_key)
+        miss_blocked = (
+            _auth_failure_limited(ADMIN_AUTH_GLOBAL_FAILURES, ADMIN_AUTH_GLOBAL_KEY,
+                                  ADMIN_AUTH_GLOBAL_WINDOW_SECONDS)
+            or not _pbkdf2_budget_available()
+        )
+        if miss_blocked and not cache_hit:
+            # 沒跑 PBKDF2：不記成這個 IP 的失敗（真管理員重試才不會把自己鎖 300 秒），也不記全域失敗
+            # （否則正常重試會一直延長保險）。只記進 ADMIN_AUTH_BLOCKED，給下一段的快取防線用。
+            _record_auth_failure(ADMIN_AUTH_BLOCKED, client_key, ADMIN_AUTH_FAILURE_LIMIT,
+                                 ADMIN_AUTH_FAILURE_WINDOW_SECONDS, ADMIN_AUTH_LOCK_SECONDS)
+            self._send_429()
+            return False
+        if (miss_blocked
+                and _auth_failure_limited(ADMIN_AUTH_BLOCKED, client_key, ADMIN_AUTH_FAILURE_WINDOW_SECONDS)):
+            # 這段期間「沒命中＝不花成本的 429、命中＝200」。同一個 client_key 剛被擋滿次數還照樣放行命中，
+            # 共用 IP 的人就能高速猜「同 IP 已登入管理員」的密碼。所以這時連命中也擋，保險／預算恢復後自動放行。
+            self._send_429()
+            return False
+
+        # 先驗密碼再看 usable：寫成 usable and ... 會短路，假 PBKDF2 就白做了。
+        started = time.perf_counter()
+        verified = _verify_password_cached(salt, password, stored_hash, client_key) and usable
+        if not verified and usable and _pbkdf2_parts(stored_hash) is None:
+            # 舊格式（單次 SHA-256）或認不得的格式沒跑 PBKDF2，補跑一次假的，失敗時間才和「帳號不存在」一致。
+            _verify_password("", password, _DUMMY_PASSWORD_HASH)
+        _spend_pbkdf2_budget(time.perf_counter() - started)
+
+        if verified:
+            # 不清這個 IP 的失敗計數，讓它自然過期：否則持有任一有效帳號的人能藉此重置計數、再猜別人的密碼。
+            # ponytail: 升級要密碼正確、每個帳號最多一次，不吃全網預算。
+            if accounts and _password_needs_upgrade(stored_hash):
+                _upgrade_account_password_hash(account, password)
+            self._auth_account = account
             return True
-        self._send_401()
+
+        _record_auth_failure(ADMIN_AUTH_GLOBAL_FAILURES, ADMIN_AUTH_GLOBAL_KEY,
+                             ADMIN_AUTH_GLOBAL_FAILURE_LIMIT, ADMIN_AUTH_GLOBAL_WINDOW_SECONDS,
+                             ADMIN_AUTH_GLOBAL_LOCK_SECONDS)
+        if _record_auth_failure(ADMIN_AUTH_FAILURES, client_key, ADMIN_AUTH_FAILURE_LIMIT,
+                                ADMIN_AUTH_FAILURE_WINDOW_SECONDS, ADMIN_AUTH_LOCK_SECONDS):
+            self._send_429()
+        else:
+            self._send_401()
         return False
 
     def _require_permission(self, permission):
@@ -2332,18 +2676,31 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _send_429(self):
+        # 後台登入被限制（每 IP 鎖定、全域保險、全網 PBKDF2 預算）；前端 401 以外都只顯示錯誤、不登出。
+        self._send_error_json(429, "登入嘗試過多，請稍後再試")
+
     # ------------------------------------------------------------------
     # Body reading
     # ------------------------------------------------------------------
 
-    def _read_body(self):
-        length = int(self.headers.get("Content-Length", 0))
+    def _read_body(self, limit=None):
+        """讀 request body。Content-Length 不是整數 → 400；超過 limit → 413，且不讀進記憶體。
+
+        limit=None 不設上限（只有上傳圖片 /api/upload/ 這樣用）。
+        """
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+        except (TypeError, ValueError):
+            raise RequestBodyError(400, "Invalid Content-Length")
         if length <= 0:
             return b""
+        if limit is not None and length > limit:
+            raise RequestBodyError(413, "Request body too large")
         return self.rfile.read(length)
 
     def _read_json_body(self):
-        raw = self._read_body()
+        raw = self._read_body(MAX_REQUEST_BODY_BYTES)
         if not raw:
             return None
         try:
@@ -2671,6 +3028,12 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             )
             return
 
+        new_password = None
+        if "password" in data:
+            # 先算雜湊（PBKDF2 約 0.5 秒）再讀 manifest：讀到寫之間越短，和 register_quote.py 互相覆蓋的機會越小。
+            salt = _generate_salt()
+            new_password = (salt, _make_password_hash(salt, data["password"]))
+
         try:
             manifest = _load_quote_manifest(strict=True)
         except QuoteManifestError:
@@ -2686,12 +3049,9 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         record.setdefault("createdAt", now)
         record["updatedAt"] = now
 
-        if "password" in data:
-            salt = _generate_salt()
-            record["passwordSalt"] = salt
-            record["passwordHash"] = _hash_password(salt, data["password"])
-            # 明文留存供後台提醒村長告知客人；僅限 quotes.manage 權限可見。
-            record["passwordPlain"] = data["password"]
+        if new_password:
+            # 提案密碼不存明碼；舊版留下的 passwordPlain 由 _save_quote_manifest 統一清掉。
+            record["passwordSalt"], record["passwordHash"] = new_password
         record.pop("password", None)
 
         if record.get("status") == "active" and not _quote_has_password(record):
@@ -2851,7 +3211,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             "enabled": bool(data.get("enabled", True)),
             "permissions": list(data.get("permissions") or []),
             "salt": salt,
-            "passwordHash": _hash_password(salt, data["password"]),
+            "passwordHash": _make_password_hash(salt, data["password"]),
             "createdAt": now,
             "updatedAt": now,
         }
@@ -2900,7 +3260,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             account["permissions"] = new_perms
         if data.get("password"):
             account["salt"] = _generate_salt()
-            account["passwordHash"] = _hash_password(account["salt"], data["password"])
+            account["passwordHash"] = _make_password_hash(account["salt"], data["password"])
         account["updatedAt"] = time.strftime("%Y-%m-%dT%H:%M:%S")
 
         _save_accounts(accounts)
@@ -3932,23 +4292,29 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         super().do_HEAD()
 
     def do_POST(self):
-        if self._is_api():
-            if not self._route_api("POST"):
-                self._send_error_json(404, "Not found")
-            return
-        if self._is_quote_path():
-            if self._handle_quote_auth_post():
+        try:
+            if self._is_api():
+                if not self._route_api("POST"):
+                    self._send_error_json(404, "Not found")
                 return
-            if self._handle_quote_state_post():
-                return
-        self._send_error_json(405, "Method not allowed")
+            if self._is_quote_path():
+                if self._handle_quote_auth_post():
+                    return
+                if self._handle_quote_state_post():
+                    return
+            self._send_error_json(405, "Method not allowed")
+        except RequestBodyError as exc:  # _read_body 都在回應之前呼叫，這裡還沒送出任何東西
+            self._send_error_json(exc.status, str(exc))
 
     def do_PUT(self):
-        if self._is_api():
-            if not self._route_api("PUT"):
-                self._send_error_json(404, "Not found")
-            return
-        self._send_error_json(405, "Method not allowed")
+        try:
+            if self._is_api():
+                if not self._route_api("PUT"):
+                    self._send_error_json(404, "Not found")
+                return
+            self._send_error_json(405, "Method not allowed")
+        except RequestBodyError as exc:
+            self._send_error_json(exc.status, str(exc))
 
     def do_DELETE(self):
         if self._is_api():

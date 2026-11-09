@@ -59,6 +59,8 @@ class QuoteAuthTest(unittest.TestCase):
             env["GOODJOB_QUOTE_AUTH_FAILURE_WINDOW_SECONDS"] = "60"
             env["GOODJOB_QUOTE_AUTH_LOCK_SECONDS"] = "60"
             env["GOODJOB_TRUST_PROXY_HEADERS"] = "1"
+            # 本類別不測全網 PBKDF2 預算：100% 等於不限，避免連續登入被 429
+            env["GOODJOB_PBKDF2_BUDGET_PERCENT"] = "100"
             cls.proc = subprocess.Popen(
                 [
                     sys.executable,

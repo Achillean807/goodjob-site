@@ -16,6 +16,8 @@ var lbIndex = 0;
 var selectedAccountUsername = '';
 var selectedQuoteId = '';
 var QUOTE_PASSWORD_MIN_LENGTH = 8;
+// 後台登入被限制（每 IP 鎖定、全域保險、全網 PBKDF2 預算，或 Cloudflare 的 429）時顯示的訊息。
+var RATE_LIMITED_MESSAGE = '登入嘗試過多，請稍後再試';
 
 var CAT_LABELS = {
   business: '主題活動',
@@ -112,10 +114,15 @@ function api(method, path, body, options) {
 
     return parseBody.then(function(payload) {
       if (!response.ok) {
-        var error = new Error(payload && payload.error ? payload.error : ('API error: ' + response.status));
+        var message = payload && payload.error ? payload.error : ('API error: ' + response.status);
+        if (response.status === 429) {
+          message = RATE_LIMITED_MESSAGE;
+        }
+        var error = new Error(message);
         error.status = response.status;
         error.payload = payload;
 
+        // 只有 401 會登出；429、5xx 等其他錯誤只顯示訊息，不清掉登入狀態。
         if (response.status === 401 && !(options && options.suppressLogout)) {
           handleUnauthorized(options && options.silentUnauthorized);
         }
@@ -187,8 +194,19 @@ function doLogin() {
     })
     .catch(function(error) {
       authHeader = '';
-      showLoginError(error && error.status === 401 ? '帳號或密碼錯誤' : '登入失敗，請稍後再試');
+      showLoginError(loginErrorMessage(error));
     });
+}
+
+function loginErrorMessage(error) {
+  var status = error && error.status;
+  if (status === 401) {
+    return '帳號或密碼錯誤';
+  }
+  if (status === 429) {
+    return RATE_LIMITED_MESSAGE;
+  }
+  return '登入失敗，請稍後再試';
 }
 
 function doLogout() {
@@ -229,8 +247,13 @@ function restoreSession() {
     .then(function() {
       showApp();
     })
-    .catch(function() {
-      handleUnauthorized(true);
+    .catch(function(error) {
+      if (error && error.status === 401) {
+        handleUnauthorized(true);
+        return;
+      }
+      // 429、伺服器錯誤、網路斷線：不登出（保留 sessionStorage，稍後重新整理即可恢復），只顯示訊息。
+      showLoginError(loginErrorMessage(error));
     });
 }
 
@@ -1489,7 +1512,7 @@ function renderQuotesList() {
         '<td><strong>' + esc(quote.title || quote.id) + '</strong><div class="muted">' + esc(quote.id) + '</div></td>' +
         '<td><span class="status-chip ' + (quote.status === 'active' && quote.hasPassword ? 'is-enabled' : 'is-disabled') + '">' +
           esc(quoteStatusLabel(quote.status, quote.hasPassword)) + '</span></td>' +
-        '<td>' + (quote.password ? '<code class="quote-pw">' + esc(quote.password) + '</code>' : (quote.hasPassword ? '<span class="muted">已設定（舊資料，重設後顯示）</span>' : '<span class="muted">未設定</span>')) + '</td>' +
+        '<td><span class="muted">' + (quote.hasPassword ? '已設定（無法回看，忘記請重設）' : '未設定') + '</span></td>' +
         '<td><a href="' + esc(quote.url) + '" target="_blank" rel="noopener noreferrer">' + esc(quote.url) + '</a></td>' +
       '</tr>'
     );
@@ -1516,9 +1539,7 @@ function openQuoteForm(id) {
   }
 
   if (pwCurrentEl) {
-    pwCurrentEl.value = quote.password
-      ? quote.password
-      : (quote.hasPassword ? '（舊資料，重設密碼後才會顯示）' : '（尚未設定）');
+    pwCurrentEl.value = quote.hasPassword ? '（已設定，無法回看；忘記請輸入新密碼重設）' : '（尚未設定）';
   }
 
   document.getElementById('quote-form-title').textContent = '編輯提案';
@@ -1587,7 +1608,7 @@ function saveQuote() {
     payload.password = password;
   }
   api('PUT', '/api/quotes/' + encodeURIComponent(id), payload).then(function(response) {
-    toast('提案已儲存');
+    toast(payload.password ? '提案已儲存。密碼不會保存明碼，請先記下或傳給客人' : '提案已儲存');
     document.getElementById('quote-password').value = '';
     var quote = response && response.quote ? response.quote : null;
     return loadQuotes(quote ? quote.id : id);
