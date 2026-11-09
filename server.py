@@ -1237,6 +1237,13 @@ def _works_index_sort_key(article):
     return (0 if featured else 1, order if order is not None else 10 ** 9)
 
 
+# 合併重複作品：舊網址一律 301 到保留的那篇（2026-11-09 村長裁示）。
+# 在查 DB 之前判斷，舊作品還在 DB 時就生效；GET／HEAD 都走 _serve_works_page。
+MERGED_WORKS = {
+    "81bf85d4": "benz-taichung-lunar-new-year-decor",
+    "auto-brand-new-year-showroom": "benz-taichung-lunar-new-year-decor",
+}
+
 # 分類 → (服務頁 pillar 連結, 中文名)。/works/{id} SSR 頁的相關服務連結、
 # /api/works-search 的 theme 欄位共用同一份，避免像 WORKS_INDEX_CATEGORIES
 # 那樣各自寫一份中文名而彼此不一致。
@@ -3583,6 +3590,10 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             同時可索引；id 仍是 R2 圖片路徑與前端 hash routing 的 key，不改）
           - 命中某篇的 id 但該篇沒有 slug → 照舊 200
         """
+        merged_into = MERGED_WORKS.get(url_key)
+        if merged_into:
+            self._redirect_to_slug(merged_into)
+            return
         articles = _load_articles()
         # slug 先比對：撞名時 slug 優先，且能確保有 slug 的篇目不會走進 301 分支
         article = next((a for a in articles if a.get("slug") == url_key), None)
