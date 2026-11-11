@@ -58,7 +58,7 @@ class AdminQuoteUiTest(unittest.TestCase):
         self.assertIn("function openQuotesModal()", js)
         self.assertIn("function loadQuotes()", js)
         self.assertIn("function saveQuote()", js)
-        self.assertIn("function deleteSelectedQuote()", js)
+        self.assertIn("function deleteQuote(", js)
         self.assertIn("'/api/quotes'", js)
 
     def test_apply_permissions_wires_quote_management_button(self):
@@ -104,7 +104,7 @@ class AdminQuoteUiTest(unittest.TestCase):
 
     def test_delete_selected_quote_requires_permission_and_deletes_api(self):
         js = self.read("admin/app.js")
-        body = self.js_function_body(js, "deleteSelectedQuote")
+        body = self.js_function_body(js, "deleteQuote")
         self.assertIn("requirePermission('quotes.manage'", body)
         self.assertIn("api('DELETE', '/api/quotes/' + encodeURIComponent(id))", body)
 
@@ -131,7 +131,7 @@ class AdminQuoteUiTest(unittest.TestCase):
         self.assertIn("showLoginError(loginErrorMessage(error));", restore_body)
         self.assertNotIn("sessionStorage.removeItem", restore_body)
 
-        self.assertIn("/controlcenter/app.js?v=20261111a", self.read("admin/index.html"))
+        self.assertIn("/controlcenter/app.js?v=20261111b", self.read("admin/index.html"))
 
     def test_admin_ui_never_shows_quote_plaintext_password(self):
         js = self.read("admin/app.js")

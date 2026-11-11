@@ -184,8 +184,7 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
 .quotes-table td{vertical-align:middle}
 .quote-thumb{width:96px;height:60px;object-fit:cover;border-radius:4px;background:var(--bg2);display:block}
 .quote-thumb-empty{display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted)}
-.quote-edit-btn{background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:16px;padding:4px 10px;color:inherit}
-.quote-edit-btn:hover{border-color:var(--accent)}
+.quote-actions{white-space:nowrap}
 .status-chip{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700}
 .status-chip.is-enabled{background:var(--bg3);color:var(--ink);border:1px solid var(--border)}
 .status-chip.is-disabled{background:rgba(155,62,53,.12);color:var(--point)}
@@ -515,7 +514,7 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
   </div>
 </div>
 
-<!-- Quote Edit Modal（按列尾 ⚡ 開啟） -->
+<!-- Quote Edit Modal（按列尾「編輯」開啟） -->
 <div class="modal-overlay" id="quote-edit-modal">
   <div class="modal">
     <h2 id="quote-form-title">編輯提案</h2>
@@ -546,7 +545,6 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeQuoteEdit()">取消</button>
-      <button class="btn btn-danger" id="quote-delete-btn" onclick="deleteSelectedQuote()">永久刪除</button>
       <button class="btn btn-primary" onclick="saveQuote()">儲存提案</button>
     </div>
   </div>
@@ -605,6 +603,6 @@ tr.drag-below td{box-shadow:inset 0 -2px 0 var(--accent)}
   };
 })();
 </script>
-<script src="/controlcenter/app.js?v=20261111a"></script>
+<script src="/controlcenter/app.js?v=20261111b"></script>
 </body>
 </html>

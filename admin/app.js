@@ -1542,7 +1542,9 @@ function renderQuotesList() {
           esc(quoteStatusLabel(quote.status, quote.hasPassword)) + '</span></td>' +
         '<td><span class="muted">' + (quote.hasPassword ? '已設定（無法回看，忘記請重設）' : '未設定') + '</span></td>' +
         '<td><a href="' + esc(quote.url) + '" target="_blank" rel="noopener noreferrer">' + esc(quote.url) + '</a></td>' +
-        '<td><button class="quote-edit-btn" title="編輯" aria-label="編輯 ' + esc(quote.id) + '" onclick="openQuoteForm(&quot;' + esc(quote.id) + '&quot;)">⚡</button></td>' +
+        '<td class="quote-actions">' +
+          '<button class="btn btn-secondary" onclick="openQuoteForm(&quot;' + esc(quote.id) + '&quot;)">編輯</button> ' +
+          '<button class="btn btn-danger" onclick="deleteQuote(&quot;' + esc(quote.id) + '&quot;)">刪除</button></td>' +
       '</tr>'
     );
   }
@@ -1641,20 +1643,18 @@ function saveQuote() {
   });
 }
 
-function deleteSelectedQuote() {
+function deleteQuote(id) {
   if (!requirePermission('quotes.manage', '只有管理員可以管理提案')) {
     return;
   }
-  var id = document.getElementById('quote-id').value;
-  if (!id) {
-    toast('請先選擇提案', true);
+  if (!id || !findQuote(id)) {
+    toast('找不到提案', true);
     return;
   }
   openConfirm('確定要永久刪除提案「' + id + '」？資料夾與所有檔案會完整刪除，無法復原。', function() {
     api('DELETE', '/api/quotes/' + encodeURIComponent(id)).then(function() {
       closeConfirm();
       selectedQuoteId = '';
-      closeQuoteEdit();
       toast('提案已永久刪除');
       return loadQuotes();
     }).catch(function(error) {
