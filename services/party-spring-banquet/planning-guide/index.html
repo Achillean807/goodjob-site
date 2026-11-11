@@ -124,6 +124,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=optional" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/site.css?v=20261102a" />
   <link rel="stylesheet" href="/services/services.css?v=20261001a" />
+  <style>
+    .pillar-intro .guide-cards { grid-template-columns: repeat(3, 1fr); margin: 8px 0 30px; gap: 14px; }
+    .pillar-intro .guide-cards .case-card img { height: 150px; }
+    .pillar-intro .guide-cards .case-card h3 { font-size: 0.92rem; }
+    @media (max-width: 640px) {
+      .pillar-intro .guide-cards { grid-template-columns: 1fr; }
+      .pillar-intro .guide-cards .case-card img { height: 200px; }
+      .pillar-intro .guide-cards .case-card h3 { font-size: 0.95rem; -webkit-line-clamp: unset; display: block; }
+      .pillar-intro .guide-cards .case-card .case-meta { font-size: 0.8rem; -webkit-line-clamp: unset; display: block; }
+    }
+  </style>
 <!-- Google Analytics 4 (村山良作 Property) -->
 <script>
       /* 效能：Meta Pixel／GA4 腳本延到首次互動或 load 後閒置時（無支援則 1.5 秒）才載入（fbq／gtag 已先排佇列，事件不遺失） */
@@ -220,6 +231,23 @@
       <h2 style="margin-top:44px">步驟 1：先決定今年想對員工說的故事</h2>
       <p>主題方向不是「想做什麼裝飾」，而是「今年公司想對員工說什麼故事」，常見的是年度回顧、品牌轉型、團隊凝聚、跨入新階段。故事定了，才能挑對應的視覺語彙。</p>
       <p>實際做法可以參考：<a href="https://goodjob.weddingwishlove.com/works/the-roman-black-gold-team-party">黑金奢華風</a>、<a href="https://goodjob.weddingwishlove.com/works/lin-hotel-casino-year-end-party">賭城撲克風</a>、<a href="https://goodjob.weddingwishlove.com/works/spy-party">特務派對風</a>。春酒的主題挑法相同，只是多半轉向開春與展望。</p>
+      <div class="featured-grid guide-cards">
+        <a class="case-card" href="/works/the-roman-black-gold-team-party">
+          <img src="https://goodjob-img.weddingwishlove.com/works/the-roman-black-gold-team-party/the-roman-black-gold-team-party-1-thumb.webp" srcset="https://goodjob-img.weddingwishlove.com/works/the-roman-black-gold-team-party/the-roman-black-gold-team-party-1-thumb.webp 400w, https://goodjob-img.weddingwishlove.com/works/the-roman-black-gold-team-party/the-roman-black-gold-team-party-1.webp 1600w" sizes="(max-width: 640px) 100vw, 260px" alt="金色亮片牆、白色鴕鳥羽毛與金銀黑氣球花圈組成的尾牙背板" loading="lazy" decoding="async" />
+          <h3>黑金奢華風</h3>
+          <p class="case-meta">亮片牆・金色氣球</p>
+        </a>
+        <a class="case-card" href="/works/lin-hotel-casino-year-end-party">
+          <img src="https://goodjob-img.weddingwishlove.com/works/lin-hotel-casino-year-end-party/lin-hotel-casino-year-end-party-1-thumb.webp" srcset="https://goodjob-img.weddingwishlove.com/works/lin-hotel-casino-year-end-party/lin-hotel-casino-year-end-party-1-thumb.webp 400w, https://goodjob-img.weddingwishlove.com/works/lin-hotel-casino-year-end-party/lin-hotel-casino-year-end-party-1.webp 1600w" sizes="(max-width: 640px) 100vw, 260px" alt="暗紅色背板前的紅地毯，兩側是白色鴕鳥羽毛花器、大型骰子與撲克牌立牌" loading="lazy" decoding="async" />
+          <h3>賭城撲克風</h3>
+          <p class="case-meta">紅地毯・骰子與撲克牌</p>
+        </a>
+        <a class="case-card" href="/works/spy-party">
+          <img src="https://goodjob-img.weddingwishlove.com/works/spy-party/spy-party-4-thumb.webp" srcset="https://goodjob-img.weddingwishlove.com/works/spy-party/spy-party-4-thumb.webp 400w, https://goodjob-img.weddingwishlove.com/works/spy-party/spy-party-4.webp 1600w" sizes="(max-width: 640px) 100vw, 260px" alt="黑金色特務派對主視覺背板與舞台，兩側各有一組乾燥花藝" loading="lazy" decoding="async" />
+          <h3>特務派對風</h3>
+          <p class="case-meta">黑金主視覺・舞台</p>
+        </a>
+      </div>
 
       <h2 style="margin-top:44px">步驟 2：確認活動形式、場地與人數</h2>
       <p>頒獎晚宴、員工派對、家庭日、品酒會的場景設計差很多，所以活動形式要先講清楚。人數則決定做法：</p>
@@ -233,6 +261,23 @@
       <p><strong>簽到背板與拍照打卡點：</strong>員工進場第一個停下來的位置，LOGO 比例與色票先確認，照片才認得出是哪家公司。</p>
       <p><strong>桌次與燈光：</strong>桌花過高會擋掉同桌視線；宴會廳既有燈光偏白偏亮，要另外配置。</p>
       <p>預算會影響執行密度：只做主視覺背板，或做整場沉浸式場景，成本差很多，所以位置要在談報價之前先排出優先順序。</p>
+      <div class="featured-grid guide-cards">
+        <a class="case-card" href="/works/auto-brand-year-end-party">
+          <img src="https://goodjob-img.weddingwishlove.com/works/ff14fcca/ff14fcca-1-thumb.webp" srcset="https://goodjob-img.weddingwishlove.com/works/ff14fcca/ff14fcca-1-thumb.webp 400w, https://goodjob-img.weddingwishlove.com/works/ff14fcca/ff14fcca-1.webp 1600w" sizes="(max-width: 640px) 100vw, 260px" alt="舞台上的紅金幾何圖樣背板，兩側搭配紅色花藝" loading="lazy" decoding="async" />
+          <h3>舞台主視覺</h3>
+          <p class="case-meta">舞台背板與兩側花藝</p>
+        </a>
+        <a class="case-card" href="/works/twtc-corporate-year-end-party">
+          <img src="https://goodjob-img.weddingwishlove.com/works/874c65e1/874c65e1-1-thumb.webp" srcset="https://goodjob-img.weddingwishlove.com/works/874c65e1/874c65e1-1-thumb.webp 400w, https://goodjob-img.weddingwishlove.com/works/874c65e1/874c65e1-1.webp 1600w" sizes="(max-width: 640px) 100vw, 260px" alt="金色幾何圖樣的入口拱門，中間是標題字牌，兩側有立燈" loading="lazy" decoding="async" />
+          <h3>入口拱門</h3>
+          <p class="case-meta">進場第一眼的位置</p>
+        </a>
+        <a class="case-card" href="/works/lianyun-logistics-2024-year-end">
+          <img src="https://goodjob-img.weddingwishlove.com/works/9c529934/9c529934-1-thumb.webp" srcset="https://goodjob-img.weddingwishlove.com/works/9c529934/9c529934-1-thumb.webp 400w, https://goodjob-img.weddingwishlove.com/works/9c529934/9c529934-1.webp 1600w" sizes="(max-width: 640px) 100vw, 260px" alt="貨櫃港口主題的拍照背板，前方擺著藍色貨櫃造型道具" loading="lazy" decoding="async" />
+          <h3>拍照背板與道具</h3>
+          <p class="case-meta">產業主題背板</p>
+        </a>
+      </div>
 
       <h2 style="margin-top:44px">步驟 4：抓預算、請廠商報價</h2>
       <p>多數行政或福委窗口需檢附兩到三家報價才能請購。報價單要把項目分開列，才放得進比價單逐條比對：設計費、結構（骨架、桁架、配重）、輸出（面積與材質）、軟裝與花藝、燈光設備、人力（進場施作、現場待場、撤場清運）。</p>
@@ -264,6 +309,32 @@
 
       <h2 style="margin-top:44px">詢價前先備好這份清單</h2>
       <p>活動日期、場地與城市、預計人數、預算區間、主題方向或想佈置的區域、進場與撤場時段、場地限制。還沒決定的項目填「未定」即可；企業 LOGO 備好向量檔，後面會快很多。</p>
+    </section>
+
+    <section class="pillar-intro">
+      <h2>村山良作的春酒尾牙佈置</h2>
+      <p>村山良作做的是把企業尾牙春酒變成員工會拍照、會記得的一個現場：舞台主視覺、簽到背板、拍照打卡點與桌次燈光，整套規劃。</p>
+      <p><strong>實拍作品：</strong>18 件春酒尾牙作品都附實拍相簿，可以先看風格與規模，再決定要不要聊。</p>
+      <p><strong>分項報價：</strong>設計、結構、輸出、花藝、燈光與進撤場人力分開列，放進比價單才看得出差在哪一項。</p>
+      <p><strong>先確認檔期：</strong>把日期、場地與人數傳到 LINE，我們先確認檔期與施作範圍。</p>
+      <div class="featured-grid guide-cards">
+        <a class="case-card" href="/works/lianyun-logistics-2025-year-end">
+          <img src="https://goodjob-img.weddingwishlove.com/works/f8b4b9f4/f8b4b9f4-1-thumb.webp" srcset="https://goodjob-img.weddingwishlove.com/works/f8b4b9f4/f8b4b9f4-1-thumb.webp 400w, https://goodjob-img.weddingwishlove.com/works/f8b4b9f4/f8b4b9f4-1.webp 1600w" sizes="(max-width: 640px) 100vw, 260px" alt="貨櫃主題背板前的船艏造型道具" loading="lazy" decoding="async" />
+          <h3>聯運物流 2025 尾牙活動・台北寒舍艾美</h3>
+          <p class="case-meta">產業主題・飯店宴會廳</p>
+        </a>
+        <a class="case-card" href="/works/kway-2025-year-end-party">
+          <img src="https://goodjob-img.weddingwishlove.com/works/kway-2025-year-end-party/kway-2025-year-end-party-4-thumb.webp" srcset="https://goodjob-img.weddingwishlove.com/works/kway-2025-year-end-party/kway-2025-year-end-party-4-thumb.webp 400w, https://goodjob-img.weddingwishlove.com/works/kway-2025-year-end-party/kway-2025-year-end-party-4.webp 1600w" sizes="(max-width: 640px) 100vw, 260px" alt="白色布幔舞台，上方垂墜白色花藝，兩側是白色鴕鳥羽毛花器" loading="lazy" decoding="async" />
+          <h3>凱衛 2025 尾牙活動・晶宴民權</h3>
+          <p class="case-meta">白色布幔・垂墜花藝</p>
+        </a>
+        <a class="case-card" href="/works/twtc-corporate-year-end-party">
+          <img src="https://goodjob-img.weddingwishlove.com/works/874c65e1/874c65e1-7-thumb.webp" srcset="https://goodjob-img.weddingwishlove.com/works/874c65e1/874c65e1-7-thumb.webp 400w, https://goodjob-img.weddingwishlove.com/works/874c65e1/874c65e1-7.webp 1600w" sizes="(max-width: 640px) 100vw, 260px" alt="紅色布幔與星光地毯的舞台背板，旁邊有立牌與金色獎座" loading="lazy" decoding="async" />
+          <h3>企業社團尾牙 世貿一館活動佈置</h3>
+          <p class="case-meta">世貿展區大型尾牙</p>
+        </a>
+      </div>
+      <p><a href="/services/party-spring-banquet/">看全部 18 件春酒尾牙佈置作品 →</a></p>
     </section>
 
     <section class="pillar-faq" id="faq">
