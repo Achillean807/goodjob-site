@@ -1516,6 +1516,28 @@ function loadQuoteThumb(img) {
     .catch(function() { img.alt = '無圖'; });
 }
 
+function toggleQuoteStatus(id) {
+  if (!requirePermission('quotes.manage', '只有管理員可以管理提案')) {
+    return;
+  }
+  var quote = findQuote(id);
+  if (!quote) {
+    toast('找不到提案', true);
+    return;
+  }
+  var next = quoteIsActive(quote) ? 'hidden' : 'active';
+  if (next === 'active' && !quote.hasPassword) {
+    toast('啟用提案前，請先按「編輯」設定至少 ' + QUOTE_PASSWORD_MIN_LENGTH + ' 碼密碼', true);
+    return;
+  }
+  api('PUT', '/api/quotes/' + encodeURIComponent(id), { status: next }).then(function() {
+    toast(next === 'active' ? '提案已啟用' : '提案已隱藏');
+    return loadQuotes();
+  }).catch(function(error) {
+    toast('切換狀態失敗：' + error.message, true);
+  });
+}
+
 function renderQuotesList() {
   var tbody = document.getElementById('quotes-list');
   var filter = document.getElementById('quote-filter').value;
@@ -1538,7 +1560,9 @@ function renderQuotesList() {
       '<tr>' +
         '<td>' + thumb + '</td>' +
         '<td><strong>' + esc(quote.title || quote.id) + '</strong><div class="muted">' + esc(quote.id) + '</div></td>' +
-        '<td><span class="status-chip ' + (quoteIsActive(quote) ? 'is-enabled' : 'is-disabled') + '">' +
+        '<td><button class="quote-switch' + (quoteIsActive(quote) ? ' is-on' : '') + '" role="switch" aria-checked="' + (quoteIsActive(quote) ? 'true' : 'false') +
+          '" title="點擊切換啟用／隱藏" onclick="toggleQuoteStatus(&quot;' + esc(quote.id) + '&quot;)"><span class="quote-switch-knob"></span></button> ' +
+          '<span class="status-chip ' + (quoteIsActive(quote) ? 'is-enabled' : 'is-disabled') + '">' +
           esc(quoteStatusLabel(quote.status, quote.hasPassword)) + '</span></td>' +
         '<td><span class="muted">' + (quote.hasPassword ? '已設定（無法回看，忘記請重設）' : '未設定') + '</span></td>' +
         '<td><a href="' + esc(quote.url) + '" target="_blank" rel="noopener noreferrer">' + esc(quote.url) + '</a></td>' +
