@@ -3,6 +3,7 @@
 var articles = [];
 var accountsCache = [];
 var quotesCache = [];
+var quoteThumbs = {};
 var authHeader = '';
 var currentAccount = null;
 var editImages = [];
@@ -1496,48 +1497,70 @@ function updateQuotesSummary() {
     '共 ' + quotesCache.length + ' 份提案，啟用 ' + active + '，隱藏 ' + hidden + '，未設定密碼 ' + noPassword;
 }
 
+function quoteIsActive(quote) {
+  return quote.status === 'active' && quote.hasPassword;
+}
+
+function loadQuoteThumb(img) {
+  var id = img.getAttribute('data-banner-id');
+  if (quoteThumbs[id]) {
+    img.src = quoteThumbs[id];
+    return;
+  }
+  fetch(img.getAttribute('data-banner'), { headers: authHeader ? { Authorization: authHeader } : {} })
+    .then(function(res) { return res.ok ? res.blob() : Promise.reject(new Error(res.status)); })
+    .then(function(blob) {
+      quoteThumbs[id] = URL.createObjectURL(blob);
+      img.src = quoteThumbs[id];
+    })
+    .catch(function() { img.alt = '無圖'; });
+}
+
 function renderQuotesList() {
   var tbody = document.getElementById('quotes-list');
-  if (!quotesCache.length) {
-    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">quote 資料夾內目前沒有提案</td></tr>';
+  var filter = document.getElementById('quote-filter').value;
+  var shown = quotesCache.filter(function(q) {
+    return filter === 'all' || (filter === 'active') === quoteIsActive(q);
+  });
+  if (!shown.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">' +
+      (quotesCache.length ? '沒有符合篩選的提案' : 'quote 資料夾內目前沒有提案') + '</td></tr>';
     return;
   }
 
   var rows = [];
-  for (var i = 0; i < quotesCache.length; i++) {
-    var quote = quotesCache[i];
-    var classes = quote.id === selectedQuoteId ? 'is-selected' : '';
+  for (var i = 0; i < shown.length; i++) {
+    var quote = shown[i];
+    var thumb = quote.banner
+      ? '<img class="quote-thumb" alt="" data-banner="' + esc(quote.banner) + '" data-banner-id="' + esc(quote.id) + '">'
+      : '<div class="quote-thumb quote-thumb-empty">無圖</div>';
     rows.push(
-      '<tr class="' + classes + '" onclick="openQuoteForm(\'' + esc(quote.id) + '\')">' +
+      '<tr>' +
+        '<td>' + thumb + '</td>' +
         '<td><strong>' + esc(quote.title || quote.id) + '</strong><div class="muted">' + esc(quote.id) + '</div></td>' +
-        '<td><span class="status-chip ' + (quote.status === 'active' && quote.hasPassword ? 'is-enabled' : 'is-disabled') + '">' +
+        '<td><span class="status-chip ' + (quoteIsActive(quote) ? 'is-enabled' : 'is-disabled') + '">' +
           esc(quoteStatusLabel(quote.status, quote.hasPassword)) + '</span></td>' +
         '<td><span class="muted">' + (quote.hasPassword ? '已設定（無法回看，忘記請重設）' : '未設定') + '</span></td>' +
         '<td><a href="' + esc(quote.url) + '" target="_blank" rel="noopener noreferrer">' + esc(quote.url) + '</a></td>' +
+        '<td><button class="quote-edit-btn" title="編輯" aria-label="編輯 ' + esc(quote.id) + '" onclick="openQuoteForm(&quot;' + esc(quote.id) + '&quot;)">⚡</button></td>' +
       '</tr>'
     );
   }
   tbody.innerHTML = rows.join('');
+  var imgs = tbody.querySelectorAll('img[data-banner]');
+  for (var j = 0; j < imgs.length; j++) {
+    loadQuoteThumb(imgs[j]);
+  }
 }
 
 function openQuoteForm(id) {
   var quote = id ? findQuote(id) : null;
-  selectedQuoteId = quote ? quote.id : '';
-  renderQuotesList();
-  document.getElementById('quote-password').value = '';
-  var pwCurrentEl = document.getElementById('quote-password-current');
-
   if (!quote) {
-    document.getElementById('quote-form-title').textContent = '選擇提案';
-    document.getElementById('quote-id').value = '';
-    document.getElementById('quote-id-display').value = '';
-    document.getElementById('quote-title').value = '';
-    document.getElementById('quote-status').value = 'hidden';
-    document.getElementById('quote-delete-btn').style.display = 'none';
-    if (pwCurrentEl) { pwCurrentEl.value = ''; }
     return;
   }
-
+  selectedQuoteId = quote.id;
+  document.getElementById('quote-password').value = '';
+  var pwCurrentEl = document.getElementById('quote-password-current');
   if (pwCurrentEl) {
     pwCurrentEl.value = quote.hasPassword ? '（已設定，無法回看；忘記請輸入新密碼重設）' : '（尚未設定）';
   }
@@ -1547,23 +1570,23 @@ function openQuoteForm(id) {
   document.getElementById('quote-id-display').value = quote.id;
   document.getElementById('quote-title').value = quote.title || quote.id;
   document.getElementById('quote-status').value = quote.status === 'active' ? 'active' : 'hidden';
-  document.getElementById('quote-delete-btn').style.display = '';
+  document.getElementById('quote-edit-modal').classList.add('is-open');
+}
+
+function closeQuoteEdit() {
+  document.getElementById('quote-edit-modal').classList.remove('is-open');
 }
 
 function loadQuotes() {
-  var preselectId = arguments.length ? arguments[0] : '';
   if (!hasPermission('quotes.manage')) {
     return Promise.resolve();
   }
   return api('GET', '/api/quotes').then(function(data) {
     quotesCache = (data && data.quotes) || [];
+    Object.keys(quoteThumbs).forEach(function(k) { URL.revokeObjectURL(quoteThumbs[k]); });
+    quoteThumbs = {};
     updateQuotesSummary();
     renderQuotesList();
-    var nextId = preselectId || selectedQuoteId;
-    if (!nextId || !findQuote(nextId)) {
-      nextId = quotesCache.length ? quotesCache[0].id : '';
-    }
-    openQuoteForm(nextId);
   }).catch(function(error) {
     toast('載入提案失敗：' + error.message, true);
   });
@@ -1578,6 +1601,7 @@ function openQuotesModal() {
 }
 
 function closeQuotesModal() {
+  closeQuoteEdit();
   document.getElementById('quotes-modal').classList.remove('is-open');
 }
 
@@ -1610,8 +1634,8 @@ function saveQuote() {
   api('PUT', '/api/quotes/' + encodeURIComponent(id), payload).then(function(response) {
     toast(payload.password ? '提案已儲存。密碼不會保存明碼，請先記下或傳給客人' : '提案已儲存');
     document.getElementById('quote-password').value = '';
-    var quote = response && response.quote ? response.quote : null;
-    return loadQuotes(quote ? quote.id : id);
+    closeQuoteEdit();
+    return loadQuotes();
   }).catch(function(error) {
     toast('儲存提案失敗：' + error.message, true);
   });
@@ -1626,11 +1650,12 @@ function deleteSelectedQuote() {
     toast('請先選擇提案', true);
     return;
   }
-  openConfirm('確定要刪除提案「' + id + '」？資料夾會移到 quote/_deleted。', function() {
+  openConfirm('確定要永久刪除提案「' + id + '」？資料夾與所有檔案會完整刪除，無法復原。', function() {
     api('DELETE', '/api/quotes/' + encodeURIComponent(id)).then(function() {
       closeConfirm();
       selectedQuoteId = '';
-      toast('提案已移到 _deleted');
+      closeQuoteEdit();
+      toast('提案已永久刪除');
       return loadQuotes();
     }).catch(function(error) {
       toast('刪除提案失敗：' + error.message, true);

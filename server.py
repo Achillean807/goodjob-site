@@ -28,6 +28,7 @@ import sys
 import tempfile
 import time
 import io
+import mimetypes
 import uuid
 from http import HTTPStatus, cookies
 try:
@@ -1692,6 +1693,39 @@ def _scan_quote_dirs():
     return sorted(quote_ids)
 
 
+_BANNER_EXTS = (".webp", ".jpg", ".jpeg", ".png", ".gif", ".avif")
+_BANNER_SRC_RE = re.compile(
+    r"""(?:<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']"""
+    r"""|<img\b[^>]*?\bsrc=["']([^"']+)["']"""
+    r"""|url\(\s*["']?([^"')\s]+)["']?\s*\))""",
+    re.I,
+)
+
+
+def _quote_banner_file(quote_id):
+    """從提案 index.html 找 Banner：og:image → 第一張非 logo 的 <img> → CSS url()。回本機絕對路徑或 None。"""
+    try:
+        index_path = _quote_real_path(quote_id, "index.html")
+        with open(index_path, "r", encoding="utf-8", errors="replace") as fh:
+            html = fh.read(400000)
+    except (OSError, ValueError):
+        return None
+    for match in _BANNER_SRC_RE.finditer(html):
+        src = next((g for g in match.groups() if g), "")
+        src = src.split("#")[0].split("?")[0].strip()
+        if not src or "logo" in src.lower() or src.startswith(("data:", "http", "//", "/")):
+            continue
+        if not src.lower().endswith(_BANNER_EXTS):
+            continue
+        try:
+            path = _quote_real_path(quote_id, unquote(src))
+        except ValueError:
+            continue
+        if os.path.isfile(path):
+            return path
+    return None
+
+
 def _public_quote_record(quote_id, record, exists=True):
     status = (record or {}).get("status") or "hidden"
     has_password = _quote_has_password(record)
@@ -3008,8 +3042,49 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         quotes = []
         for quote_id in sorted(folder_ids | manifest_ids):
             record = _quote_record(manifest, quote_id) or {}
-            quotes.append(_public_quote_record(quote_id, record, exists=quote_id in folder_ids))
+            # 舊版「移到 _deleted」留下的墓碑紀錄不再列出（資料夾本身不動）。
+            if record.get("status") == "deleted":
+                continue
+            item = _public_quote_record(quote_id, record, exists=quote_id in folder_ids)
+            if quote_id in folder_ids and _quote_banner_file(quote_id):
+                item["banner"] = f"/api/quotes/{quote_id}/banner"
+            quotes.append(item)
         self._send_json({"quotes": quotes})
+
+    def _api_quote_banner(self, quote_id):
+        """GET /api/quotes/{id}/banner — 提案 Banner 縮圖（管理員驗證；<=480px JPEG）。"""
+        if not self._check_auth():
+            return
+        if not self._require_permission("quotes.manage"):
+            return
+        path = _quote_banner_file(quote_id) if _is_manageable_quote_id(quote_id) else None
+        if not path:
+            self._send_error_json(404, "Banner not found")
+            return
+        try:
+            with open(path, "rb") as fh:
+                raw = fh.read()
+        except OSError:
+            self._send_error_json(404, "Banner not found")
+            return
+        body, ctype = raw, mimetypes.guess_type(path)[0] or "application/octet-stream"
+        if _PILLOW_AVAILABLE:
+            try:
+                img = _PILImage.open(io.BytesIO(raw))
+                img.thumbnail((480, 480), _PILImage.LANCZOS)
+                if img.mode not in ("RGB", "L"):
+                    img = img.convert("RGB")
+                out = io.BytesIO()
+                img.save(out, "JPEG", quality=78)
+                body, ctype = out.getvalue(), "image/jpeg"
+            except Exception:
+                pass  # ponytail: 解不開就回原圖
+        self.send_response(200)
+        self.send_header("Content-Type", ctype)
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "private, max-age=300")
+        self.end_headers()
+        self.wfile.write(body)
 
     def _api_update_quote(self, quote_id):
         if not self._check_auth():
@@ -3110,45 +3185,28 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self._send_error_json(500, "Invalid quote manifest")
             return
 
-        deleted_name = f"{quote_id}-{time.strftime('%Y%m%d-%H%M%S')}"
-        try:
-            deleted_path = _quote_path(QUOTE_DELETED_DIRNAME, deleted_name)
-        except ValueError:
-            self._send_error_json(400, "Invalid quote id")
+        # 完整刪除（村長 2026-11-11）：資料夾、manifest 紀錄、共用進度存檔一併永久移除，不留 _deleted 備份。
+        if os.path.islink(quote_root):
+            self._send_error_json(400, "Quote folder is a symlink")
             return
-        if os.path.exists(deleted_path):
-            self._send_error_json(500, "Delete target already exists")
-            return
-
         try:
-            os.makedirs(deleted_root, exist_ok=True)
-            shutil.move(quote_root, deleted_path)
+            shutil.rmtree(quote_root)
         except (OSError, shutil.Error):
-            self._send_error_json(500, "Failed to move quote folder")
+            self._send_error_json(500, "Failed to delete quote folder")
             return
 
-        quotes = manifest.setdefault("quotes", {})
-        record = dict(_quote_record(manifest, quote_id) or {})
-        now = _now_iso()
-        record.setdefault("title", quote_id)
-        record.setdefault("createdAt", now)
-        record["status"] = "deleted"
-        record["deletedAt"] = now
-        record["deletedPath"] = f"quote/{QUOTE_DELETED_DIRNAME}/{deleted_name}"
-        record["updatedAt"] = now
-        quotes[quote_id] = record
-
+        manifest.setdefault("quotes", {}).pop(quote_id, None)
         try:
             _save_quote_manifest(manifest)
-        except Exception:
-            try:
-                shutil.move(deleted_path, quote_root)
-            except (OSError, shutil.Error) as exc:
-                sys.stderr.write(f"[quote] rollback failed for {quote_id}: {exc}\n")
-            self._send_error_json(500, "Failed to save quote manifest")
+        except Exception as exc:
+            sys.stderr.write(f"[quote] manifest save failed after delete {quote_id}: {exc}\n")
+            self._send_error_json(500, "Folder deleted but failed to save quote manifest")
             return
-
-        self._send_json({"quote": _public_quote_record(quote_id, record, exists=False)})
+        try:
+            os.remove(_task_state_path(quote_id))
+        except OSError:
+            pass
+        self._send_json({"deleted": quote_id})
 
     # ------------------------------------------------------------------
     # API: session
@@ -3371,6 +3429,11 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         # GET /api/quotes
         if method == "GET" and path == "/api/quotes":
             self._api_list_quotes()
+            return True
+
+        # GET /api/quotes/{id}/banner
+        if method == "GET" and path.startswith("/api/quotes/") and path.endswith("/banner"):
+            self._api_quote_banner(path[len("/api/quotes/"):-len("/banner")])
             return True
 
         # PUT /api/quotes/{id}

@@ -550,34 +550,33 @@ class QuoteAuthTest(unittest.TestCase):
         with open(self.manifest_path, encoding="utf-8") as fh:
             self.assertEqual(fh.read(), invalid_manifest)
 
-    def test_delete_quote_moves_folder_to_deleted_and_marks_manifest(self):
+    def test_delete_quote_removes_folder_and_manifest_record(self):
         self.set_quote("260613", {"title": "Proposal B", "status": "active", "password": "otherpass"})
         src = os.path.join(self.quote_dir, "260613")
         self.assertTrue(os.path.isdir(src))
 
         status, headers, body = self.request("/api/quotes/260613", method="DELETE", auth=True)
         self.assertEqual(status, 200, body)
-        payload = json.loads(body)
-        self.assertEqual(payload["quote"]["status"], "deleted")
+        self.assertEqual(json.loads(body)["deleted"], "260613")
         self.assertFalse(os.path.exists(src))
-        self.assertTrue(os.path.isdir(os.path.join(self.quote_dir, "_deleted")))
-        self.assertTrue(payload["quote"]["deletedPath"].startswith("quote/_deleted/260613-"))
-        deleted_rel_path = payload["quote"]["deletedPath"]
-        deleted_fs_path = os.path.join(
-            self.quote_dir,
-            *deleted_rel_path.replace("\\", "/").split("/")[1:],
-        )
-        self.assertTrue(os.path.isdir(deleted_fs_path))
-        self.assertTrue(os.path.exists(os.path.join(deleted_fs_path, "index.html")))
-        self.assertTrue(os.path.exists(os.path.join(deleted_fs_path, "images", "003.jpg")))
+        self.assertFalse(os.path.exists(os.path.join(self.quote_dir, "_deleted", "260613")))
         with open(self.manifest_path, encoding="utf-8") as fh:
             manifest = json.load(fh)
-        self.assertEqual(manifest["quotes"]["260613"]["status"], "deleted")
-        self.assertEqual(manifest["quotes"]["260613"]["deletedPath"], deleted_rel_path)
+        self.assertNotIn("260613", manifest["quotes"])
 
-        status, headers, body = self.request("/quote/260613/")
+        status, headers, body = self.request("/api/quotes", auth=True)
+        self.assertNotIn("260613", [q["id"] for q in json.loads(body)["quotes"]])
+
+    def test_list_includes_banner_and_serves_thumbnail(self):
+        with open(os.path.join(self.quote_dir, "260613", "index.html"), "w", encoding="utf-8") as fh:
+            fh.write('<img class="hero-logo" src="images/logo.webp"><img src="images/003.jpg">')
+        status, headers, body = self.request("/api/quotes", auth=True)
+        item = next(q for q in json.loads(body)["quotes"] if q["id"] == "260613")
+        self.assertEqual(item["banner"], "/api/quotes/260613/banner")
+        status, headers, body = self.request("/api/quotes/260613/banner", auth=True)
         self.assertEqual(status, 200)
-        self.assertIn("此提案暫停開放", body)
+        status, headers, body = self.request("/api/quotes/260613/banner")
+        self.assertEqual(status, 401)
 
     def test_deleted_archive_cannot_be_enabled_or_served_as_quote(self):
         status, headers, body = self.request("/api/quotes/260613", method="DELETE", auth=True)

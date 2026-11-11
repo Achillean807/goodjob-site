@@ -131,7 +131,7 @@ class AdminQuoteUiTest(unittest.TestCase):
         self.assertIn("showLoginError(loginErrorMessage(error));", restore_body)
         self.assertNotIn("sessionStorage.removeItem", restore_body)
 
-        self.assertIn("/controlcenter/app.js?v=20261104b", self.read("admin/index.html"))
+        self.assertIn("/controlcenter/app.js?v=20261111a", self.read("admin/index.html"))
 
     def test_admin_ui_never_shows_quote_plaintext_password(self):
         js = self.read("admin/app.js")
