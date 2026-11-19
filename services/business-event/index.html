@@ -39,6 +39,8 @@
     /* 代表案例：標題在某段卡片寬度會只剩 1 字落到第二行；只在該段寬度縮字級（取一行剛好放得下的最大字級）。
        以卡片寬度（container query）判斷，不用視窗寬，避免 Windows 捲軸讓區間位移。寬度值為 Noto Sans TC 實測，上限多留 2.5px（2026-11-19） */
     .featured-grid .case-card { container-type: inline-size; }
+    /* 其他寬度的單字落行交給瀏覽器避開（不支援的瀏覽器維持原樣）；美福的 balance 寫在後面，會蓋過這條 */
+    .featured-grid .case-card h3 { text-wrap: pretty; }
     @media (min-width: 641px) {
       @container (min-width: 304px) and (max-width: 322.5px) { .featured-grid h3.case-title-fit-factory { font-size: 0.94rem; } }
       @container (min-width: 301.03px) and (max-width: 319.54px) { .featured-grid h3.case-title-fit-wacoal { font-size: 0.94rem; } }
