@@ -30,6 +30,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=optional" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/site.css?v=20261102a" />
   <link rel="stylesheet" href="/services/services.css?v=20260724a" />
+  <style>
+    /* 代表案例：美福卡標題字級縮 6%，桌機一行放得下，不讓「置」單字落行（2026-11-19） */
+    .featured-grid .case-card h3.case-title-tight { font-size: 0.94rem; }
+    @media (max-width: 640px) {
+      .featured-grid .case-card h3.case-title-tight { font-size: calc(0.86rem * 0.94); }
+    }
+  </style>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -114,13 +121,13 @@
       {
         "@type": "ListItem",
         "position": 1,
-        "name": "台北美福大飯店｜星空銀河主題佈置",
+        "name": "台北美福大飯店丨星空銀河主題佈置",
         "url": "https://goodjob.weddingwishlove.com/works/meifu-blue-planet-galaxy-decor"
       },
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Joey 40 生日派對｜黑金奢華佈置",
+        "name": "Joey 40 生日派對丨黑金奢華佈置",
         "url": "https://goodjob.weddingwishlove.com/works/joey-40-golden-hour-birthday-party"
       },
       {
@@ -375,11 +382,11 @@
       <div class="featured-grid">
         <a class="case-card" href="/works/meifu-blue-planet-galaxy-decor">
           <img src="https://goodjob-img.weddingwishlove.com/works/meifu-blue-planet-galaxy-decor/meifu-blue-planet-galaxy-decor-1.webp" alt="半圓弧形星空背板與上方水晶吊燈，兩側金枝白色光球燈與藍白花藝，前方鏡面地坪" loading="lazy" />
-          <h3>台北美福大飯店｜星空銀河主題佈置</h3>
+          <h3 class="case-title-tight">台北美福大飯店丨星空銀河主題佈置</h3>
         </a>
         <a class="case-card" href="/works/joey-40-golden-hour-birthday-party">
           <img src="https://goodjob-img.weddingwishlove.com/works/joey-40-golden-hour-birthday-party/joey-40-golden-hour-birthday-party-16.webp" alt="黑色拱形背板上的金字 JOEY · 40，兩側白色花柱，前方是低矮舞台" loading="lazy" />
-          <h3>Joey 40 生日派對｜黑金奢華佈置</h3>
+          <h3>Joey 40 生日派對丨黑金奢華佈置</h3>
         </a>
         <a class="case-card" href="/works/gd-home-sweet-home">
           <img src="https://goodjob-img.weddingwishlove.com/works/gd-home-sweet-home/hero.webp" alt="G-Dragon 台北演唱會丨應援佈置" loading="lazy" />
