@@ -36,6 +36,21 @@
     @media (max-width: 640px) {
       .featured-grid .case-card h3.case-title-tight { font-size: calc(0.86rem * 0.94); }
     }
+    /* 代表案例：標題在某段卡片寬度會只剩 1 字落到第二行；只在該段寬度縮字級（取一行剛好放得下的最大字級）。
+       以卡片寬度（container query）判斷，不用視窗寬，避免 Windows 捲軸讓區間位移。寬度值為 Noto Sans TC 實測，上限多留 2.5px（2026-11-19） */
+    .featured-grid .case-card { container-type: inline-size; }
+    @media (min-width: 641px) {
+      @container (min-width: 304px) and (max-width: 322.5px) { .featured-grid h3.case-title-fit-factory { font-size: 0.94rem; } }
+      @container (min-width: 301.03px) and (max-width: 319.54px) { .featured-grid h3.case-title-fit-wacoal { font-size: 0.94rem; } }
+      @container (min-width: 291.64px) and (max-width: 310.15px) { .featured-grid h3.case-title-fit-chef { font-size: 0.94rem; } }
+    }
+    @media (max-width: 640px) {
+      @container (min-width: 181.12px) and (max-width: 197.4px) { .featured-grid h3.case-title-fit-chengmei { font-size: calc(0.86rem * 0.92); } }
+      @container (min-width: 206.7px) and (max-width: 222.97px) { .featured-grid h3.case-title-fit-gd { font-size: calc(0.86rem * 0.93); } }
+      @container (min-width: 208.28px) and (max-width: 224.55px) { .featured-grid h3.case-title-fit-joey { font-size: calc(0.86rem * 0.93); } }
+      /* 美福已縮 6%，再縮會低於原字級 0.88 倍，這段寬度改用 balance 平均兩行 */
+      @container (min-width: 209.95px) and (max-width: 225.4px) { .featured-grid h3.case-title-tight { text-wrap: balance; } }
+    }
   </style>
   <script type="application/ld+json">
   {
@@ -386,15 +401,15 @@
         </a>
         <a class="case-card" href="/works/joey-40-golden-hour-birthday-party">
           <img src="https://goodjob-img.weddingwishlove.com/works/joey-40-golden-hour-birthday-party/joey-40-golden-hour-birthday-party-16.webp" alt="黑色拱形背板上的金字 JOEY · 40，兩側白色花柱，前方是低矮舞台" loading="lazy" />
-          <h3>Joey 40 生日派對丨黑金奢華佈置</h3>
+          <h3 class="case-title-fit-joey">Joey 40 生日派對丨黑金奢華佈置</h3>
         </a>
         <a class="case-card" href="/works/gd-home-sweet-home">
           <img src="https://goodjob-img.weddingwishlove.com/works/gd-home-sweet-home/hero.webp" alt="G-Dragon 台北演唱會丨應援佈置" loading="lazy" />
-          <h3>G-Dragon 台北演唱會丨應援佈置</h3>
+          <h3 class="case-title-fit-gd">G-Dragon 台北演唱會丨應援佈置</h3>
         </a>
         <a class="case-card" href="/works/chengmei-insect-exhibition">
           <img src="https://goodjob-img.weddingwishlove.com/works/chengmei-insect-exhibition/hero.webp" alt="成美文化園昆蟲展丨園區佈置" loading="lazy" />
-          <h3>成美文化園昆蟲展丨園區佈置</h3>
+          <h3 class="case-title-fit-chengmei">成美文化園昆蟲展丨園區佈置</h3>
         </a>
         <a class="case-card" href="/works/cxo-female-founders-club">
           <img src="https://goodjob-img.weddingwishlove.com/works/cxo-female-founders-club/hero.webp" alt="CXO 女創俱樂部 品牌活動佈置" loading="lazy" />
@@ -402,11 +417,11 @@
         </a>
         <a class="case-card" href="/works/factory-brand-event">
           <img src="https://goodjob-img.weddingwishlove.com/works/factory-brand-event/hero.webp" alt="南港瓶蓋工廠「永續美學」品牌活動佈置" loading="lazy" />
-          <h3>南港瓶蓋工廠「永續美學」品牌活動佈置</h3>
+          <h3 class="case-title-fit-factory">南港瓶蓋工廠「永續美學」品牌活動佈置</h3>
         </a>
         <a class="case-card" href="/works/wacoal-2024-anniversary">
           <img src="https://goodjob-img.weddingwishlove.com/works/wacoal-2024-anniversary/hero.webp" alt="華歌爾 2024 週年慶新品發表會活動佈置" loading="lazy" />
-          <h3>華歌爾 2024 週年慶新品發表會活動佈置</h3>
+          <h3 class="case-title-fit-wacoal">華歌爾 2024 週年慶新品發表會活動佈置</h3>
         </a>
         <a class="case-card" href="/works/academia-sinica-conference-venue">
           <img src="https://goodjob-img.weddingwishlove.com/works/48235c66/48235c66-1.webp" alt="中研院 會議會場佈置" loading="lazy" />
@@ -414,7 +429,7 @@
         </a>
         <a class="case-card" href="/works/chef-popup">
           <img src="https://goodjob-img.weddingwishlove.com/works/chef-popup/chef-popup-1.webp" alt="曾師傅手工麻糬 新光三越快閃活動佈置" loading="lazy" />
-          <h3>曾師傅手工麻糬 新光三越快閃活動佈置</h3>
+          <h3 class="case-title-fit-chef">曾師傅手工麻糬 新光三越快閃活動佈置</h3>
         </a>
       </div>
     </section>
