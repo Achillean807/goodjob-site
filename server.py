@@ -3875,9 +3875,16 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
                 f"還有哪些{cat_label}作品可以參考？",
                 "、".join(a.get("title") or "" for a in related[:3]),
             ))
+        # 可見答案：Q3 的作品名加超連結（村長 2026-11-20）；JSON-LD 仍用純文字 a。
+        faq_links_html = "、".join(
+            f'<a href="/works/{_esc(_article_url_key(a))}">{_esc(a.get("title") or "")}</a>'
+            for a in related[:3]
+        ) if related else ""
         faq_html = "".join(
-            f'<details><summary>{_esc(q)}</summary><p>{_esc(a)}</p></details>'
-            for q, a in faq_items
+            f'<details><summary>{_esc(q)}</summary><p>'
+            f'{faq_links_html if (related and i == len(faq_items) - 1) else _esc(a)}'
+            '</p></details>'
+            for i, (q, a) in enumerate(faq_items)
         )
         faq_html = (
             '<section class="works-faq" aria-label="常見問題">'
@@ -4158,6 +4165,7 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
     .works-pillar {{ margin: 40px 0 0; padding: 20px 24px; border-left: 3px solid var(--point); background: var(--salt); }}
     .works-pillar p {{ margin: 0; line-height: 1.8; color: var(--ink); }}
     .works-pillar a {{ color: var(--point); text-decoration: underline; text-underline-offset: 3px; }}
+    .works-faq p a {{ color: var(--point); text-decoration: underline; text-underline-offset: 3px; }}
   </style>
   <script>
   // GA4 line_click：全站 LINE 連結點擊追蹤（SSR 頁面獨立內嵌同份邏輯）
