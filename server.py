@@ -42,7 +42,6 @@ except ImportError:
     pass
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import parse_qs, unquote
-import urllib.request
 
 
 def _env_int(name, default):
@@ -79,12 +78,9 @@ LANYA_VOTES_PATH = os.path.join(LANYA_VOTES_DIR, "votes.json")
 LANYA_VOTERS = ("Lindsay", "Melody", "Shin Yin", "天霸", "宜君", "智萍")
 LANYA_CANDIDATES = 6
 MAX_LANYA_VOTE_BYTES = 4 * 1024
-# 四十歲派對詢問單：每筆存成獨立 JSON 檔於 data/inquiries/，避免併發覆蓋；可選 Resend 通知信
+# 四十歲派對詢問單：每筆存成獨立 JSON 檔於 data/inquiries/，避免併發覆蓋；不寄 Email
 INQUIRY_DIR = os.path.join(DATA_DIR, "inquiries")
 MAX_INQUIRY_BYTES = 16 * 1024
-RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "").strip()
-RESEND_INQUIRY_FROM = "村花弄囍詢問單 <inquiry@reflunker.com>"
-RESEND_INQUIRY_TO = "weddingwishlove@gmail.com"
 QUOTE_PASSWORD_MIN_LENGTH = 8
 QUOTE_COOKIE_MAX_AGE = 7 * 24 * 60 * 60
 QUOTE_COOKIE_SECURE = os.environ.get("GOODJOB_QUOTE_COOKIE_SECURE", "").lower() in (
@@ -2442,10 +2438,10 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         self._send_json({"ok": True, "votes": votes})
 
     def _api_inquiry_post(self):
-        """POST /api/inquiry — 四十歲派對詢問單：存檔一筆獨立 JSON + （可選）寄 Email 通知。
+        """POST /api/inquiry — 四十歲派對詢問單：存檔一筆獨立 JSON（不寄 Email）。
 
         body：任意 JSON 物件（前端表單全部欄位）。蜜罐欄位 "website" 有非空值時，
-        視為機器人送出，回傳假成功但不存檔、不寄信。
+        視為機器人送出，回傳假成功但不存檔。
         """
         # 先看 Content-Length 再讀，避免無上限讀入記憶體
         try:
@@ -2493,55 +2489,8 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
             self._send_error_json(500, "詢問單寫入失敗")
             return
 
-        # 資料已經存檔，寄信只是錦上添花——失敗絕不能讓使用者看到錯誤
-        self._send_inquiry_email(payload)
+        # 不再寄 Email（村長 2026-11-20：改請客人加 LINE）；只存檔
         self._send_json({"ok": True})
-
-    def _send_inquiry_email(self, payload):
-        """透過 Resend 寄詢問單通知信給村花信箱；沒設定 RESEND_API_KEY 就略過。
-
-        任何例外只記錄到 stderr、不往外拋出——呼叫端已經完成存檔與回應。
-        """
-        if not RESEND_API_KEY:
-            sys.stderr.write("[inquiry] 未設定 RESEND_API_KEY，略過通知信\n")
-            return
-        try:
-            nickname = str(payload.get("nickname") or "")
-            occupation = str(payload.get("occupation") or "")
-            subject = "【40歲派對詢問單】%s — %s" % (nickname, occupation)
-
-            lines = []
-            for key, value in payload.items():
-                if key == "website":
-                    continue  # 蜜罐欄位，通知信不需要出現
-                if isinstance(value, list):
-                    value_text = "、".join(str(item) for item in value)
-                elif value is None:
-                    value_text = ""
-                else:
-                    value_text = str(value)
-                lines.append("%s：%s" % (key, value_text))
-            text = "\n".join(lines)
-
-            body = json.dumps({
-                "from": RESEND_INQUIRY_FROM,
-                "to": [RESEND_INQUIRY_TO],
-                "subject": subject,
-                "text": text,
-            }).encode("utf-8")
-            req = urllib.request.Request(
-                "https://api.resend.com/emails",
-                data=body,
-                method="POST",
-                headers={
-                    "Authorization": "Bearer %s" % RESEND_API_KEY,
-                    "Content-Type": "application/json",
-                    "User-Agent": "murayama-goodjob/1.0",
-                },
-            )
-            urllib.request.urlopen(req, timeout=10)
-        except Exception as exc:
-            sys.stderr.write(f"[inquiry] 通知信寄送失敗: {exc}\n")
 
     def _handle_quote_auth_post(self):
         quote_id, rel_path = self._quote_parts()
