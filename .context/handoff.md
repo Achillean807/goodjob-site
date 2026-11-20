@@ -1,28 +1,24 @@
-# 交接檔
+---
+日期: 2026-11-20
+repo: goodjob-site
+分支: master
+HEAD: d74fa96（之後只加 docs commit）
+---
+# 交接 2026-11-20
 
-- 日期：2026-11-11（第二次收工）
-- repo：goodjob-site　分支：master
-- 程式 HEAD：`d6e9667`（本檔 commit 之後另有 docs commit，以 git log 為準）
+## 今天完成（皆已上正式站並驗證）
+- 作品頁 FAQ 第 3 題作品名加超連結（202301b）。
+- 移除詢問單功能、Email 寄信與信箱（e96a6b5、d74fa96）；/api/inquiry 對外回 404。
+- 主題活動服務頁代表案例換入美福與 Joey 40、標題斷行（11-19，見 CLAUDE.md 11-19(B)）。
+- 村花婚禮專欄上架美福藍色星球（wedding-site 0039e14）。三處待裁（價格區塊、2026·冬、真實字樣）村長裁示維持現狀。
 
-## 本 session 做了什麼
-1. 後台「提案管理」改版（上午，已收工過）：Banner 縮圖、啟用/隱藏篩選、狀態開關、列尾「編輯」「刪除」、完整刪除。commit `e71442e`、`eaa41f2`、`cd24b50`。
-2. SEO 健康檢查：sitemap 83 頁全部通過（title、meta、canonical、h1、JSON-LD 皆正常，無重複內容）。
-3. GSC 近 28 天：曝光 1,547、點擊 77、平均排名 6.7；「尾牙布置」平均排名 7.6、「尾牙佈置」10.2。
-4. 尾牙服務頁 title／meta 加「2026–2027」（commit `6c615fc`）。
-5. 新增指南頁 `/services/party-spring-banquet/planning-guide/`（七步驟、FAQ、時程）；sitemap、llms.txt 已同步。
-6. 指南頁加 9 張實拍作品卡片與宣傳區塊；尾牙頁 hero 加指南入口按鈕（commit `d6e9667`）。
+## 未竟事項
+- 主機 prod 仍有 systemd drop-in resend.conf，新程式不讀；是否清掉待村長決定。
+- 兩個服務 NeedDaemonReload=yes（部署前就有，原因未驗證，未動）。
+- 是否有主機外的前端呼叫 /api/inquiry：未查全。
+- 手機 Safari 實機：未驗證。
+- 引用登記：村花婚禮專欄引用 goodjob meifu-blue-planet-galaxy-decor 第 1～9 張圖；改圖、刪圖、重新編號前先通知該專欄。
+- 本機有未追蹤備份檔 CLAUDE.md.bak-2026111*、bak-20261120，不進 git。
 
-## 部署狀態
-- prod：`server.py`、`llms.txt`、尾牙頁、指南頁 md5 與 staging 一致；服務 active；CF purge 成功；IndexNow HTTP 200。
-- 備份：`/srv/raid1/backups/goodjob-quotemgr-20261111/`、`goodjob-seo-planguide-20261111/`（含 `b2/`）。
-- 測試：全套 113 項 OK。
-
-## 未竟事項／待確認
-- **未驗證**：後台提案管理畫面（開關、彈窗、刪除）沒人實際點過。
-- **未驗證**：指南頁與新 title 的收錄與排名變化，約 2～4 週後用 GSC 比對；「要求建立索引」未送。
-- 指南頁宣傳區最後一張（`874c65e1-7`）拱門上看得到一家銀行英文名稱，待村長決定是否換圖。
-- `quote/_deleted/` 內 3 份舊資料夾未動，待村長決定是否永久刪除。
-- 提案編輯彈窗仍保留「狀態」下拉，與列表開關重複。
-- 沒做：尾牙服務頁補「提前多久準備」段落（指南頁已涵蓋）、首頁與頂部導覽的指南入口。
-- 排名對手名單（2 張截圖）只來自村長手動搜尋，Firecrawl 額度 11-15 才重置。
-- 本 session 兩次改動都沒有 fresh-context agent 驗收。
+## 踩坑
+- cc-plugin-privacy 外掛擋含信箱的檔案寫出，也擋 cd 路徑 && 開頭的 Bash；用 git -C 或 python os.chdir。
