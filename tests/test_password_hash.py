@@ -1050,16 +1050,11 @@ class RequestHardeningServerTest(_AdminAuthServerBase):
         self.assertEqual(self.quote("::ffff:198.51.100.40", "wrong"), 200)
         self.assertEqual(self.quote("198.51.100.40", "wrong"), 429)
 
-    def test_inquiry_keeps_full_ipv6_address(self):
-        ip = "2001:db8:a:d:1:2:3:4"
-        status, _, body = self.request("/api/inquiry", data={"nickname": "測試"}, headers={"CF-Connecting-IP": ip})
-        self.assertEqual(status, 200, body)
-        inquiry_dir = os.path.join(self.data_dir, "inquiries")
-        records = []
-        for name in os.listdir(inquiry_dir):
-            with open(os.path.join(inquiry_dir, name), encoding="utf-8") as fh:
-                records.append(json.load(fh))
-        self.assertIn(ip, [r["remote_ip"] for r in records])
+    def test_inquiry_api_is_removed(self):
+        # 村長 2026-11-20：不再提供詢問單功能，改請客人加 LINE
+        status, _, _ = self.request("/api/inquiry", data={"nickname": "測試"})
+        self.assertNotEqual(status, 200)
+        self.assertFalse(os.path.exists(os.path.join(self.data_dir, "inquiries")))
 
     def test_non_ascii_quote_cookie_gets_login_page_not_dropped_connection(self):
         cookie = {"Cookie": 'quote_auth_260801="1:\xe9"'}  # urllib 用 latin-1 送出 é

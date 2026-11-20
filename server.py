@@ -78,9 +78,6 @@ LANYA_VOTES_PATH = os.path.join(LANYA_VOTES_DIR, "votes.json")
 LANYA_VOTERS = ("Lindsay", "Melody", "Shin Yin", "天霸", "宜君", "智萍")
 LANYA_CANDIDATES = 6
 MAX_LANYA_VOTE_BYTES = 4 * 1024
-# 四十歲派對詢問單：每筆存成獨立 JSON 檔於 data/inquiries/，避免併發覆蓋；不寄 Email
-INQUIRY_DIR = os.path.join(DATA_DIR, "inquiries")
-MAX_INQUIRY_BYTES = 16 * 1024
 QUOTE_PASSWORD_MIN_LENGTH = 8
 QUOTE_COOKIE_MAX_AGE = 7 * 24 * 60 * 60
 QUOTE_COOKIE_SECURE = os.environ.get("GOODJOB_QUOTE_COOKIE_SECURE", "").lower() in (
@@ -2437,61 +2434,6 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
 
         self._send_json({"ok": True, "votes": votes})
 
-    def _api_inquiry_post(self):
-        """POST /api/inquiry — 四十歲派對詢問單：存檔一筆獨立 JSON（不寄 Email）。
-
-        body：任意 JSON 物件（前端表單全部欄位）。蜜罐欄位 "website" 有非空值時，
-        視為機器人送出，回傳假成功但不存檔。
-        """
-        # 先看 Content-Length 再讀，避免無上限讀入記憶體
-        try:
-            length = int(self.headers.get("Content-Length", 0))
-        except (TypeError, ValueError):
-            self._send_error_json(400, "Content-Length 無效")
-            return
-        if length > MAX_INQUIRY_BYTES:
-            self._send_error_json(413, "請求內容過大")
-            return
-        if length <= 0:
-            self._send_error_json(400, "請求內容不可為空")
-            return
-        try:
-            payload = json.loads(self.rfile.read(length).decode("utf-8"))
-        except (json.JSONDecodeError, UnicodeDecodeError):
-            self._send_error_json(400, "JSON 格式錯誤")
-            return
-        if not isinstance(payload, dict):
-            self._send_error_json(400, "內容必須是 JSON 物件")
-            return
-
-        # 蜜罐：正常使用者看不到這個隱藏欄位，會填的多半是機器人 → 假裝成功、不留任何紀錄
-        if str(payload.get("website") or "").strip():
-            self._send_json({"ok": True})
-            return
-
-        remote_ip = self._client_ip()
-        # 系統時鐘無論設在哪個時區，time.time() 都是 UTC epoch，故直接加 8 小時換算台北時間
-        taipei_now = time.gmtime(time.time() + 8 * 3600)
-
-        record = dict(payload)
-        record["received_at"] = time.strftime("%Y-%m-%dT%H:%M:%S+08:00", taipei_now)
-        record["remote_ip"] = remote_ip
-        record["user_agent"] = self.headers.get("User-Agent", "")
-
-        filename = "%s-%s.json" % (
-            time.strftime("%Y%m%d-%H%M%S", taipei_now),
-            secrets.token_hex(4),
-        )
-        try:
-            os.makedirs(INQUIRY_DIR, exist_ok=True)
-            _write_json_atomic(os.path.join(INQUIRY_DIR, filename), record)
-        except OSError:
-            self._send_error_json(500, "詢問單寫入失敗")
-            return
-
-        # 不再寄 Email（村長 2026-11-20：改請客人加 LINE）；只存檔
-        self._send_json({"ok": True})
-
     def _handle_quote_auth_post(self):
         quote_id, rel_path = self._quote_parts()
         if quote_id is None or rel_path != "auth":
@@ -3431,11 +3373,6 @@ class MurayamaHandler(SimpleHTTPRequestHandler):
         # POST /api/lanya-tote/votes — 蘭雅資優班紀念包記名投票
         if method == "POST" and path == "/api/lanya-tote/votes":
             self._api_lanya_vote_post()
-            return True
-
-        # POST /api/inquiry — 四十歲派對詢問單
-        if method == "POST" and path == "/api/inquiry":
-            self._api_inquiry_post()
             return True
 
         return False
